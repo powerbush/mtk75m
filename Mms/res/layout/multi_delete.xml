@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:background="@android:color/white"
+	android:cacheColorHint="@android:color/white">
+    <com.android.mms.ui.MultiDeleteHeaderItem xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/header_item"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:paddingRight="5dip" >
+
+        <TextView android:id="@+id/select_all"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:singleLine="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="12dip"
+            android:layout_marginLeft="8dip"
+            android:textSize="20sp"
+            android:text = "@string/select_all"
+            android:layout_alignWithParentIfMissing="true" />
+     
+        <CheckBox android:id="@+id/check_box" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_alignParentRight="true"
+            android:focusable="false"
+            android:clickable="false"></CheckBox>
+    </com.android.mms.ui.MultiDeleteHeaderItem>
+	<ListView android:id="@+id/item_list" android:layout_width="match_parent"
+		android:layout_height="match_parent" android:layout_weight="1.0"
+		android:layout_marginBottom="1dip"
+		android:cacheColorHint="@android:color/white"
+		android:footerDividersEnabled="false" android:scrollbarStyle="outsideOverlay"></ListView>
+	<LinearLayout android:id="@+id/bottom_panel"
+		android:layout_width="match_parent" android:layout_height="wrap_content"
+		android:paddingRight="5dip" android:paddingLeft="5dip"
+		android:paddingTop="5dip" 
+		android:background="@drawable/bottombar_landscape_565">
+		<Button android:id="@+id/delete" android:layout_height="wrap_content"
+			android:layout_width="match_parent" android:layout_weight="1"
+			android:text="@string/delete" android:layout_marginRight="5dip"></Button>
+		<Button android:id="@+id/cancel" android:layout_height="wrap_content"
+			android:layout_width="match_parent" android:layout_weight="1"
+			android:text="@android:string/cancel" android:layout_marginLeft="5dip"></Button>
+	</LinearLayout>
+
+</LinearLayout>

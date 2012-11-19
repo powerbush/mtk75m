@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/white_background">
+    
+    <LinearLayout android:id="@+id/select_panel"
+        android:layout_width="match_parent"
+        android:layout_height="65dip"
+        android:gravity="center_vertical"
+        android:background="#e2e3e2"
+        android:paddingRight="5dip"
+        android:focusable="true"
+        android:clickable="true">		
+        <TextView android:id="@+id/select_all"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:singleLine="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="8dip"
+            android:layout_centerVertical="true"
+            android:textSize="20sp"
+            android:text = "@string/select_all"
+            android:focusable="false"
+            android:clickable="false"
+            android:layout_alignWithParentIfMissing="true" />
+     
+        <CheckBox android:id="@+id/select_all_checked" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="2dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            android:clickable="false"></CheckBox>
+	</LinearLayout>
+	
+	<ListView android:id="@+id/vcard_list"
+		android:layout_width="match_parent"
+		android:layout_height="0dip"
+		android:layout_weight="1.0"
+		android:transcriptMode="alwaysScroll"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarStyle="insideInset"
+        android:fadingEdge="none"
+        android:layout_marginBottom="1dip"
+        android:cacheColorHint="@android:color/white" />
+    
+    <LinearLayout
+    	android:layout_height="wrap_content"
+        android:id="@+id/bottom_panel"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:paddingTop="5dip"
+        android:background="@drawable/bottombar_landscape_565">
+        <Button
+        	android:id="@+id/save"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_marginRight="5dip"></Button>
+        <Button
+            android:id="@+id/cancel"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:text="@android:string/cancel"
+            android:layout_marginLeft="5dip"></Button>
+    </LinearLayout>
+ </LinearLayout>

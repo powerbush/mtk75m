@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string-array name="default_smiley_names">
+        <item>Senang</item>
+        <item>Sedih</item>
+        <item>Kedip mata</item>
+        <item>Lidah menjulur</item>
+        <item>Heran</item>
+        <item>Cium</item>
+        <item>Teriak</item>
+        <item>Tenang</item>
+        <item>Banyak bicara</item>
+        <item>Mulut disumpal sepatu</item>
+        <item>Malu</item>
+        <item>Malaikat</item>
+        <item>Ragu</item>
+        <item>Menangis</item>
+        <item>Mulut diplester</item>
+        <item>Tertawa</item>
+        <item>Bingung</item>
+    </string-array>
+    <string-array name="default_quick_texts">
+        <item>Di mana Anda?</item>
+        <item>Apa yang Anda lakukan?</item>
+        <item>Telepon kembali!Tolong!</item>
+        <item>Maaf, saya ada pertemuan sekarang.</item>
+        <item>Saya akan segera menelepon Anda.</item>
+        <item>Jangan khawatir!Saya baik-baik saja.</item>
+        <item>Dalam perjalanan pulang.</item>
+        <item>Segera tiba.</item>
+        <item>Datang dan hadiri!</item>
+    </string-array>    
+    <string-array name="pref_mms_creation_mode_choices">
+        <item>Mode Terbatas</item>
+        <item>Mode Peringatan</item>
+        <item>Mode Bebas</item>
+    </string-array>   
+        <string-array name="pref_key_mms_priority_choices">
+        <item>Tinggi</item>
+        <item>Normal</item>
+        <item>Rendah</item>
+    </string-array> 
+    <string-array name="pref_sms_save_location_choices">
+        <item>Telepon</item>
+        <item>Kartu SIM</item>
+    </string-array>   
+</resources>
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:paddingTop="5dip"
+    android:paddingRight="5dip"
+    android:paddingBottom="5dip"
+    android:paddingLeft="5dip">
+    	
+    <ImageView
+    	android:id="@+id/vcard_item_term_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dip"
+        android:layout_marginLeft="5dip"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/sym_contact"/>
+        
+    <TextView android:id="@+id/vcard_item_term_label"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_toRightOf="@id/vcard_item_term_icon"
+    	android:textColor="#ff000000"
+    	android:textSize="20dip"
+    	android:gravity="left"
+    	android:layout_marginTop="5dip"
+    	android:layout_marginRight="5dip"
+    	android:layout_marginLeft="5dip"/>
+    	
+    <TextView android:id="@+id/vcard_item_term_detail"
+		android:layout_width="match_parent" 
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/vcard_item_term_icon"
+		android:layout_below="@id/vcard_item_term_label"
+		android:textColor="#ff000000"
+		android:textSize="15dip"
+	    android:gravity="left"
+        android:layout_marginTop="1dip"
+	    android:layout_marginLeft="5dip"
+	    android:layout_marginRight="5dip"/>
+</RelativeLayout>

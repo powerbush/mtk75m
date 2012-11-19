@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="Insert_sdcard">Hãy lắp thẻ SD</string>
+    <string name="pref_title_mms_enable_to_send_delivery_reports">Bật để gửi báo cáo gửi</string>
+    <string name="pref_summary_mms_enable_to_send_delivery_reports">Gửi báo cáo gửi khi đã nhận tin nhắn</string>
+    <string name="sms_save_location">SMS Save Location</string>
+    <string name="sms_service_center">Trung tâm dịch vụ SMS</string>
+    <string name="service_center_label">Trung tâm dịch vụ:</string>
+    <string name="attach_ringtone">N.chuông</string>
+    <string name="pref_title_mms_size_limit">Giới hạn kích thước</string>
+    <string name="pref_summary_mms_size_limit">Quá giới hạn kích thước MMS để soạn tin nhắn</string>
+    <string name="pref_title_mms_creation_mode">Chế độ soạn</string>
+    <string name="pref_summary_mms_creation_mode">Chế độ soạn MMS cho thông báo soạn</string>
+    <string name="confirm_restricted_audio">Loại nội dung âm thanh giới hạn, bạn vẫn muốn đính kèm?</string>
+    <string name="confirm_restricted_image">Loại nội dung hình ảnh giới hạn, bạn vẫn muốn đính kèm?</string>
+    <string name="confirm_restricted_video">Loại nội dung video giới hạn, bạn vẫn muốn đính kèm?</string>
+    <string name="unsupport_media_type">Loại media không hỗ trợ</string>
+    <string name="select_different_media_type">Chọn loại media khác</string>
+    <!-- to notify user that image resolution is too large -->    
+    <string name="image_resolution_too_large">Độ p.giải hình quá lớn không thể chèn</string>
+    <!-- wap push string begin -->
+    <!-- The type of wap push message, used in message details -->
+    <string name="wp_msg_type">Tin nhắn dịch vụ</string>
+    <string name="wp_msg_created_label">Đã tạo:\u0020</string>
+    <string name="wp_msg_created_unknown">Unknown</string>
+    <string name="wp_msg_priority_label">Ưu tiên:\u0020</string>
+    <!-- Wappush message priority -->
+    <string name="wp_msg_priority_low">Thấp</string>
+    <string name="wp_msg_priority_medium">Trung bình</string>
+    <string name="wp_msg_priority_high">Cao</string>
+    <!-- Context menu item -->
+    <string name="menu_goto_browser">Mở trình duyệt</string>
+    <string name="menu_add_to_bookmark">Thêm vào trang yêu thích</string>
+    <!-- Wappush message content label -->
+    <string name="wp_msg_expiration_label">Đã hết hạn: <xliff:g id="DATE">%s</xliff:g></string>
+    
+    <string name="error_unsupported_scheme">Thao tác đó hiện không được hỗ trợ.</string>
+    
+    <!-- wap push setting -->
+    <string name="pref_title_wappush_settings">Cài đặt tin nhắn dịch vụ</string>
+    
+    <string name="pref_title_wappush_enable">Bật WAP PUSH</string>
+    <string name="pref_summary_wappush_enable">Bật để nhận WAP PUSH</string>
+    
+    <string name="pref_title_wappush_sl_autoloading">Tự khởi động SL</string>
+    <string name="pref_summary_wappush_sl_autoloading">Tự khởi động tin nhắn tải dịch vụ (SL) khi đã nhận</string>
+    <!-- wap push string end -->
+    
+    <string name="app_label">Tin nhắn</string>
+    <string name="new_message">Tin nhắn mới</string>
+    <string name="create_new_message">Soạn tin nhắn mới</string>
+    <string name="menu_call_back">Gọi số <xliff:g id="name">%s</xliff:g></string>
+    <string name="menu_send_email">Gửi email cho <xliff:g id="NAME">%s</xliff:g></string>
+    <string name="menu_send_sms">Gửi tin nhắn cho <xliff:g id="name">%s</xliff:g></string>
+    <string name="menu_compose_new">Soạn</string>
+    <string name="menu_preferences">Cài đặt</string>
+    <string name="menu_add_address_to_contacts">Thêm <xliff:g id="NAME">%s</xliff:g> vào D.bạ</string>
+    <string name="menu_call">Gọi số khác</string>
+    <string name="menu_delete_all">Xóa các dòng</string>
+    <string name="menu_delete">Xóa dòng</string>
+    <string name="menu_undelivered_messages">Các tin nhắn chưa gửi</string>
+    <string name="menu_view">Xem dòng</string>
+    <string name="refreshing">Đang c.nhật...</string>
+    <string name="has_draft">Bản thảo</string>
+    <string name="broadcast_from_to"><xliff:g id="SENDER">%1$s</xliff:g> cho <xliff:g id="RECIPIENT">%2$s</xliff:g></string>
+    <string name="anonymous_recipient">Giấu tên</string>
+    <string name="no_subject_view">(K.có c.đề)</string>
+    <string name="messagelist_sender_self">Tôi</string>
+    <string name="view_picture">Xem hình</string>
+    <string name="view_slideshow">Xem trình chiếu</string>
+    <string name="view_message_details">Xem chi tiết tin nhắn</string>
+    <string name="view_delivery_report">Xem b.cáo</string>
+    <string name="delete_message">Xóa tin nhắn</string>
+    <string name="sent_on">"Đã gửi: <xliff:g id="DATE">%s</xliff:g>"</string>
+    <string name="received_on">"Đã nhận: <xliff:g id="date">%s</xliff:g>"</string>
+    <string name="expire_on">"Hết hạn: <xliff:g id="DATE">%s</xliff:g>"</string>
+    <string name="kilobyte">KB</string>
+    <string name="undelivered_msg_dialog_title">Tin nhắn chưa gửi</string>
+    <string name="undelivered_msg_dialog_body">Không thể gửi tin nhắn này.\nĐã thử: <xliff:g id="MESSAGE">%s</xliff:g>.</string>
+    <string name="undelivered_sms_dialog_body">Không thể gửi tin nhắn này.</string>
+    <string name="delete_thread">Xóa dòng</string>
+    <string name="menu_forward">Chuyển tiếp</string>
+    <string name="download">Tải về</string>
+    <string name="downloading">Đang tải về</string>
+    <string name="name_colon"><b><xliff:g id="name" example="Me">%s</xliff:g></b>": "</string>
+    <string name="inline_subject">"&lt;Chủ đề: <xliff:g id="SUBJECT">%s</xliff:g>&gt;"</string>
+    <string name="drm_protected_text">"* N.dung được b.vệ bởi DRM *"</string>
+    <string name="insufficient_drm_rights">Đã p.hiện không đủ quyền DRM.</string>
+    <string name="copy_message_text">Chép n.dung tin nhắn</string>
+    <string name="message_options">Tùy chọn tin nhắn</string>
+    <string name="done">Hoàn tất</string>
+    <string name="move_up">Chuyển lên</string>
+    <string name="move_down">Chuyển xuống</string>
+    <string name="remove_slide">Xóa bản chiếu</string>
+    <string name="add_slide">Thêm b.chiếu</string>
+    <string name="add_slide_hint">Chọn để tạo bản chiếu mới.</string>
+    <string name="discard_slideshow">Hủy bỏ trình chiếu</string>
+    <string name="slide_show_part">Phần <xliff:g id="PART">%1$s</xliff:g>/<xliff:g id="TOTAL">%2$s</xliff:g></string>
+    <string name="remove_text">Xóa nội dung</string>
+    <string name="add_picture">Thêm hình</string>
+    <string name="remove_picture">Xóa hình</string>
+    <string name="add_music">Thêm nhạc</string>
+    <string name="remove_music">Xóa nhạc</string>
+    <string name="add_video">Thêm video</string>
+    <string name="remove_video">Xóa video</string>
+    <string name="compose_title">Soạn</string>
+    <string name="to_hint">Đến</string>
+    <string name="subject_hint">Chủ đề</string>
+    <string name="add_attachment">Đính kèm</string>
+    <string name="add_subject">Thêm chủ đề</string>
+    <string name="discard">Hủy bỏ</string>
+    <string name="view">Xem</string>
+    <string name="replace">Thay thế</string>
+    <string name="remove">Xóa</string>
+    <string name="send">Gửi</string>
+    <string name="mms">MMS</string>
+    <string name="all_threads">Mọi dòng</string>
+    <string name="type_to_compose_text_enter_to_send">Nhập để soạn</string>
+    <string name="open_keyboard_to_compose_message">Mở bàn phím để soạn tin nhắn</string>
+    <string name="image_too_large">Hình quá lớn</string>
+    <string name="ask_for_automatically_resize">Tự động chỉnh cỡ hình trước khi gửi?</string>
+    <string name="compressing">Hình quá lớn. Đang nén…</string>
+    <string name="unsupported_media_format">Đ.dạng <xliff:g id="NAME">%1$s</xliff:g> không hỗ trợ</string>
+    <string name="select_different_media">Hãy chọn <xliff:g id="NAME">%1$s</xliff:g> khác.</string>
+    <string name="exceed_message_size_limitation">Quá cỡ tin nhắn tối đa.</string>
+    <string name="message_too_big_for_video">Tin nhắn quá lớn không thể gửi kèm video.</string>
+    <string name="failed_to_add_media">Rất tiếc, bạn không thể thêm <xliff:g id="NAME">%1$s</xliff:g> vào tin nhắn.</string>
+    <string name="failed_to_resize_image">Chưa chỉnh cỡ hình.</string>
+    <string name="resize_image_error_information">Rất tiếc, ngay cả khi đã chỉnh k.thước, hình này vẫn quá lớn k.thể gửi.</string>
+    <string name="forward_prefix">C.tiếp:</string>
+    <string name="discard_message">Hủy bỏ</string>
+    <string name="discard_message_reason">Tin nhắn của bạn sẽ bị hủy bỏ vì không có người nhận hợp lệ.</string>
+    <string name="has_invalid_recipient">Ng.nhận k.hợp lệ: &lt;<xliff:g id="NAME">%1$s</xliff:g>&gt;</string>
+    <string name="invalid_destination">Bạn đã nhập địa chỉ không hợp lệ.</string>
+    <string name="invalid_recipient_message">Hãy hiệu chỉnh (các) ng.nhận, nếu không họ sẽ không nhận được t.nhắn.</string>
+    <string name="cannot_send_message">Không thể gửi tin nhắn này</string>
+    <string name="cannot_send_message_reason">T.nhắn của bạn không có ng.nhận hợp lệ.</string>
+    <string name="cannot_forward_drm_obj">Không thể chuyển tiếp đối tượng DRM có trong tin nhắn.</string>
+    <string name="converting_to_picture_message">Đang chuyển sang t.nhắn đa ph.tiện...</string>
+    <string name="converting_to_text_message">Đang chuyển sang t.nhắn v.bản...</string>
+    <string name="cannot_add_slide_anymore">K.thể thêm b.chiếu khác.</string>
+    <string name="cannot_add_picture_and_video">K.thể thêm video và hình vào một b.chiếu.</string>
+    <string name="cannot_save_message">Không thể lưu tin nhắn.</string>
+    <string name="cannot_load_message">Không thể tải tin nhắn.</string>
+    <string name="message_saved_as_draft">Đã lưu tin nhắn làm nháp.</string>
+    <string name="locked_message_cannot_be_deleted">không thể xóa tin nhắn bị khóa.</string>
+    <string name="too_many_recipients">Tin nhắn này có quá nhiều người nhận (<xliff:g id="CURRENTCOUNT">%1$s</xliff:g>). Có giới hạn <xliff:g id="MAXLIMIT">%2$s</xliff:g> người nhận.</string>
+    <string name="cannot_add_recipient">Quá số lượng người nhận. Bạn không thể thêm bất cứ người nhận nào.</string>
+    <string name="too_many_attachments">Có giới hạn <xliff:g id="MAXLIMIT">%1$s</xliff:g> file đính kèm. Sẽ chỉ thêm vào <xliff:g id="CURRENTCOUNT">%2$s</xliff:g> đầu tiên.</string>
+    <string name="adding_attachments_title">Đang thêm file đ.kèm</string>
+    <string name="adding_attachments">Hãy đợi trong khi các mục được thêm vào trình chiếu.</string>
+    <string name="multiple_recipients"><xliff:g id="RECIPIENTCOUNT">%1$s</xliff:g> ng.nhận</string>
+    <string name="cannot_play_audio">K.thể phát â.thanh.</string>
+    <string name="preview">Xem trước</string>
+    <string name="preview_slideshow">Xem trước</string>
+    <string name="replace_image">Thay hình</string>
+    <string name="duration_sec">Th.lượng (<xliff:g id="DURATION">%s</xliff:g> giây)</string>
+    <string name="duration_selector_title">"Th.lượng b.chiếu"</string>
+    <string name="layout_selector_title">"Bố trí trình chiếu"</string>
+    <string name="layout_top">Bố trí (trên)</string>
+    <string name="layout_bottom">Bố trí (dưới)</string>
+    <string name="type_to_compose_text_or_leave_blank">Nhập để soạn n.dung hoặc để trống</string>
+    <string name="duration_not_a_number">Th.lượng phải là số</string>
+    <string name="duration_zero">Thời lượng phải lớn hơn 0 giây.</string>
+    <string name="secs">giây</string>
+    <string-array name="select_dialog_items">
+        <item>1 giây</item>
+        <item>2 giây</item>
+        <item>3 giây</item>
+        <item>4 giây</item>
+        <item>5 giây</item>
+        <item>6 giây</item>
+        <item>7 giây</item>
+        <item>8 giây</item>
+        <item>9 giây</item>
+        <item>10 giây</item>
+        <item>Khác…</item>
+    </string-array>
+    <string name="menu_view_contact">Xem số l.lạc</string>
+    <string name="menu_add_to_contacts">Thêm vào D.bạ</string>
+    <string name="hidden_sender_address">Địa chỉ người gửi bị ẩn</string>
+    <string name="yes">OK</string>
+    <string name="no">Hủy</string>
+    <string name="set">Cài đặt</string>
+    <string name="play">Phát</string>
+    <string name="edit">Sửa</string>
+    <string name="resize">Chỉnh k.thước</string>
+    <string name="try_to_send">Cố gửi</string>
+    <string name="preferences_title">Cài đặt</string>
+    <string name="restore_default">"P.hồi c.đặt mặc định"</string>
+    <string name="pref_notification_settings_title">Cài đặt thông báo</string>
+    <string name="pref_mms_settings_title">"Cài đặt tin nhắn đa ph.tiện (MMS)"</string>
+    <string name="pref_sms_settings_title">"C.đặt tin nhắn văn bản (SMS)"</string>
+    <string name="pref_sms_storage_title">Cài đặt bộ nhớ</string>
+    <string name="pref_summary_manage_sim_messages">Quản lý các tin nhắn lưu trên thể SIM</string>
+    <string name="pref_summary_mms_delivery_reports">Yêu cầu báo cáo gửi cho mỗi tin nhắn bạn đã gửi</string>
+    <string name="pref_summary_mms_read_reports">Yêu cầu báo cáo đọc cho mỗi tin nhắn bạn đã gửi</string>
+    <string name="pref_summary_sms_delivery_reports">Yêu cầu báo cáo gửi cho mỗi tin nhắn bạn đã gửi</string>
+    <string name="pref_summary_auto_delete">Xóa các tin nhắn cũ vì hết d.lượng lưu trữ</string>
+    <string name="pref_summary_delete_limit"><xliff:g id="COUNT">%1$s</xliff:g> tin nhắn cho mỗi hội thoại</string>
+    <string name="pref_title_manage_sim_messages">Quản lý các tin nhắn trên SIM</string>
+    <string name="pref_title_mms_delivery_reports">Báo cáo gửi</string>
+    <string name="pref_title_mms_read_reports">Báo cáo đọc</string>
+    <string name="pref_title_sms_delivery_reports">Báo cáo gửi</string>
+    <string name="pref_title_auto_delete">Xóa các tin nhắn cũ</string>
+    <string name="pref_title_sms_delete">G.hạn t.nhắn v.bản</string>
+    <string name="pref_title_mms_delete">G.hạn tin nhắn đa ph.tiện</string>
+    <string name="pref_title_notification_enabled">Thông báo</string>
+    <string name="pref_summary_notification_enabled">H.thị th.báo tin nhắn trên thanh tình trạng</string>
+    <string name="pref_title_notification_ringtone">Chọn n.chuông</string>
+    <string name="pref_messages_to_save">Cài số lượng tin nhắn cần lưu</string>
+    <string name="pref_title_mms_auto_retrieval">Tự phục hồi</string>
+    <string name="pref_summary_mms_auto_retrieval">Tự động phục hồi các tin nhắn</string>
+    <string name="pref_title_mms_retrieval_during_roaming">Tự p.hồi chuyển vùng</string>
+    <string name="pref_summary_mms_retrieval_during_roaming">T.động phục hồi các tin nhắn khi chuyển vùng</string>
+    <string name="to_label">Đến</string>
+    <string name="confirm_dialog_title">Xóa</string>
+    <string name="confirm_dialog_locked_title">Xóa tin nhắn bị khóa?</string>
+    <string name="confirm_delete_conversation">Toàn bộ dòng sẽ bị xóa.</string>
+    <string name="confirm_delete_all_conversations">Mọi dòng sẽ bị xóa.</string>
+    <string name="confirm_delete_message">Tin nhắn sẽ bị xóa.</string>
+    <string name="confirm_delete_locked_message">Bạn chắc chắn muốn xóa tin nhắn bị khóa này?</string>
+    <string name="confirm_delete_all_messages">Toàn bộ dòng sẽ bị xóa.</string>
+    <string name="confirm_delete_all_SIM_messages">Mọi tin nhắn trên SIM sẽ bị xóa.</string>
+    <string name="confirm_delete_SIM_message">Tin nhắn này trên SIM sẽ bị xóa.</string>
+    <string name="delete_unlocked">Xóa các tin nhắn bị khóa</string>
+    <string name="delete">Xóa</string>
+    <string name="cannot_get_details">K.thể nhận chi tiết</string>
+    <string name="message_details_title">Chi tiết tin nhắn</string>
+    <string name="message_type_label">Kiểu: </string>
+    <string name="text_message">Tin nhắn v.bản</string>
+    <string name="multimedia_message">Tin nhắn đa ph.tiện</string>
+    <string name="multimedia_notification">Thông báo tin nhắn đa ph.tiện</string>
+    <string name="from_label">Từ:</string>
+    <string name="to_address_label">Đến:\u0020</string>
+    <string name="bcc_label">Bcc:</string>
+    <string name="sent_label">Đã gửi:</string>
+    <string name="received_label">Đã nhận:</string>
+    <string name="saved_label">Đã lưu:</string>
+    <string name="subject_label">Chủ đề:</string>
+    <string name="message_size_label">Cỡ tin nhắn:</string>
+    <string name="priority_label">Ưu tiên:</string>
+    <string name="mms_priority_label">Ưu tiên</string>
+    <string name="priority_high">Cao</string>
+    <string name="priority_normal">Chuẩn</string>
+    <string name="priority_low">Thấp</string>
+    <string name="message_class_label">Loại tin nhắn:</string>
+    <string name="error_code_label">Mã lỗi:</string>
+    <string name="menu_edit">Sửa</string>
+    <string name="menu_retry_sending">Thử gửi lại</string>
+    <string name="menu_retry_sending_all">Thử gửi lại tất cả</string>
+    <string name="menu_delete_messages">Xóa tin nhắn</string>
+    <string name="retrying_dialog_body">Không thể gửi tin nhắn <xliff:g id="MESSAGE">%s</xliff:g> này do sự cố kết nối.\nĐang cố gửi lại…</string>
+    <string name="menu_lock">Khóa tin nhắn</string>
+    <string name="menu_unlock">Mở khóa tin nhắn</string>
+    <string name="sim_copy_to_phone_memory">Chép sang bộ nhớ ĐT</string>
+    <string name="sim_delete">Xóa</string>
+    <string name="sim_manage_messages_title">Tin nhắn văn bản trên SIM</string>
+    <string name="sim_view">Xem</string>
+    <string name="sim_empty">K.có tin nhắn v.bản trên SIM.</string>
+    <string name="delivery_header_title">Báo cáo</string>
+    <string name="status_none">(K.có)</string>
+    <string name="status_pending">Đang đợi</string>
+    <string name="status_read">Đã đọc</string>
+    <string name="status_received">Đã nhận</string>
+    <string name="status_failed">Không thành công</string>
+    <string name="status_unread">Chưa đọc</string>
+    <string name="status_rejected">Bị từ chối</string>
+    <string name="recipient_label">"Người nhận: "</string>
+    <string name="status_label">"Tình trạng: "</string>
+    <string name="attach_image">Hình</string>
+    <string name="attach_take_photo">Chụp hình</string>
+    <string name="attach_video">Video</string>
+    <string name="attach_record_video">Quay video</string>
+    <string name="attach_sound">Âm thanh</string>
+    <string name="attach_record_sound">Ghi âm</string>
+    <string name="attach_slideshow">Trình chiếu</string>
+    <string name="select_bottom_text">Nội dung ở dưới</string>
+    <string name="select_top_text">N.dung ở trên</string>
+    <string name="delivery_toast_body">Đã nhận t.nhắn bởi %s</string>
+    <string name="notification_multiple"><xliff:g id="COUNT">%s</xliff:g> tin nhắn chưa đọc.</string>
+    <string name="notification_multiple_title">Tin nhắn mới</string>
+    <string name="notification_multiple_cb"><xliff:g id="count">%s</xliff:g> t.nhắn q.cáo chưa đọc</string>
+    <string name="notification_multiple_cb_title">Tin nhắn quảng cáo mới</string>
+    <string name="notification_failed_multiple">Không thể gửi <xliff:g id="COUNT">%s</xliff:g> tin nhắn.</string>
+    <string name="notification_failed_multiple_title">Chưa gửi tin nhắn</string>
+    <string name="sim_full_title">SIM đã đầy</string>
+    <string name="sim_full_body">Xóa m.số t.nhắn để dành d.lượng cho mục khác.</string>
+    <string name="sms_full_title">B.nhớ tin nhắn v.bản đã đầy</string>
+    <string name="sms_full_body">Tin nhắn đến bị từ chối do bộ nhớ đã đầy. Hãy xóa bớt các tin nhắn cũ.</string>
+    <string name="sms_rejected_title">Tin nhắn v.bản bị từ chối</string>
+    <string name="sms_rejected_body">Tin nhắn đến bị từ chối vì nguyên nhân không x.định.</string>
+    <string name="type_audio">Âm thanh</string>
+    <string name="type_picture">Hình</string>
+    <string name="type_video">Video</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="message_send_read_report">B.cáo đọc sẽ được gửi đi.</string>
+    <string name="message_queued">Hiện không thể gửi tin nhắn của bạn. Nó sẽ được gửi đi khi dịch vụ có sẵn.</string>
+    <string name="no_subject">(K.có c.đề)</string>
+    <string name="unknown_sender">Ng.gửi không x.định</string>
+    <string name="dl_failure_notification">Không thể tải về tin nhắn <xliff:g id="SUBJECT">%1$s</xliff:g> từ <xliff:g id="FROM">%2$s</xliff:g>.</string>
+    <string name="dl_expired_notification">Tin nhắn này đã hết hạn và sẽ bị xóa.</string>
+    <string name="rate_limit_surpassed">Xác nhận</string>
+    <string name="confirm_rate_limit">Nhiều tin nhắn đa ph.tiện đang được gửi đi. Bạn đồng ý?</string>
+    <string name="message_download_failed_title">Chưa tải tin nhắn về</string>
+    <string name="message_send_failed_title">Chưa gửi tin nhắn</string>
+    <string name="message_failed_body">Chọn để xem lại tin nhắn và thử lại.</string>
+    <string name="download_later">Hiện không thể tải về. Hãy thử lại sau.</string>
+    <string name="select_audio">Chọn âm thanh</string>
+    <string name="copy_to_sdcard">Chép file đ.kèm vào thẻ SD</string>
+    <string name="copy_to_sdcard_success">Đã chép file đ.kèm vào thẻ SD</string>
+    <string name="copy_to_sdcard_fail">Không thể chép file đ.kèm vào thẻ SD</string>
+    <string name="save_ringtone">Lưu làm n.chuông</string>
+    <string name="saved_ringtone">Đã lưu n.chuông</string>
+    <string name="saved_ringtone_fail">K.thể lưu n.chuông</string>
+    <string name="menu_insert_smiley">Chèn mặt cười</string>
+    <string name="select_link_title">Chọn thao tác</string>
+    <string name="slide_number">Bản chiếu <xliff:g id="NUMBER">%s</xliff:g></string>
+    <plurals name="slide_duration">
+        <item quantity="one"><xliff:g id="NUMBER">%s</xliff:g> giây</item>
+        <item quantity="few"><xliff:g id="NUMBER">%s</xliff:g> giây</item>
+        <item quantity="other"><xliff:g id="NUMBER">%s</xliff:g> giây</item>
+    </plurals>
+    <string name="delivery_report_activity">Báo cáo gửi</string>
+    <string name="storage_limits_activity">G.hạn bộ nhớ</string>
+    <string name="add_attachment_activity">Thêm file đ.kèm:</string>
+    <string name="select_layout_activity">Chọn kiểu bổ trí</string>
+    <string name="change_duration_activity">Đổi thời lượng</string>
+    <string name="edit_text_activity">Sửa n.dung</string>
+    <string name="edit_slideshow_activity">Sửa trình chiếu</string>
+    <string name="edit_slide_activity">Sửa b.chiếu</string>
+    <string name="pick_numbers_activity">Chọn các số</string>
+    <string name="slideshow_activity">Trình chiếu</string>
+    <string name="class_0_message_activity">Tin nhắn loại 0</string>
+    <string name="send_using_mms_activity">Gửi dạng tin nhắn đa ph.tiện...</string>
+    <string name="select_contact_method_activity">Chọn cách liên lạc</string>
+    <string name="search_label">Tin nhắn</string>
+    <string name="search_hint">Tìm kiếm tin nhắn</string>
+    <string name="search">Tin nhắn</string>
+    <string name="search_setting_description">N.dung trong tin nhắn</string>
+    <string name="search_empty">Không khớp</string>
+    <plurals name="search_results_title">
+        <item quantity="one"><xliff:g id="number">%1$s</xliff:g> kết quả cho \"<xliff:g id="search">%2$s</xliff:g>\"</item>
+        <item quantity="other"><xliff:g id="number">%1$s</xliff:g> kết quả cho \"<xliff:g id="search">%2$s</xliff:g>\"</item>
+    </plurals>
+    <string name="search_history"><xliff:g id="count">%1$s</xliff:g> kết quả cho  \"<xliff:g id="search">%2$s</xliff:g>\"</string>
+    <string name="confirm_clear_search_title">Xóa</string>
+    <string name="confirm_clear_search_text">Nhật ký tìm kiếm sẽ bị xóa.</string>
+    <string name="pref_mms_clear_search_history_title">Xóa nhật ký tìm kiếm</string>
+    <string name="pref_mms_clear_search_history_summary">Xóa các kết quả tìm kiếm tin nhắn cũ khỏi d.mục trong ô Tìm kiếm</string>
+    <string name="save">Lưu</string>
+    <string name="storage_limits_title">Giới hạn tin nhắn</string>
+    <string name="storage_limits_message">Bạn muốn giới hạn số lượng tin nhắn cần lưu lại cho mỗi hội thoại?</string>
+    <string name="storage_limits_setting">Cài g.hạn</string>
+    <string name="storage_limits_setting_dismiss">K.giới hạn</string>
+    <string name="too_many_unsent_mms">Không thể gửi ngay tin nhắn. Có quá nhiều tin nhắn đa ph.tiện chưa gửi đi.</string>
+    <string name="fdn_enabled">Đã bật FDN</string>
+    <string name="cannot_send_message_reason_no_content">K.có n.dung nào cần gửi</string>
+    <string name="cb_read_message">Đọc t.nhắn q.cáo</string>
+    <string name="cb_read_message2">Đọc mọi tin nhắn quảng cáo</string>
+    <string name="cb_message">Tin nhắn quảng cáo</string>
+    <string name="cb_default_channel_name">Từ kênh</string>
+    <string name="message_open_email_fail">Rất tiếc, hãy c.đặt t.khoản email của bạn trước.</string>
+    <string name="add_contacts">Danh bạ</string>
+    <string name="me">Tôi</string>
+    <string name="sending_message">Đang gửi...</string>
+    <string name="send_by_sim2">Gửi bằng SIM2</string>
+    <string name="send_by_sim1">Gửi bằng SIM1</string>
+    <string name="menu_item_send_by">Gửi bằng</string>
+    <string name="data_connected_confirm_title">X.nhận gửi</string>
+    <string name="data_connected_confirm_message">Gửi MMS bằng SIM này có thể khiến việc tải d.liệu h.hành của bạn bị t.dừng trong giây lát. Tiếp tục?</string>
+    <string name="menu_item_sim1">SIM1</string>
+    <string name="menu_item_sim2">SIM2</string>
+    <string name="no_sim_1">Chưa lắp SIM.</string>
+    <string name="no_sim_2">Chưa lắp SIM.</string>
+    <string name="sim1_full_title">SIM1 đã đầy</string>
+    <string name="sim2_full_title">SIM2 đã đầy</string>
+    <string name="select_all">Chọn tất cả</string>
+    <string name="confirm_delete_selected_messages">Các tin nhắn đã chọn sẽ bị xóa.</string>
+    <string name="confirm_delete_selected_theads">Các dòng đã chọn sẽ bị xóa.</string>
+    <string name="restricted_forward_title">Tin nhắn đa ph.tiện</string>
+    <string name="restricted_forward_message">Người nhận có thể không đọc được nội dung media này. Tiếp tục?</string>
+    <string name="menu_insert_quick_text">Chèn n.dung trả lời nhanh</string>
+    <string name="select_quick_text">Chọn n.dung trả lời nhanh</string>
+    <string name="add">Thêm</string>
+    <string name="quick_text_editor">Sửa kiểu nhập nhanh</string>
+    <string name="modify_successful">Sửa thành công!</string>
+    <string name="modify_unsuccessful">Không thể sửa!</string>
+    <string name="delete_successful">Xóa thành công!</string>
+    <string name="delete_unsuccessful">Không thể xóa!</string>
+    <string name="add_quick_text_successful">Thêm kiểu nhập nhanh thành công!</string>
+    <string name="already_have_quick_text">Bạn đã có kiểu nhập nhanh này!</string>
+    <string name="menu_insert_text_vcard">Chèn số liên lạc</string>
+    <string name="contact_name">Tên</string>
+    <string name="contact_tel">Điện thoại</string>
+    <string name="contact_email">Email</string>
+    <string name="contact_organization">Tổ chức</string>
+    <string name="contact_address">Địa chỉ</string>
+	
+	<string name="strOk">Tin nhắn đã gửi</string>
+    <string name="strFail">Không thể gửi tin nhắn</string>
+    <string name="max_recipients_title">Quá số tối đa</string>
+    <string name="max_recipients_message">MMS chỉ cho phép <xliff:g id="maxLimit">%s</xliff:g> người nhận tối đa. Một số người nhận sẽ bị xóa. Bạn muốn tiếp tục?</string>
+    <string name="via_without_time_for_send">qua</string>
+    <string name="via_without_time_for_recieve">qua</string>
+    <string name="sim_selected_dialog_title">Chọn SIM</string>
+    <string name="suggested">Đã gợi ý</string>
+    <string name="add_contact_dialog_message">"Thêm số %s vào liên lạc mới hay đã có?"</string>
+    <string name="add_contact_dialog_existing">Hiện hành</string>
+    <string name="add_contact_dialog_new">Mới</string> 
+    <string name="deleting">Đang xóa</string>
+    <!-- Context menu item on an SMS for saving message to sim card -->
+    <string name="save_message_to_sim">Lưu tin nhắn vào thẻ SIM</string>
+    <!-- Toast message for saving message to sim card successful-->
+    <string name="save_message_to_sim_successful">Đã lưu thành công</string>
+    <!-- Toast message for saving message to sim card unsuccessful-->
+    <string name="save_message_to_sim_unsuccessful">Không thể lưu</string>
+    <!-- Toast message for transmission transiently failed-->
+    <string name="transmission_transiently_failed">Không thể gửi. Sẽ thử lại sau.</string>
+    <!-- Toast message for downloading failed due to full memory-->
+    <string name="download_failed_due_to_full_memory">Không thể tải tin nhắn do bộ nhớ đầy.</string>
+    <!-- Toast message for downloading failed due to message size exceed limitation-->
+    <string name="mms_too_big_to_download">Tin nhắn quá lớn để tải về từ mạng</string>
+    <!-- Status in "Report" window -->
+    <string name="status_expired">Đã hết hạn</string>
+    <string name="status_deferred">Chuyển chậm</string>
+    <string name="status_unrecognized">Chưa xác nhận</string>
+    <string name="status_indeterminate">Không xác định</string>
+    <string name="status_unreachable">Ngoài v.p.sóng</string>
+   <string name="file_attachment_vcard_name">Danh thiếp (<xliff:g id="text">%s</xliff:g>)</string>
+    <string name="attach_vcalendar">Lịch</string>
+   <string name="file_attachment_import_vcard">Nhập danh thiếp</string>
+   <string name="attach_vcard">Số liên lạc</string>
+   <string name="type_common_file">file</string>
+   <string name="failed_to_parse_vcard">Không thể phân tích file danh thiếp!</string>
+   <string name="empty_vcard">Không có số liên lạc trong danh thiếp</string>
+   <string name="parse_vcard">Phân tích danh thiếp</string>
+   <string name="vcard_no_details">Không có thông tin bổ sung cho số liên lạc này"</string>
+   <string name="call_custom"><xliff:g id="custom">%s</xliff:g></string>
+   <string name="call_home">nhà riêng</string>
+   <string name="call_mobile">ĐTDĐ</string>
+   <string name="call_work">công việc</string>
+   <string name="call_fax_work">fax công việc</string>
+   <string name="call_fax_home">fax nhà riêng</string>
+   <string name="call_pager">máy nhắn tin</string>
+   <string name="call_callback">gọi lại</string>
+   <string name="call_car">xe hơi</string>
+   <string name="call_company_main">số ĐT chính công ty</string>
+   <string name="call_isdn">ISDN</string>
+   <string name="call_radio">radio</string>
+   <string name="call_telex">telex</string>
+   <string name="call_tty_tdd">TTY/TDD</string>
+   <string name="call_work_mobile">ĐTDĐ công việc</string>
+   <string name="call_work_pager">máy nhắn tin công việc</string>
+   <string name="call_assistant"><xliff:g id="assistant">%s</xliff:g></string>
+   <string name="call_mms">MMS</string>
+   <string name="email_home">Email nhà riêng</string>
+   <string name="email_mobile">Email di động</string>
+   <string name="email_work">Email công việc</string>
+   <string name="email_custom">Email <xliff:g id="custom">%s</xliff:g></string>
+   <string name="map_home">Xem địa chỉ nhà riêng</string>
+   <string name="map_work">Xem địa chỉ làm việc</string>
+   <string name="map_other">Xem địa chỉ</string>
+   <string name="map_custom">Xem địa chỉ <xliff:g id="custom">%s</xliff:g></string>
+   <string name="chat_aim">Chat bằng AIM</string>
+   <string name="chat_msn">Chat bằng Windows Live</string>
+   <string name="chat_yahoo">Chat bằng Yahoo</string>
+   <string name="chat_skype">Chat bằng Skype</string>
+   <string name="chat_qq">Chat bằng QQ</string>
+   <string name="chat_gtalk">Chat bằng Google Talk</string>
+   <string name="chat_icq">Chat bằng ICQ</string>
+   <string name="chat_jabber">Chat bằng Jabber</string>
+   <string name="chat">Chat</string>
+   <string name="please_wait">\'Hãy đợi...\'\'</string>
+   <string name="note">Ghi chú</string>
+   <string name="organization">Tổ chức</string>
+   <string name="website">Website</string>
+   <string name="nickname">Bí danh</string>
+   <string name="call_other">khác</string>
+   <string name="call_main">số ĐT chính</string>
+   <string name="call_other_fax">fax</string>
+   <string name="email_other">Email</string>
+   <string name="email">Email</string>
+</resources>

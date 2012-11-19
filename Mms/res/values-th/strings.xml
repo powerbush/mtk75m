@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="Insert_sdcard">โปรดใส่ SD การ์ด</string>
+    <string name="pref_title_mms_enable_to_send_delivery_reports">เปิดทำงานเพื่อส่งรายงานการส่ง</string>
+    <string name="pref_summary_mms_enable_to_send_delivery_reports">ส่งรายงานการส่งเมื่อได้รับข้อความ</string>
+    <string name="deleting">กำลังลบ</string>
+    <string name="sms_save_location">ตำแหน่งบันทึก SMS</string>
+    <string name="sms_service_center">ศูนย์บริการ SMS</string>
+    <string name="service_center_label">ศูนย์บริการ:</string>
+    <string name="attach_ringtone">ริงโทน</string>
+    <string name="pref_title_mms_size_limit">ขีดจำกัดขนาด</string>
+    <string name="pref_summary_mms_size_limit">ขีดจำกัดขนาด MMS สำหรับการเขียนข้อความ</string>
+    <string name="pref_title_mms_creation_mode">โหมดสร้าง</string>
+    <string name="pref_summary_mms_creation_mode">โหมดสร้าง MMS สำหรับสร้างข้อความใหม่</string>
+    <string name="confirm_restricted_audio">ชนิดเนื้อหาเสียงที่จำกัด อย่างไรคุณก็ต้องการแนบไฟล์ใช่หรือไม่?</string>
+    <string name="confirm_restricted_image">ชนิดเนื้อหาภาพที่จำกัด อย่างไรคุณก็ต้องการแนบไฟล์ใช่หรือไม่?</string>
+    <string name="confirm_restricted_video">ชนิดเนื้อหาวิดีโอที่จำกัด อย่างไรคุณก็ต้องการแนบไฟล์ใช่หรือไม่?</string>
+    <string name="unsupport_media_type">ไม่สนับสนุนชนิดมีเดีย</string>
+    <string name="select_different_media_type">เลือกมีเดียที่แตกต่าง</string>
+    <!-- to notify user that image resolution is too large -->    
+    <string name="image_resolution_too_large">ความละเอียดภาพมากเกินไปที่จะใส่</string>
+    <!-- wap push string begin -->
+    <!-- The type of wap push message, used in message details -->
+    <string name="wp_msg_type">ข้อความบริการ</string>
+    <string name="wp_msg_created_label">สร้างเมื่อ:\u0020</string>
+    <string name="wp_msg_created_unknown">Unknown</string>
+    <string name="wp_msg_priority_label">ความสำคัญ:\u0020</string>
+    <!-- Wappush message priority -->
+    <string name="wp_msg_priority_low">ต่ำ</string>
+    <string name="wp_msg_priority_medium">ปานกลาง</string>
+    <string name="wp_msg_priority_high">สูง</string>
+    <!-- Context menu item -->
+    <string name="menu_goto_browser">เปิดเบราเซอร์</string>
+    <string name="menu_add_to_bookmark">เพิ่มลงในบุ๊คมาร์ค</string>
+    <!-- Wappush message content label -->
+    <string name="wp_msg_expiration_label">หมดอายุ: <xliff:g id="DATE">%s</xliff:g></string>
+    
+    <string name="error_unsupported_scheme">ขณะนี้ไม่สนับสนุนการกระทำนั้น</string>
+    
+    <!-- wap push setting -->
+    <string name="pref_title_wappush_settings">การตั้งค่าข้อความบริการ</string>
+    
+    <string name="pref_title_wappush_enable">เปิดทำงาน WAP PUSH</string>
+    <string name="pref_summary_wappush_enable">เปิดทำงานเพื่อรับ WAP PUSH</string>
+    
+    <string name="pref_title_wappush_sl_autoloading">เปิด SL อัตโนมัติ</string>
+    <string name="pref_summary_wappush_sl_autoloading">เปิดข้อความการโหลดบริการ (SL) เมื่อได้รับโดยอัตโนมัติ</string>
+    <!-- wap push string end -->
+    
+    <string name="app_label">ระบบข้อความ</string>
+    <string name="new_message">ข้อความใหม่</string>
+    <string name="create_new_message">สร้างข้อความใหม่</string>
+    <string name="menu_call_back">โทร <xliff:g id="name">%s</xliff:g></string>
+    <string name="menu_send_email">ส่งอีเมลไปยัง <xliff:g id="NAME">%s</xliff:g></string>
+    <string name="menu_send_sms">ส่งข้อความไปยัง <xliff:g id="name">%s</xliff:g></string>
+    <string name="menu_compose_new">สร้าง</string>
+    <string name="menu_preferences">การตั้งค่า</string>
+    <string name="menu_add_address_to_contacts">เพิ่ม <xliff:g id="NAME">%s</xliff:g> ลงในผู้ติดต่อ</string>
+    <string name="menu_call">โทร</string>
+    <string name="menu_delete_all">ลบเธรด</string>
+    <string name="menu_delete">ลบเธรด</string>
+    <string name="menu_undelivered_messages">ข้อความที่ไม่ได้ส่ง</string>
+    <string name="menu_view">ดูเธรด</string>
+    <string name="refreshing">กำลังรีเฟรช...</string>
+    <string name="has_draft">ร่าง</string>
+    <string name="broadcast_from_to"><xliff:g id="SENDER">%1$s</xliff:g> ไป <xliff:g id="RECIPIENT">%2$s</xliff:g></string>
+    <string name="anonymous_recipient">ไม่ทราบชื่อ</string>
+    <string name="no_subject_view">(ไม่มีหัวข้อ)</string>
+    <string name="messagelist_sender_self">ฉัน</string>
+    <string name="view_picture">ดูภาพ</string>
+    <string name="view_slideshow">ดูสไลด์โชว์</string>
+    <string name="view_message_details">ดูรายละเอียดข้อความ</string>
+    <string name="view_delivery_report">ดูรายงาน</string>
+    <string name="delete_message">ลบข้อความ</string>
+    <string name="sent_on">"ส่งแล้ว: <xliff:g id="DATE">%s</xliff:g>"</string>
+    <string name="received_on">"ที่ได้รับ: <xliff:g id="date">%s</xliff:g>"</string>
+    <string name="expire_on">"หมดอายุ: <xliff:g id="DATE">%s</xliff:g>"</string>
+    <string name="kilobyte">KB</string>
+    <string name="undelivered_msg_dialog_title">ข้อความที่ยังไม่ส่ง</string>
+    <string name="undelivered_msg_dialog_body">ไม่สามารถส่งข้อความนี้ได้\nจำนวนครั้งที่พยายาม: <xliff:g id="MESSAGE">%s</xliff:g></string>
+    <string name="undelivered_sms_dialog_body">ไม่สามารถส่งข้อความนี้ได้</string>
+    <string name="delete_thread">ลบเธรด</string>
+    <string name="menu_forward">ส่งต่อ</string>
+    <string name="download">ดาวน์โหลด</string>
+    <string name="downloading">กำลังดาวน์โหลด</string>
+    <string name="name_colon"><b><xliff:g id="name" example="Me">%s</xliff:g></b>": "</string>
+    <string name="inline_subject">"&lt;เรื่อง: <xliff:g id="SUBJECT">%s</xliff:g>&gt;"</string>
+    <string name="drm_protected_text">"* ข้อความป้องกัน DRM *"</string>
+    <string name="insufficient_drm_rights">ตรวจพบว่าสิทธิ์ DRM ไม่เพียงพอ</string>
+    <string name="copy_message_text">คัดลอกเนื้อหาข้อความ</string>
+    <string name="message_options">ตัวเลือกข้อความ</string>
+    <string name="done">เสร็จ</string>
+    <string name="move_up">เลื่อนขึ้น</string>
+    <string name="move_down">เลื่อนลง</string>
+    <string name="remove_slide">ลบสไลด์</string>
+    <string name="add_slide">เพิ่มสไลด์</string>
+    <string name="add_slide_hint">เลือกเพื่อสร้างสไลด์ใหม่</string>
+    <string name="discard_slideshow">ทิ้งสไลด์โชว์</string>
+    <string name="slide_show_part">ส่วน <xliff:g id="PART">%1$s</xliff:g>/<xliff:g id="TOTAL">%2$s</xliff:g></string>
+    <string name="remove_text">ลบข้อความ</string>
+    <string name="add_picture">เพิ่มภาพ</string>
+    <string name="remove_picture">ลบภาพ</string>
+    <string name="add_music">เพิ่มดนตรี</string>
+    <string name="remove_music">ลบดนตรี</string>
+    <string name="add_video">เพิ่มวิดีโอ</string>
+    <string name="remove_video">ลบวิดีโอ</string>
+    <string name="compose_title">สร้าง</string>
+    <string name="to_hint">ถึง</string>
+    <string name="subject_hint">เรื่อง</string>
+    <string name="add_attachment">แนบ</string>
+    <string name="add_subject">เพิ่มเรื่อง</string>
+    <string name="discard">ทิ้ง</string>
+    <string name="view">มุมมอง</string>
+    <string name="replace">แทนที่</string>
+    <string name="remove">ลบ</string>
+    <string name="send">ส่ง</string>
+    <string name="mms">MMS</string>
+    <string name="all_threads">เธรดทั้งหมด</string>
+    <string name="type_to_compose_text_enter_to_send">พิมพ์เพื่อสร้าง</string>
+    <string name="open_keyboard_to_compose_message">เปิดแป้นพิมพ์เพื่อสร้างข้อความ</string>
+    <string name="image_too_large">ภาพใหญ่เกินไป</string>
+    <string name="ask_for_automatically_resize">เปลี่ยนขนาดภาพก่อนการส่งโดยอัตโนมัติ?</string>
+    <string name="compressing">ภาพใหญ่เกินไป กำลังบีบขนาด…</string>
+    <string name="unsupported_media_format">รูปแบบ <xliff:g id="NAME">%1$s</xliff:g> ไม่สนับสนุน</string>
+    <string name="select_different_media">โปรดเลือก <xliff:g id="NAME">%1$s</xliff:g> ที่แตกต่าง</string>
+    <string name="exceed_message_size_limitation">ถึงขีดจำกัดขนาดข้อความ</string>
+    <string name="message_too_big_for_video">ข้อความใหญ่เกินไปที่จะแนบวิดีโอ</string>
+    <string name="failed_to_add_media">ขออภัย คุณไม่สามารถเพิ่ม <xliff:g id="NAME">%1$s</xliff:g> นี้ลงในข้อความของคุณได้</string>
+    <string name="failed_to_resize_image">ภาพไม่เปลี่ยนขนาด</string>
+    <string name="resize_image_error_information">ขออภัย แม้ภาพที่เปลี่ยนขนาดแล้วยังใหญ่เกินไปที่จะส่ง</string>
+    <string name="forward_prefix">ส่งต่อ:</string>
+    <string name="discard_message">ทิ้ง</string>
+    <string name="discard_message_reason">ข้อความของคุณจะถูกทิ้งเนื่องจากไม่มีผู้รับที่ถูกต้อง</string>
+    <string name="has_invalid_recipient">ผู้รับไม่ถูกต้อง: &lt;<xliff:g id="NAME">%1$s</xliff:g>&gt;</string>
+    <string name="invalid_destination">คุณป้อนที่อยู่ที่ไม่ถูกต้อง</string>
+    <string name="invalid_recipient_message">โปรดแก้ไขผู้รับ ไม่เช่นนั้นผู้รับจะไม่ได้รับข้อความ</string>
+    <string name="cannot_send_message">ไม่สามารถส่งข้อความนี้</string>
+    <string name="cannot_send_message_reason">ข้อความของคุณไม่มีผู้รับที่ถูกต้อง</string>
+    <string name="cannot_forward_drm_obj">ออบเจ็กต์ DRM ที่รวมอยู่ในข้อความไม่สามารถถูกส่งต่อได้</string>
+    <string name="converting_to_picture_message">กำลังแปลงเป็นข้อความมัลติมีเดีย…</string>
+    <string name="converting_to_text_message">กำลังแปลงเป็นข้อความตัวอักษร…</string>
+    <string name="cannot_add_slide_anymore">ไม่สามารถเพิ่มสไลด์ได้อีก</string>
+    <string name="cannot_add_picture_and_video">ไม่สามารถเพิ่มวิดีโอและภาพลงในสไลด์เดียว</string>
+    <string name="cannot_save_message">ไม่สามารถบันทึกข้อความ</string>
+    <string name="cannot_load_message">ไม่สามารถโหลดข้อความ</string>
+    <string name="message_saved_as_draft">ข้อความถูกบันทึกเป็นแบบร่าง</string>
+    <string name="locked_message_cannot_be_deleted">ข้อความที่ล็อคไม่สามารถถูกลบได้</string>
+    <string name="too_many_recipients">ข้อความนี้มีผู้รับมากเกินไป (<xliff:g id="CURRENTCOUNT">%1$s</xliff:g>) มีข้อจำกัดผู้รับอยู่ที่ <xliff:g id="MAXLIMIT">%2$s</xliff:g> ราย</string>
+    <string name="cannot_add_recipient">ถึงขีดจำกัดผู้รับแล้ว คุณไม่สามารถเพิ่มผู้รับได้</string>
+    <string name="too_many_attachments">มีข้อจำกัดไฟล์แนบอยู่ที่ <xliff:g id="MAXLIMIT">%1$s</xliff:g> ไฟล์ เฉพาะ <xliff:g id="CURRENTCOUNT">%2$s</xliff:g> แรกจะถูกเพิ่ม</string>
+    <string name="adding_attachments_title">กำลังเพิ่มไฟล์แนบ</string>
+    <string name="adding_attachments">โปรดรอในขณะที่รายการถูกเพิ่มลงในสไลด์โชว์</string>
+    <string name="multiple_recipients"><xliff:g id="RECIPIENTCOUNT">%1$s</xliff:g> ผู้รับ</string>
+    <string name="cannot_play_audio">ไม่สามารถเล่นเสียง</string>
+    <string name="preview">พรีวิว</string>
+    <string name="preview_slideshow">พรีวิว</string>
+    <string name="replace_image">แทนที่ภาพ</string>
+    <string name="duration_sec">ระยะเวลา (<xliff:g id="DURATION">%s</xliff:g> วินาที)</string>
+    <string name="duration_selector_title">"ระยะเวลาสำหรับสไลด์ "</string>
+    <string name="layout_selector_title">"โครงร่างสไลด์โชว์ "</string>
+    <string name="layout_top">โครงร่าง (บน)</string>
+    <string name="layout_bottom">โครงร่าง (ล่าง)</string>
+    <string name="type_to_compose_text_or_leave_blank">พิมพ์เพื่อสร้างข้อความ หรือปล่อยให้ว่างไว้</string>
+    <string name="duration_not_a_number">ระยะเวลาต้องเป็นตัวเลข</string>
+    <string name="duration_zero">ระยะเวลาต้องมีค่ามากกว่าศูนย์วินาที</string>
+    <string name="secs">วินาที</string>
+    <string-array name="select_dialog_items">
+        <item>1 วินาที</item>
+        <item>2 วินาที</item>
+        <item>3 วินาที</item>
+        <item>4 วินาที</item>
+        <item>5 วินาที</item>
+        <item>6 วินาที</item>
+        <item>7 วินาที</item>
+        <item>8 วินาที</item>
+        <item>9 วินาที</item>
+        <item>10 วินาที</item>
+        <item>อื่นๆ…</item>
+    </string-array>
+    <string name="menu_view_contact">ดูผู้ติดต่อ</string>
+    <string name="menu_add_to_contacts">เพิ่มลงในผู้ติดต่อ</string>
+    <string name="hidden_sender_address">ที่อยู่ผู้ส่งที่ถูกซ่อน</string>
+    <string name="yes">ตกลง</string>
+    <string name="no">ยกเลิก</string>
+    <string name="set">ตั้งค่า</string>
+    <string name="play">เล่น</string>
+    <string name="edit">แก้ไข</string>
+    <string name="resize">เปลี่ยนขนาด</string>
+    <string name="try_to_send">พยายามส่ง</string>
+    <string name="preferences_title">การตั้งค่า</string>
+    <string name="restore_default">"กู้คืนการตั้งค่าเริ่มต้น"</string>
+    <string name="pref_notification_settings_title">การตั้งค่าการแจ้งเตือน</string>
+    <string name="pref_mms_settings_title">"การตั้งค่าข้อความมัลติมีเดีย (MMS)"</string>
+    <string name="pref_sms_settings_title">"การตั้งค่าข้อความตัวอักษร (SMS)"</string>
+    <string name="pref_sms_storage_title">การตั้งค่าที่เก็บ</string>
+    <string name="pref_summary_manage_sim_messages">จัดการข้อความที่เก็บบน SIM การ์ดของคุณ</string>
+    <string name="pref_summary_mms_delivery_reports">ขอรายงานการส่งสำหรับแต่ละข้อความที่คุณส่ง</string>
+    <string name="pref_summary_mms_read_reports">ขอรายงานการอ่านสำหรับแต่ละข้อความที่คุณส่ง</string>
+    <string name="pref_summary_sms_delivery_reports">ขอรายงานการส่งสำหรับแต่ละข้อความที่คุณส่ง</string>
+    <string name="pref_summary_auto_delete">ลบข้อความเก่า เนื่องจากถึงขีดจำกัดแล้ว</string>
+    <string name="pref_summary_delete_limit">ข้อความ <xliff:g id="COUNT">%1$s</xliff:g> ต่อการสนทนา</string>
+    <string name="pref_title_manage_sim_messages">จัดการข้อความ SIM การ์ด</string>
+    <string name="pref_title_mms_delivery_reports">รายงานการส่ง</string>
+    <string name="pref_title_mms_read_reports">รายงานการอ่าน</string>
+    <string name="pref_title_sms_delivery_reports">รายงานการส่ง</string>
+    <string name="pref_title_auto_delete">ลบข้อความเก่า</string>
+    <string name="pref_title_sms_delete">ขีดจำกัดข้อความตัวอักษร</string>
+    <string name="pref_title_mms_delete">ขีดจำกัดข้อความมัลติมีเดีย</string>
+    <string name="pref_title_notification_enabled">การแจ้งเตือน</string>
+    <string name="pref_summary_notification_enabled">แสดงการแจ้งเตือนข้อความในแถบสถานะ</string>
+    <string name="pref_title_notification_ringtone">เลือกริงโทน</string>
+    <string name="pref_messages_to_save">ตั้งจำนวนข้อความที่จะบันทึก</string>
+    <string name="pref_title_mms_auto_retrieval">ดึงอัตโนมัติ</string>
+    <string name="pref_summary_mms_auto_retrieval">ดึงข้อความโดยอัตโนมัติ</string>
+    <string name="pref_title_mms_retrieval_during_roaming">ดึงอัตโนมัติขณะโรมมิ่ง</string>
+    <string name="pref_summary_mms_retrieval_during_roaming">ดึงข้อความโดยอัตโนมัติขณะโรมมิ่ง</string>
+    <string name="to_label">ถึง</string>
+    <string name="confirm_dialog_title">ลบ</string>
+    <string name="confirm_dialog_locked_title">ลบข้อความที่ล็อค?</string>
+    <string name="confirm_delete_conversation">เธรดทั้งหมดจะถูกลบ</string>
+    <string name="confirm_delete_all_conversations">เธรดทั้งหมดจะถูกลบ</string>
+    <string name="confirm_delete_message">ข้อความจะถูกลบ</string>
+    <string name="confirm_delete_locked_message">แน่ใจหรือไม่ว่าคุณต้องการลบข้อความที่ล็อคนี้?</string>
+    <string name="confirm_delete_all_messages">เธรดทั้งหมดจะถูกลบ</string>
+    <string name="confirm_delete_all_SIM_messages">ข้อความทั้งหมดบน SIM จะถูกลบ</string>
+    <string name="confirm_delete_SIM_message">ข้อความนี้บน SIM จะถูกลบ</string>
+    <string name="delete_unlocked">ลบข้อความที่ล็อค</string>
+    <string name="delete">ลบ</string>
+    <string name="cannot_get_details">ไม่สามารถรับรายละเอียด</string>
+    <string name="message_details_title">รายละเอียดข้อความ</string>
+    <string name="message_type_label">ประเภท:</string>
+    <string name="text_message">ข้อความตัวอักษร</string>
+    <string name="multimedia_message">ข้อความมัลติมีเดีย</string>
+    <string name="multimedia_notification">การแจ้งเตือนข้อความมัลติมีเดีย</string>
+    <string name="from_label">จาก:</string>
+    <string name="to_address_label">ถึง:\u0020</string>
+    <string name="bcc_label">สำเนาซ่อน:</string>
+    <string name="sent_label">ส่งแล้ว:</string>
+    <string name="received_label">ที่ได้รับ:</string>
+    <string name="saved_label">บันทึกแล้ว:</string>
+    <string name="subject_label">เรื่อง:</string>
+    <string name="message_size_label">ขนาดข้อความ:</string>
+    <string name="priority_label">ความสำคัญ:</string>
+    <string name="mms_priority_label">ความสำคัญ</string>
+    <string name="priority_high">สูง</string>
+    <string name="priority_normal">ปกติ</string>
+    <string name="priority_low">ต่ำ</string>
+    <string name="message_class_label">คลาสข้อความ:</string>
+    <string name="error_code_label">รหัสข้อผิดพลาด:</string>
+    <string name="menu_edit">แก้ไข</string>
+    <string name="menu_retry_sending">ลองส่งใหม่</string>
+    <string name="menu_retry_sending_all">ลองส่งใหม่ทั้งหมด</string>
+    <string name="menu_delete_messages">ลบข้อความ</string>
+    <string name="retrying_dialog_body">ข้อความนี้ <xliff:g id="MESSAGE">%s</xliff:g> ไม่ถูกส่งเนื่องจากปัญหาในการเชื่อมต่อ\nกำลังลองส่งใหม่…</string>
+    <string name="menu_lock">ล็อคข้อความ</string>
+    <string name="menu_unlock">ปลดล็อคข้อความ</string>
+    <string name="sim_copy_to_phone_memory">คัดลอกไปยังหน่วยความจำโทรศัพท์</string>
+    <string name="sim_delete">ลบ</string>
+    <string name="sim_manage_messages_title">ข้อความตัวอักษรบน SIM การ์ด</string>
+    <string name="sim_view">มุมมอง</string>
+    <string name="sim_empty">ไม่มีข้อความบน SIM การ์ด</string>
+    <string name="delivery_header_title">รายงาน</string>
+    <string name="status_none">(ไม่มี)</string>
+    <string name="status_pending">ที่ค้าง</string>
+    <string name="status_read">อ่านแล้ว</string>
+    <string name="status_received">ที่ได้รับ</string>
+    <string name="status_failed">ไม่สำเร็จ</string>
+    <string name="status_unread">ยังไม่อ่าน</string>
+    <string name="status_rejected">ถูกปฏิเสธ</string>
+    <string name="recipient_label">ผู้รับ:</string>
+    <string name="status_label">สถานะ</string>
+    <string name="attach_image">รูปภาพ</string>
+    <string name="attach_take_photo">ถ่ายภาพ</string>
+    <string name="attach_video">วีดีโอ</string>
+    <string name="attach_record_video">ถ่ายวิดีโอ</string>
+    <string name="attach_sound">เสียง</string>
+    <string name="attach_record_sound">บันทึกเสียง</string>
+    <string name="attach_slideshow">สไลด์โชว์</string>
+    <string name="select_bottom_text">ข้อความที่ด้านล่าง</string>
+    <string name="select_top_text">ข้อความที่ด้านบน</string>
+    <string name="delivery_toast_body">ข้อความได้รับโดย %s</string>
+    <string name="notification_multiple"><xliff:g id="COUNT">%s</xliff:g> ข้อความที่ยังไม่อ่าน</string>
+    <string name="notification_multiple_title">ข้อความใหม่</string>
+    <string name="notification_multiple_cb"><xliff:g id="count">%s</xliff:g> ข้อความ CB ที่ยังไม่อ่าน</string>
+    <string name="notification_multiple_cb_title">ข้อความเซลล์บรอดคาสท์ใหม่</string>
+    <string name="notification_failed_multiple"><xliff:g id="COUNT">%s</xliff:g> ข้อความไม่สามารถถูกส่งได้</string>
+    <string name="notification_failed_multiple_title">ข้อความไม่ถูกส่ง</string>
+    <string name="sim_full_title">SIM การ์ดเต็ม</string>
+    <string name="sim_full_body">ลบบางข้อความเพื่อทำให้พื้นที่มากขึ้น</string>
+    <string name="sms_full_title">หน่วยความจำข้อความตัวอักษรเต็ม</string>
+    <string name="sms_full_body">ข้อความเข้าถูกปฏิเสธเนื่องจากหน่วยความจำเต็ม โปรดลบข้อความเก่า</string>
+    <string name="sms_rejected_title">ข้อความตัวอักษรถูกปฏิเสธ</string>
+    <string name="sms_rejected_body">ข้อความเข้าถูกปฏิเสธเนื่องจากเหตุผลที่ไม่รู้จัก</string>
+    <string name="type_audio">เสียง</string>
+    <string name="type_picture">รูปภาพ</string>
+    <string name="type_video">วีดีโอ</string>
+    <string name="confirm">ยืนยัน</string>
+    <string name="message_send_read_report">รายงานการอ่านจะถูกส่ง</string>
+    <string name="message_queued">ขณะนี้ไม่สามารถส่งข้อความของคุณได้ ข้อความจะถูกส่งเมื่อบริการใช้ได้</string>
+    <string name="no_subject">(ไม่มีหัวข้อ)</string>
+    <string name="unknown_sender">ผู้ส่งที่ไม่รู้จัก</string>
+    <string name="dl_failure_notification">การดาวน์โหลดข้อความ <xliff:g id="SUBJECT">%1$s</xliff:g> จาก <xliff:g id="FROM">%2$s</xliff:g> ไม่สำเร็จ</string>
+    <string name="dl_expired_notification">ข้อความนี้หมดอายุแล้ว และจะถูกลบ</string>
+    <string name="rate_limit_surpassed">ยืนยัน</string>
+    <string name="confirm_rate_limit">ข้อความมัลติมีเดียจำนวนมากกำลังถูกส่งออกไป ตกลงหรือไม่?</string>
+    <string name="message_download_failed_title">ข้อความไม่ถูกดาวน์โหลด</string>
+    <string name="message_send_failed_title">ข้อความไม่ถูกส่ง</string>
+    <string name="message_failed_body">เลือกเพื่อทบทวนข้อความ และลองอีกครั้ง</string>
+    <string name="download_later">ขณะนี้ไม่สามารถดาวน์โหลดได้ โปรดลองอีกครั้งในภายหลัง</string>
+    <string name="select_audio">เลือกเสียง</string>
+    <string name="copy_to_sdcard">คัดลอกไฟล์แนบไปยัง SD การ์ด</string>
+    <string name="copy_to_sdcard_success">ไฟล์แนบถูกคัดลอกไปยัง SD การ์ดแล้ว</string>
+    <string name="copy_to_sdcard_fail">การคัดลอกไฟล์แนบไปยัง SD การ์ดล้มเหลว</string>
+    <string name="save_ringtone">บันทึกเป็นริงโทน</string>
+    <string name="saved_ringtone">ริงโทนถูกบันทึกแล้ว</string>
+    <string name="saved_ringtone_fail">การบันทึกริงโทนล้มเหลว</string>
+    <string name="menu_insert_smiley">ใส่รอยยิ้ม</string>
+    <string name="select_link_title">เลือกการกระทำ</string>
+    <string name="slide_number">สไลด์ <xliff:g id="NUMBER">%s</xliff:g></string>
+    <plurals name="slide_duration">
+        <item quantity="one"><xliff:g id="NUMBER">%s</xliff:g> วินาที</item>
+        <item quantity="few"><xliff:g id="NUMBER">%s</xliff:g> วินาที</item>
+        <item quantity="other"><xliff:g id="NUMBER">%s</xliff:g> วินาที</item>
+    </plurals>
+    <string name="delivery_report_activity">รายงานการส่งข้อความ</string>
+    <string name="storage_limits_activity">ขีดจำกัดที่เก็บข้อมูล</string>
+    <string name="add_attachment_activity">เพิ่มไฟล์แนบ:</string>
+    <string name="select_layout_activity">เลือกโครงร่าง</string>
+    <string name="change_duration_activity">เปลี่ยนระยะเวลา</string>
+    <string name="edit_text_activity">แก้ไขข้อความ</string>
+    <string name="edit_slideshow_activity">แก้ไขสไลด์โชว์</string>
+    <string name="edit_slide_activity">แก้ไขสไลด์</string>
+    <string name="pick_numbers_activity">เลือกตัวเลข</string>
+    <string name="slideshow_activity">สไลด์โชว์</string>
+    <string name="class_0_message_activity">ข้อความคลาส 0 </string>
+    <string name="send_using_mms_activity">ส่งเป็นข้อความมัลติมีเดีย...</string>
+    <string name="select_contact_method_activity">เลือกวิธีติดต่อ</string>
+    <string name="search_label">ระบบข้อความ</string>
+    <string name="search_hint">ค้นหาระบบข้อความ</string>
+    <string name="search">ระบบข้อความ</string>
+    <string name="search_setting_description">ตัวอักษรในข้อความของคุณ</string>
+    <string name="search_empty">ไม่ตรง</string>
+    <plurals name="search_results_title">
+        <item quantity="one"><xliff:g id="number">%1$s</xliff:g> ผลลัพธ์สำหรับ \"<xliff:g id="search">%2$s</xliff:g>\"</item>
+        <item quantity="other"><xliff:g id="number">%1$s</xliff:g> ผลลัพธ์สำหรับ \"<xliff:g id="search">%2$s</xliff:g>\"</item>
+    </plurals>
+    <string name="search_history"><xliff:g id="count">%1$s</xliff:g> ผลลัพธ์สำหรับ  \"<xliff:g id="search">%2$s</xliff:g>\"</string>
+    <string name="confirm_clear_search_title">ล้าง</string>
+    <string name="confirm_clear_search_text">ประวัติการค้นหาจะถูกล้าง</string>
+    <string name="pref_mms_clear_search_history_title">ล้างประวัติการค้นหา</string>
+    <string name="pref_mms_clear_search_history_summary">ล้างการค้นหาระบบข้อความก่อนหน้าจากที่แสดงขึ้นมาในกล่องค้นหา</string>
+    <string name="save">บันทึก</string>
+    <string name="storage_limits_title">จำกัดข้อความ</string>
+    <string name="storage_limits_message">คุณต้องการจำกัดจำนวนข้อความที่คุณบันทึกต่อการสนทนาหรือไม่?</string>
+    <string name="storage_limits_setting">ตั้งขีดจำกัด</string>
+    <string name="storage_limits_setting_dismiss">ไม่จำกัด</string>
+    <string name="too_many_unsent_mms">ไม่สามารถส่งข้อความเดี๋ยวนี้ได้ มีข้อความมัลติมีเดียที่ยังไม่ส่งมากเกินไป</string>
+    <string name="fdn_enabled">FDN เปิดทำงาน</string>
+    <string name="cannot_send_message_reason_no_content">ไม่มีเนื้อหาที่จะถูกส่ง</string>
+    <string name="cb_read_message">อ่านข้อความ CB </string>
+    <string name="cb_read_message2">อ่านข้อความเซลล์บรอดคาสท์</string>
+    <string name="cb_message">ข้อความเซลล์บรอดคาสท์</string>
+    <string name="cb_default_channel_name">จากช่อง</string>
+    <string name="message_open_email_fail">ขออภัย โปรดตั้งค่าบัญชีอีเมลของคุณก่อน</string>
+    <string name="add_contacts">ผู้ติดต่อ</string>
+    <string name="me">ฉัน</string>
+    <string name="sending_message">กำลังส่ง…</string>
+    <string name="send_by_sim2">ส่งโดย SIM2</string>
+    <string name="send_by_sim1">ส่งโดย SIM1</string>
+    <string name="menu_item_send_by">ส่งโดย</string>
+    <string name="data_connected_confirm_title">ยืนยันการส่ง</string>
+    <string name="data_connected_confirm_message">การส่ง MMS โดย SIM นี้อาจทำให้การดาวน์โหลดข้อมูลปัจจุบันของคุณถูกพักไว้ครู่หนึ่ง ทำต่อหรือไม่?</string>
+    <string name="menu_item_sim1">SIM1</string>
+    <string name="menu_item_sim2">SIM2</string>
+    <string name="no_sim_1">SIM ไม่ได้เสียบ</string>
+    <string name="no_sim_2">SIM ไม่ได้เสียบ</string>
+    <string name="sim1_full_title">SIM การ์ด 1 เต็ม</string>
+    <string name="sim2_full_title">SIM การ์ด 2 เต็ม</string>
+    <string name="select_all">เลือกทั้งหมด</string>
+    <string name="confirm_delete_selected_messages">ข้อความ ที่เลือกจะถูกลบ</string>
+    <string name="confirm_delete_selected_theads">การสนทนา ที่เลือกจะถูกลบ</string>
+    <string name="restricted_forward_title">ข้อความมัลติมีเดีย</string>
+    <string name="restricted_forward_message">มีเดียนี้อาจไม่แสดงในเครื่องของผู้รับอย่างถูกต้อง ทำต่อหรือไม่?</string>
+    <string name="menu_insert_quick_text">ใส่ข้อความด่วน</string>
+    <string name="select_quick_text">เลือกข้อความด่วน</string>
+    <string name="add">เพิ่ม</string>
+    <string name="quick_text_editor">แก้ไขข้อความด่วน</string>
+    <string name="modify_successful">แก้ไขสำเร็จ!</string>
+    <string name="modify_unsuccessful">แก้ไขไม่สำเร็จ!</string>
+    <string name="delete_successful">ลบสำเร็จ!</string>
+    <string name="delete_unsuccessful">ลบไม่สำเร็จ!</string>
+    <string name="add_quick_text_successful">เพิ่มข้อความด่วนสำเร็จ!</string>
+    <string name="already_have_quick_text">คุณมีข้อความด่วนนี้แล้ว!</string>
+    <string name="menu_insert_text_vcard">ใส่ผู้ติดต่อ</string>
+    <string name="contact_name">ชื่อ</string>
+    <string name="contact_tel">โทรศัพท์</string>
+    <string name="contact_email">อีเมล</string>
+    <string name="contact_organization">องค์กร</string>
+    <string name="contact_address">ที่อยู่</string>
+	
+	<string name="strOk">ส่งข้อความแล้ว</string>
+    <string name="strFail">การส่งข้อความล้มเหลว</string>
+     <string name="max_recipients_title">ถึงจำนวนสูงสุดแล้ว</string>
+    <string name="max_recipients_message">MMS อนุญาตเฉพาะผู้รับสูงสุด<xliff:g id="maxLimit">%s</xliff:g> คน ผู้รับบางคนจะถูกลบ คุณต้องการทำต่อหรือไม่?</string>
+    <string name="via_without_time_for_send">ผ่าน</string>
+    <string name="via_without_time_for_recieve">ผ่าน</string> 
+    <string name="sim_selected_dialog_title">เลือก SIM</string> 
+    <string name="suggested">ที่แนะนำ</string>
+    <string name="add_contact_dialog_message">"เพิ่มหมายเลข %s ไปยังผู้ติดต่อที่มีอยู่หรือผู้ติดต่อใหม่หรือไม่?"</string> 
+    <string name="add_contact_dialog_existing">เดิม</string>
+    <string name="add_contact_dialog_new">ใหม่</string>  
+    <!-- Context menu item on an SMS for saving message to sim card -->
+    <string name="save_message_to_sim">บันทึกข้อความไปยัง SIM การ์ด</string>
+    <!-- Toast message for saving message to sim card successful-->
+    <string name="save_message_to_sim_successful">บันทึกสำเร็จแล้ว</string>
+    <!-- Toast message for saving message to sim card unsuccessful-->
+    <string name="save_message_to_sim_unsuccessful">บันทึกไม่สำเร็จ</string>
+    <!-- Toast message for transmission transiently failed-->
+    <string name="transmission_transiently_failed">การส่งข้อมูลล้มเหลว จะลองใหม่ในภายหลัง</string>
+    <!-- Toast message for downloading failed due to full memory-->
+    <string name="download_failed_due_to_full_memory">ดาวน์โหลดข้อความล้มเหลวเนื่องจากหน่วยความจำเต็ม</string>
+    <!-- Toast message for downloading failed due to message size exceed limitation-->
+    <string name="mms_too_big_to_download">ข้อความใหญ่เกินไปที่จะดาวน์โหลดจากเครือข่าย</string>
+    <!-- Status in "Report" window -->
+    <string name="status_expired">หมดอายุ</string>
+    <string name="status_deferred">หน่วง</string>
+    <string name="status_unrecognized">ไม่รู้จัก</string>
+    <string name="status_indeterminate">ไม่แน่นอน</string>
+    <string name="status_unreachable">ติดต่อไม่ได้</string>
+   <string name="file_attachment_vcard_name">vCard(<xliff:g id="text">%s</xliff:g>)</string>
+    <string name="attach_vcalendar">ปฏิทิน</string>
+   <string name="file_attachment_import_vcard">นำเข้า vCard</string>
+   <string name="attach_vcard">ที่อยู่ติดต่อ</string>
+   <string name="type_common_file">ไฟล์</string>
+   <string name="failed_to_parse_vcard">ไม่สามารถตัดคำในไฟล์vCard ได้!</string>
+   <string name="empty_vcard">ไม่มีที่อยู่ติดต่อใน vCard</string>
+   <string name="parse_vcard">ตัดคำใน vCard</string>
+   <string name="vcard_no_details">ไม่มีข้อมูลเพิ่มเติมสำหรับที่อยู่ติดต่อนี้"</string>
+   <string name="call_custom"><xliff:g id="custom">%s</xliff:g></string>
+   <string name="call_home">บ้าน</string>
+   <string name="call_mobile">มือถือ</string>
+   <string name="call_work">ที่ทำงาน</string>
+   <string name="call_fax_work">แฟกซ์ที่ทำงาน</string>
+   <string name="call_fax_home">แฟกซ์ที่บ้าน</string>
+   <string name="call_pager">เพจเจอร์</string>
+   <string name="call_callback">โทร.กลับ</string>
+   <string name="call_car">รถยนต์</string>
+   <string name="call_company_main">เบอร์โทร.หลักของบริษัท</string>
+   <string name="call_isdn">ISDN</string>
+   <string name="call_radio">วิทยุ</string>
+   <string name="call_telex">เทเลกซ์</string>
+   <string name="call_tty_tdd">TTY/TDD</string>
+   <string name="call_work_mobile">มือถือที่ทำงาน</string>
+   <string name="call_work_pager">เพจเจอร์ที่ทำงาน</string>
+   <string name="call_assistant"><xliff:g id="assistant">%s</xliff:g></string>
+   <string name="call_mms">MMS</string>
+   <string name="email_home">อีเมลไปยังบ้าน</string>
+   <string name="email_mobile">อีเมลไปยังมือถือ</string>
+   <string name="email_work">อีเมลไปที่ทำงาน</string>
+   <string name="email_custom">อีเมล <xliff:g id="custom">%s</xliff:g></string>
+   <string name="map_home">แสดงที่อยู่บ้าน</string>
+   <string name="map_work">แสดงที่อยู่ที่ทำงาน</string>
+   <string name="map_other">แสดงที่อยู่</string>
+   <string name="map_custom">แสดงที่อยู่ <xliff:g id="custom">%s</xliff:g></string>
+   <string name="chat_aim">แชทโดยใช้ AIM</string>
+   <string name="chat_msn">แชทโดยใช้ Windows Live</string>
+   <string name="chat_yahoo">แชทโดยใช้ Yahoo</string>
+   <string name="chat_skype">แชทโดยใช้ Skype</string>
+   <string name="chat_qq">แชทโดยใช้ QQ</string>
+   <string name="chat_gtalk">แชทโดยใช้ Google Talk</string>
+   <string name="chat_icq">แชทโดยใช้ ICQ</string>
+   <string name="chat_jabber">แชทโดยใช้ Jabber</string>
+   <string name="chat">แชท</string>
+   <string name="please_wait">โปรดรอ…</string>
+   <string name="note">บันทึก</string>
+   <string name="organization">องค์กร</string>
+   <string name="website">เว็บไซต์</string>
+   <string name="nickname">ชื่อเล่น</string>
+   <string name="call_other">อื่น ๆ</string>
+   <string name="call_main">Main</string>
+   <string name="call_other_fax">แฟกซ์</string>
+   <string name="email_other">อีเมล</string>
+   <string name="email">อีเมล</string>
+</resources>
