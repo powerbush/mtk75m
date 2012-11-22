@@ -269,7 +269,7 @@
                         android:layout_marginRight="5dip"
                         android:layout_marginTop="5dip" />
                 </RelativeLayout>
-
+                <!--liaobz 1.button textSize -->
                 <Button
                     android:id="@+id/send_button"
                     android:layout_marginLeft="5dip"
@@ -277,6 +277,7 @@
                     android:layout_height="wrap_content"
                     style="?android:attr/buttonStyle"
                     android:nextFocusLeft="@+id/embedded_text_editor"
+                    android:textSize="30sp"
                     android:text="@string/send" />
             </LinearLayout>
             <LinearLayout
