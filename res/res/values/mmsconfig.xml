@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- mdpi -->
+    <integer name="config_card_width_port_mdpi">300</integer>
+    <integer name="config_card_height_mdpi">194</integer>
+    <integer name="config_LowPosition_port_mdpi">75</integer>
+    <integer name="config_MidPosition_port_mdpi">89</integer>
+    <integer name="config_HighPosition_port_mdpi">111</integer>
+    
+    <integer name="config_card_width_land_mdpi">350</integer>
+    <integer name="config_button_width_Land_mdpi">50</integer>
+    <integer name="config_LowPosition_land_mdpi">10</integer>
+    <integer name="config_MidPosition_land_mdpi">24</integer>
+    <integer name="config_HighPosition_land_mdpi">46</integer>
+    <integer name="config_UnreadHeadHeight_land_mdpi">80</integer>
+    
+    <!-- move card distance -->
+    <integer name="config_move_one_distance_port_mdpi">7</integer>
+    <integer name="config_move_two_distance_port_mdpi">10</integer>
+    <integer name="config_move_one_distance_land_mdpi">7</integer>
+    <integer name="config_move_two_distance_land_mdpi">10</integer>
+    
+    <!-- message content layout -->
+    <integer name="config_attach_img_width_mdpi">80</integer>
+    <integer name="config_attach_img_height_mdpi">50</integer>
+    <integer name="config_mms_content_height_mdpi">96</integer>
+    <integer name="config_aventer_size_mdpi">50</integer>
+    <integer name="config_aventer_rectsize_mdpi">58</integer>
+    <integer name="config_mms_content_width_port_mdpi">280</integer>
+    <integer name="config_mms_content_width_land_mdpi">330</integer>
+    <integer name="config_sim_img_size_mdpi">25</integer>
+    <!-- mdpi end-->
+    
+    <!-- hdpi -->
+    <integer name="config_card_width_port_hdpi">450</integer>
+    <integer name="config_card_height_hdpi">300</integer>
+    <integer name="config_LowPosition_port_hdpi">140</integer>
+    <integer name="config_MidPosition_port_hdpi">160</integer>
+    <integer name="config_HighPosition_port_hdpi">192</integer>
+    
+    <integer name="config_card_width_land_hdpi">526</integer>
+    <integer name="config_button_width_Land_hdpi">70</integer>
+    <integer name="config_LowPosition_land_hdpi">40</integer>
+    <integer name="config_MidPosition_land_hdpi">60</integer>
+    <integer name="config_HighPosition_land_hdpi">92</integer>
+    <integer name="config_UnreadHeadHeight_land_hdpi">120</integer>
+    
+    <!-- move card distance -->
+    <integer name="config_move_one_distance_port_hdpi">8</integer>
+    <integer name="config_move_two_distance_port_hdpi">10</integer>
+    <integer name="config_move_one_distance_land_hdpi">8</integer>
+    <integer name="config_move_two_distance_land_hdpi">10</integer>
+    
+    <!-- message content layout -->
+    <integer name="config_attach_img_width_hdpi">120</integer>
+    <integer name="config_attach_img_height_hdpi">75</integer>
+    <integer name="config_mms_content_height_hdpi">144</integer>
+    <integer name="config_aventer_size_hdpi">76</integer>
+    <integer name="config_aventer_rectsize_hdpi">88</integer>
+    <integer name="config_mms_content_width_port_hdpi">420</integer>
+    <integer name="config_mms_content_width_land_hdpi">496</integer>
+    <integer name="config_sim_img_size_hdpi">38</integer>
+    <!-- hdpi end-->
+    
+    <!-- ldpi -->
+    <integer name="config_card_width_port_ldpi">226</integer>
+    <integer name="config_card_height_ldpi">150</integer>
+    <integer name="config_LowPosition_port_ldpi">35</integer>
+    <integer name="config_MidPosition_port_ldpi">45</integer>
+    <integer name="config_HighPosition_port_ldpi">61</integer>
+    
+    <integer name="config_card_width_land_ldpi">262</integer>
+    <integer name="config_button_width_Land_ldpi">40</integer>
+    <integer name="config_LowPosition_land_ldpi">10</integer>
+    <integer name="config_MidPosition_land_ldpi">20</integer>
+    <integer name="config_HighPosition_land_ldpi">36</integer>
+    <integer name="config_UnreadHeadHeight_land_ldpi">60</integer>
+    
+    <!-- move card distance -->
+    <integer name="config_move_one_distance_port_ldpi">6</integer>
+    <integer name="config_move_two_distance_port_ldpi">8</integer>
+    <integer name="config_move_one_distance_land_ldpi">6</integer>
+    <integer name="config_move_two_distance_land_ldpi">8</integer>
+    
+    <!-- message content layout -->
+    <integer name="config_attach_img_width_ldpi">60</integer>
+    <integer name="config_attach_img_height_ldpi">38</integer>
+    <integer name="config_mms_content_height_ldpi">72</integer>
+    <integer name="config_aventer_size_ldpi">38</integer>
+    <integer name="config_aventer_rectsize_ldpi">45</integer>
+    <integer name="config_mms_content_width_port_ldpi">210</integer>
+    <integer name="config_mms_content_width_land_ldpi">248</integer>
+    <integer name="config_sim_img_size_ldpi">20</integer>
+    <!-- ldpi end-->
+
+    <!-- wqvga for ds269 -->
+    <integer name="config_card_width_port_wdpi">226</integer>
+    <integer name="config_card_height_port_wdpi">170</integer>
+    <integer name="config_card_height_land_wdpi">150</integer>
+    <integer name="config_LowPosition_port_wdpi">35</integer>
+    <integer name="config_MidPosition_port_wdpi">49</integer>
+    <integer name="config_HighPosition_port_wdpi">69</integer>
+    
+    <integer name="config_card_width_land_wdpi">302</integer>
+    <integer name="config_button_width_Land_wdpi">40</integer>
+    <integer name="config_LowPosition_land_wdpi">10</integer>
+    <integer name="config_MidPosition_land_wdpi">20</integer>
+    <integer name="config_HighPosition_land_wdpi">36</integer>
+    <integer name="config_UnreadHeadHeight_land_wdpi">60</integer>
+    
+    <!-- move card distance -->
+    <integer name="config_move_one_distance_port_wdpi">6</integer>
+    <integer name="config_move_two_distance_port_wdpi">9</integer>
+    <integer name="config_move_one_distance_land_wdpi">6</integer>
+    <integer name="config_move_two_distance_land_wdpi">8</integer>
+    
+    <!-- message content layout -->
+    <integer name="config_attach_img_width_wdpi">60</integer>
+    <integer name="config_attach_img_height_wdpi">38</integer>
+    <integer name="config_mms_content_height_port_wdpi">92</integer>
+    <integer name="config_mms_content_height_land_wdpi">72</integer>
+    <integer name="config_aventer_size_wdpi">38</integer>
+    <integer name="config_aventer_rectsize_wdpi">45</integer>
+    <integer name="config_mms_content_width_port_wdpi">210</integer>
+    <integer name="config_mms_content_width_land_wdpi">288</integer>
+    <integer name="config_sim_img_size_wdpi">20</integer>
+    <!-- wqvga end-->
+</resources>
