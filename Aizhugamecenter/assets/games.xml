@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<game>
+
+	<item id="1" 
+		pkgname="org.jfedor.frozenbubble"
+		classname="org.jfedor.frozenbubble.FrozenBubble"
+		name="泡泡龙" 
+		iconpath="@drawable/app_frozen_bubble" />
+
+	<item id="2" 
+		pkgname="org.jfedor.frozenbubble"
+		classname="org.jfedor.frozenbubble.FrozenBubble"
+		name="泡泡龙" 
+		iconpath="@drawable/app_frozen_bubble" />
+
+</game>
