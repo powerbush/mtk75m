@@ -1,18 +1,51 @@
-<?xml version="1.0"  encoding="utf-8"?>
-<resources
-xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string-array name="videophone_setting_layout_entryvalues">
-<item>1</item>
-<item>2</item>
-</string-array>
-    <string-array name="videophone_setting_static_image_set_entryvalues">
-<item>1</item>
-<item>2</item>
-<item>3</item>
-</string-array>
-    <string-array name="videophone_setting_fallback_entryvalues">
-<item>1</item>
-<item>2</item>
-<item>3</item>
-</string-array>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="language_list_values" translatable="false">
+		<item>Semua Bahasa</item>
+		<item>Jerman</item>      
+		<item>Inggris</item>  
+		<item>Italia</item>
+		<item>Prancis</item>
+		<item>Spanyol</item>
+		<item>Belanda</item>
+		<item>Swedia</item>
+		<item>Denmark</item>
+		<item>Portugis</item>
+		<item>Finlandia</item>
+		<item>Norwegia</item>
+		<item>Yunani</item>
+		<item>Turki</item>
+		<item>Hungaria</item>
+		<item>Polandia</item>
+		<item>Lainnya</item>
+		<item>Ceko</item>
+		<item>Ibrani</item>
+		<item>Arab</item>
+		<item>Rusia</item>
+		<item>Islandia</item>
+	</string-array>
+	<string-array name="language_list_id" translatable="false">
+		<item>-1</item>
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+		<item>12</item>
+		<item>13</item>
+		<item>14</item>
+		<item>15</item>
+		<item>32</item>
+		<item>33</item>
+		<item>34</item>
+		<item>35</item>
+		<item>36</item>
+	</string-array>
 </resources>

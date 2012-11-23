@@ -38,7 +38,7 @@ import java.util.HashMap;
  * @hide
  */
 public class BluetoothAtPhonebook {
-    private static final String TAG = "BluetoothAtPhonebook";
+    private static final String TAG = "BtAtPhonebook";
     private static final boolean DBG = false;
 
     /** The projection to use when querying the call log database in response
@@ -95,26 +95,19 @@ public class BluetoothAtPhonebook {
     /** Returns the last dialled number, or null if no numbers have been called */
     public String getLastDialledNumber() {
         String[] projection = {Calls.NUMBER};
-        String number = null;
-        Cursor cursor = null;
-		try {
-			// get last record no matter which call type it is
-			cursor = mContext.getContentResolver().query(
-					Calls.CONTENT_URI, projection, null, null,
-					Calls.DEFAULT_SORT_ORDER + " LIMIT 1");
-			if (cursor == null || cursor.getCount() < 1){
-				return null;
-			}
-			if (cursor.moveToNext()) {
-				int column = cursor.getColumnIndexOrThrow(Calls.NUMBER);
-				number = cursor.getString(column);
-			}
-		} catch (Exception e) {
-		} finally {
-			if(cursor != null){
-				cursor.close();
-			}
-		}
+        Cursor cursor = mContext.getContentResolver().query(Calls.CONTENT_URI, projection,
+                Calls.TYPE + "=" + Calls.OUTGOING_TYPE, null, Calls.DEFAULT_SORT_ORDER +
+                " LIMIT 1");
+        if (cursor == null) return null;
+
+        if (cursor.getCount() < 1) {
+            cursor.close();
+            return null;
+        }
+        cursor.moveToNext();
+        int column = cursor.getColumnIndexOrThrow(Calls.NUMBER);
+        String number = cursor.getString(column);
+        cursor.close();
         return number;
     }
 

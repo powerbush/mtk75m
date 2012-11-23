@@ -692,4 +692,14 @@
     <string name="no_internet_available" msgid="1100564991026313234">"За да проведете интернет обаждане, първо проверете връзката си с интернет"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"За интернет обаждания трябва да сте свързани с Wi-Fi мрежа (използвайте настройките за кабелна и безжична мрежа)"</string>
     <string name="no_voip" msgid="8901474054537199865">"Интернет обажданията не се поддържат"</string>
+
+    <string name="activity_not_found">"Приложението не е инсталирано на телефона ви."</string>
+
+    <string name="sim_toolkit">"Инструментариум на SIM картата"</string>
+    
+
+<string name="simlock_returntocall">"Назад към обаждането"</string>
+<string name="simlock_emergency">"Спешно обаждане"</string>
+<string name="simlock_enterpincode">"Въведете PIN кода"</string>
+
 </resources>

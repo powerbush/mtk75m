@@ -17,10 +17,11 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Half-way between #FFF and #000 -->
-    <item android:state_enabled="false" android:color="#888"/>
-
+    <!-- <item android:state_enabled="false" android:color="#888"/>
+ 	-->
     <item android:state_pressed="true" android:color="#000"/>
-    <item android:state_selected="true" android:color="#000"/>
+    <!-- <item android:state_selected="true" android:color="#000"/>
+     -->
     <item android:state_focused="true" android:color="#FFF"/>
     <item android:color="#FFF"/> <!-- not selected -->
 

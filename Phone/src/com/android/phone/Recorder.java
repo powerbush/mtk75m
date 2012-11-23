@@ -1,319 +1,274 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
+//New file added by delong.liu@archermind.com
+
 package com.android.phone;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
+import android.media.MediaRecorder.OnErrorListener;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StatFs;
 import android.util.Log;
 
-public class Recorder implements OnCompletionListener, OnErrorListener {
-	private static final String LOG_TAG = "Recorder";
-	
-    static final String SAMPLE_PREFIX = "recording";
-    static final String SAMPLE_PATH_KEY = "sample_path";
-    static final String SAMPLE_LENGTH_KEY = "sample_length";
+public class Recorder implements OnErrorListener{
+	private static final String TAG = "Recorder";
 
-    public static final int IDLE_STATE = 0;
-    public static final int RECORDING_STATE = 1;
-    public static final int PLAYING_STATE = 2;
-    
-    int mState = IDLE_STATE;
+	static final String SAMPLE_PREFIX = "recording";
+	static final String SAMPLE_PATH_KEY = "sample_path";
+	static final String SAMPLE_LENGTH_KEY = "sample_length";
 
-    public static final int NO_ERROR = 0;
-    public static final int SDCARD_ACCESS_ERROR = 1;
-    public static final int INTERNAL_ERROR = 2;
-    public static final int IN_CALL_RECORD_ERROR = 3;
-	
-	private static final String DEFAULT_STORE_SUBDIR = "/voicecall";
-	private static final String DEFAULT_RECORD_SUFFIX = ".3gpp";
-	private static final long MINIMUM_FREE_SIZE = 1024 * 1024;
-    
-    public interface OnStateChangedListener {
-        public void onStateChanged(int state);
-        public void onError(int error);
-    }
-    OnStateChangedListener mOnStateChangedListener = null;
-    
-    long mSampleStart = 0;       // time at which latest record or play operation started
-    int mSampleLength = 0;      // length of current sample
-    File mSampleFile = null;
-    
-    MediaRecorder mRecorder = null;
-    MediaPlayer mPlayer = null;
-    private Context mContext;
-    
-	public Recorder(Context context) {
-		mContext = context;
+	public static final int IDLE_STATE = 0;
+	public static final int RECORDING_STATE = 1;
+
+	int mState = IDLE_STATE;
+
+	public static final int NO_ERROR = 0;
+	public static final int SDCARD_ACCESS_ERROR = 1;
+	public static final int INTERNAL_ERROR = 2;
+
+	public interface OnStateChangedListener {
+		public void onStateChanged(int state);
+		public void onError(int error);
 	}
-    
-    public void saveState(Bundle recorderState) {
-        recorderState.putString(SAMPLE_PATH_KEY, mSampleFile.getAbsolutePath());
-        recorderState.putInt(SAMPLE_LENGTH_KEY, mSampleLength);
-    }
-    
-    public int getMaxAmplitude() {
-        if (mState != RECORDING_STATE)
-            return 0;
-        return mRecorder.getMaxAmplitude();
-    }
-    
-    public void restoreState(Bundle recorderState) {
-        String samplePath = recorderState.getString(SAMPLE_PATH_KEY);
-        if (samplePath == null)
-            return;
-        int sampleLength = recorderState.getInt(SAMPLE_LENGTH_KEY, -1);
-        if (sampleLength == -1)
-            return;
 
-        File file = new File(samplePath);
-        if (!file.exists())
-            return;
-        if (mSampleFile != null
-                && mSampleFile.getAbsolutePath().compareTo(file.getAbsolutePath()) == 0)
-            return;
-        
-        delete();
-        mSampleFile = file;
-        mSampleLength = sampleLength;
+	OnStateChangedListener mOnStateChangedListener = null;
 
-        signalStateChanged(IDLE_STATE);
-    }
-    
-    public void setOnStateChangedListener(OnStateChangedListener listener) {
-        mOnStateChangedListener = listener;
-    }
-    
-    public int state() {
-        return mState;
-    }
-    
-    public int progress() {
-        if (mState == RECORDING_STATE || mState == PLAYING_STATE)
-            return (int) ((System.currentTimeMillis() - mSampleStart)/1000);
-        return 0;
-    }
-    
-    public int sampleLength() {
-        return mSampleLength;
-    }
+	long mSampleStart = 0; // time at which latest record or play operation started
+	long mSampleLength = 0; // length of current sample
+	File mSampleFile = null;
+	MediaRecorder mRecorder = null;
 
-    public File sampleFile() {
-        return mSampleFile;
-    }
-    
-    /**
-     * Resets the recorder state. If a sample was recorded, the file is deleted.
-     */
-    public void delete() {
-        stop();
-        
-        if (mSampleFile != null)
-            mSampleFile.delete();
-
-        mSampleFile = null;
-        mSampleLength = 0;
-        
-        signalStateChanged(IDLE_STATE);
-    }
-    
-    /**
-     * Resets the recorder state. If a sample was recorded, the file is left on disk and will 
-     * be reused for a new recording.
-     */
-    public void clear() {
-        stop();
-        
-        mSampleLength = 0;
-        
-        signalStateChanged(IDLE_STATE);
-    }
-    
-	private File getRecordFile(){
-		File base = null;
-		String root = Environment.getExternalStorageDirectory().getPath();
-		base = new File(root + DEFAULT_STORE_SUBDIR);
-		if (!base.isDirectory() && !base.mkdir()) {
-			Log.e(LOG_TAG, "Recording File aborted - can't create base directory " + base.getPath());
-			return null;
-		}
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("'voicecall'-yyyyMMddHHmmss");
-		String fn = sdf.format(new Date());
-		fn = base.getPath() + File.separator + fn + DEFAULT_RECORD_SUFFIX;
-		
-		StatFs stat = null;
-		stat = new StatFs(base.getPath());
-		long available_size = stat.getBlockSize() * ((long)stat.getAvailableBlocks() - 4);
-		if (available_size < MINIMUM_FREE_SIZE){
-			Log.e(LOG_TAG, "Recording File aborted - not enough free space");
-			return null;			
-		}
-
-		File outFile = new File(fn);
-		try{
-			if (outFile.exists()){
-				outFile.delete();
-			}
-			boolean bRet = outFile.createNewFile();
-			if (!bRet) {
-				Log.e(LOG_TAG, "getRecordFile, fn: " + fn + ", failed");
-				return null;
-			}
-		} catch (SecurityException e){
-			Log.e(LOG_TAG, "getRecordFile, fn: " + fn + ", " + e);
-			return null;
-		} catch (IOException e){
-			Log.e(LOG_TAG, "getRecordFile, fn: " + fn + ", " + e);
-			return null;
-		}
-		
-		return outFile;		 
+	public Recorder() {
 	}
-	
-    public boolean startRecording(int outputfileformat, String extension, Context context) {
-        stop();
 
-		mSampleFile = getRecordFile();
-		if (mSampleFile == null){
-			return false;
-		}
-        
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.VOICE_CALL);
-        mRecorder.setOutputFormat(outputfileformat);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mRecorder.setOutputFile(mSampleFile.getAbsolutePath());
+	public void saveState(Bundle recorderState) {
+		recorderState.putString(SAMPLE_PATH_KEY, mSampleFile.getAbsolutePath());
+		recorderState.putLong(SAMPLE_LENGTH_KEY, mSampleLength);
+	}
 
-        // Handle IOException
-        try {
-            mRecorder.prepare();
-        } catch(IOException exception) {
-            setError(INTERNAL_ERROR);
-            mRecorder.reset();
-            mRecorder.release();
-            mRecorder = null;
-            return false;
-        }
-        // Handle RuntimeException if the recording couldn't start
-        try {
-            mRecorder.start();
-        } catch (RuntimeException exception) {
-            AudioManager audioMngr = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-            boolean isInCall = audioMngr.getMode() == AudioManager.MODE_IN_CALL;
-            if (isInCall) {
-                setError(IN_CALL_RECORD_ERROR);
-            } else {
-                setError(INTERNAL_ERROR);
-            }
-            mRecorder.reset();
-            mRecorder.release();
-            mRecorder = null;
-            return false;
-        }
-        mSampleStart = System.currentTimeMillis();
-        setState(RECORDING_STATE);
-		return true;
-    }
-    
-	public void stopRecording() {
-		if (mRecorder == null)
+	public int getMaxAmplitude() {
+		if (mState != RECORDING_STATE)
+			return 0;
+		return mRecorder.getMaxAmplitude();
+	}
+
+	public void restoreState(Bundle recorderState) {
+		String samplePath = recorderState.getString(SAMPLE_PATH_KEY);
+		if (samplePath == null)
+			return;
+		long sampleLength = recorderState.getLong(SAMPLE_LENGTH_KEY, -1);
+		if (sampleLength == -1)
 			return;
 
-		try {
-			mRecorder.stop();
-		} catch (RuntimeException exception) {
-			Log.d(LOG_TAG, "stop recording failed.");
-			AudioManager audioMngr = (AudioManager) mContext
-					.getSystemService(Context.AUDIO_SERVICE);
-			boolean isInCall = audioMngr.getMode() == AudioManager.MODE_IN_CALL;
-			if (isInCall) {
-				setError(IN_CALL_RECORD_ERROR);
-			} else {
-				setError(INTERNAL_ERROR);
-			}
-			mRecorder.reset();
+		File file = new File(samplePath);
+		if (!file.exists())
+			return;
+		if (mSampleFile != null
+				&& mSampleFile.getAbsolutePath().compareTo(
+						file.getAbsolutePath()) == 0)
+			return;
+
+		delete();
+		mSampleFile = file;
+		mSampleLength = sampleLength;
+
+		signalStateChanged(IDLE_STATE);
+	}
+
+	public void setOnStateChangedListener(OnStateChangedListener listener) {
+		mOnStateChangedListener = listener;
+	}
+
+	public int state() {
+		return mState;
+	}
+
+	public int progress() {
+		if (mState == RECORDING_STATE )
+			return (int) ((System.currentTimeMillis() - mSampleStart) / 1000);
+		return 0;
+	}
+
+	public long sampleLength() {
+		return mSampleLength;
+	}
+
+	public File sampleFile() {
+		return mSampleFile;
+	}
+
+	/**
+	 * Resets the recorder state. If a sample was recorded, the file is deleted.
+	 */
+	public void delete() {
+		stop();
+
+		if (mSampleFile != null)
+			mSampleFile.delete();
+		mSampleFile = null;
+		mSampleLength = 0l;
+
+		signalStateChanged(IDLE_STATE);
+	}
+
+	/**
+	 * Resets the recorder state. If a sample was recorded, the file is left on
+	 * disk and will be reused for a new recording.
+	 */
+	public void clear() {
+		stop();
+
+		mSampleLength = 0l;
+
+		signalStateChanged(IDLE_STATE);
+	}
+
+	public void startRecording(int outputfileformat, String extension) throws IOException {
+        log("startRecording");
+        stop();
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
+		String prefix = dateFormat.format(new Date());
+		File sampleDir = Environment.getExternalStorageDirectory();
+
+		if (!sampleDir.canWrite()) {
+			Log.i(TAG, "----- file can't write!! ---");
+			// Workaround for broken sdcard support on the device.
+			sampleDir = new File("/sdcard/sdcard");
 		}
+
+		sampleDir = new File(sampleDir.getAbsolutePath() + "/PhoneRecord");
+		if(sampleDir.exists() == false) {
+		       sampleDir.mkdirs();
+		}
+
+		try {
+			mSampleFile = File.createTempFile(prefix, extension, sampleDir);
+		} catch (IOException e) {
+			setError(SDCARD_ACCESS_ERROR);
+			Log.i(TAG, "----***------- can't access sdcard !!");
+			throw e;
+		}
+		
+		log("finish creating temp file, start to record");
+
+		mRecorder = new MediaRecorder();
+		mRecorder.setOnErrorListener(this);
+		mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+		mRecorder.setOutputFormat(outputfileformat);
+		mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+		mRecorder.setOutputFile(mSampleFile.getAbsolutePath());
+
+		try {
+			mRecorder.prepare();
+			mRecorder.start();
+			mSampleStart = System.currentTimeMillis();
+			setState(RECORDING_STATE);
+		} catch (IOException exception) {
+            log("startRecording, IOException");
+            setError(INTERNAL_ERROR);
+			mRecorder.reset();
+			mRecorder.release();
+			mRecorder = null;
+			throw exception;
+		} catch (RuntimeException exception) {
+            log("startRecording, RuntimeException");
+            setError(INTERNAL_ERROR);
+			mRecorder.reset();
+			mRecorder.release();
+			mRecorder = null;
+            throw exception;
+		}
+	}
+
+	public void stopRecording() {
+        log("stopRecording");
+        if (mRecorder == null){
+			return;
+		}
+        	mSampleLength = System.currentTimeMillis() - mSampleStart;
+		mRecorder.stop();
 		mRecorder.release();
 		mRecorder = null;
 
-		mSampleLength = (int) ((System.currentTimeMillis() - mSampleStart) / 1000);
 		setState(IDLE_STATE);
 	}
-    
-    public void startPlayback() {
-        stop();
-        
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(mSampleFile.getAbsolutePath());
-            mPlayer.setOnCompletionListener(this);
-            mPlayer.setOnErrorListener(this);
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IllegalArgumentException e) {
-            setError(INTERNAL_ERROR);
-            mPlayer = null;
-            return;
-        } catch (IOException e) {
-            setError(SDCARD_ACCESS_ERROR);
-            mPlayer = null;
-            return;
-        }
-        
-        mSampleStart = System.currentTimeMillis();
-        setState(PLAYING_STATE);
-    }
-    
-    public void stopPlayback() {
-        if (mPlayer == null) // we were not in playback
-            return;
 
-        mPlayer.stop();
-        mPlayer.release();
-        mPlayer = null;
-        setState(IDLE_STATE);
-    }
-    
-    public void stop() {
+	public void stop() {
+        log("stop");
         stopRecording();
-        stopPlayback();
-    }
+	}
 
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        stop();
-        setError(SDCARD_ACCESS_ERROR);
-        return true;
-    }
+	private void setState(int state) {
+		if (state == mState)
+			return;
 
-    public void onCompletion(MediaPlayer mp) {
-        stop();
+		mState = state;
+		signalStateChanged(mState);
+	}
+
+	private void signalStateChanged(int state) {
+		if (mOnStateChangedListener != null)
+			mOnStateChangedListener.onStateChanged(state);
+	}
+
+	private void setError(int error) {
+		if (mOnStateChangedListener != null)
+			mOnStateChangedListener.onError(error);
+	}
+
+	/**
+	 * error listener
+	 */
+	// Added by tianxiang.qin@archermind.com
+	public void onError(MediaRecorder mp, int what, int extra) {
+        log("onError");
+        if (what == MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN) {
+			stop();
+			// TODO show hint view
+		}
+		return;
+	}
+	
+    public void log(String msg) {
+        Log.d(TAG, msg);
     }
-    
-    private void setState(int state) {
-        if (state == mState)
-            return;
-        
-        mState = state;
-        signalStateChanged(mState);
-    }
-    
-    private void signalStateChanged(int state) {
-        if (mOnStateChangedListener != null)
-            mOnStateChangedListener.onStateChanged(state);
-    }
-    
-    private void setError(int error) {
-        if (mOnStateChangedListener != null)
-            mOnStateChangedListener.onError(error);
-    }
+	// Added by tianxiang.qin@archermind.com end
 }

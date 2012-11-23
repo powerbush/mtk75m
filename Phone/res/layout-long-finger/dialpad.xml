@@ -34,6 +34,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_1_no_vm"
             android:background="@drawable/btn_dial"
+            android:nextFocusLeft="@id/one"
         />
 
         <ImageButton android:id="@+id/two"
@@ -48,6 +49,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_3"
             android:background="@drawable/btn_dial"
+            android:nextFocusRight="@id/three"
         />
 
         <ImageButton android:id="@+id/four"
@@ -55,6 +57,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_4"
             android:background="@drawable/btn_dial"
+            android:nextFocusLeft="@id/four"
         />
 
         <ImageButton android:id="@+id/five"
@@ -69,6 +72,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_6"
             android:background="@drawable/btn_dial"
+            android:nextFocusRight="@id/six"
         />
 
         <ImageButton android:id="@+id/seven"
@@ -76,6 +80,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_7"
             android:background="@drawable/btn_dial"
+            android:nextFocusLeft="@id/seven"
         />
 
         <ImageButton android:id="@+id/eight"
@@ -90,6 +95,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_9"
             android:background="@drawable/btn_dial"
+            android:nextFocusRight="@id/nine"
         />
 
         <ImageButton android:id="@+id/star"
@@ -97,6 +103,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_star"
             android:background="@drawable/btn_dial"
+            android:nextFocusLeft="@id/star"
         />
 
         <ImageButton android:id="@+id/zero"
@@ -111,6 +118,7 @@
             android:layout_height="58dp"
             android:src="@drawable/dial_num_pound"
             android:background="@drawable/btn_dial"
+            android:nextFocusRight="@id/pound"
         />
 </com.android.phone.ButtonGridLayout>
 

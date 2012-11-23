@@ -28,9 +28,8 @@
     <!-- Photo, with elapsed time widget off to the side. -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="142dp"
+        android:layout_height="145dip"
         >
-        <!-- Photo, jiangshimin android:layout_height="172dp" -->
         <!-- Photo, or else a generic placeholder image. -->
         <!-- Contact photos are generally 96x96 (but may be smaller.)
              The layout size of this ImageView is larger than that, though,
@@ -38,8 +37,8 @@
              adds a white border around the image (and a shadow around
              the white border.) -->
         <ImageView android:id="@+id/photo"
-                   android:layout_width="wrap_content"
-                   android:layout_height="136dp"
+                   android:layout_width="145dip"
+                   android:layout_height="140dip"
                    android:layout_centerHorizontal="true"
                    android:background="@drawable/incall_photo_border_lg"
                    android:contentDescription="@string/contactPhoto"
@@ -53,10 +52,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/onscreenManageConferenceText"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?android:attr/textColorPrimary"
-                android:background="@drawable/manage_conference_photo_button"
+                android:background="@drawable/picture_conference"
                 android:layout_marginTop="16dip"
             />
 
@@ -70,70 +68,67 @@
                   android:layout_height="wrap_content"
                   android:layout_toRightOf="@id/photo"
                   android:layout_alignParentBottom="true"
-                  android:layout_marginBottom="19dip"
                   android:layout_marginLeft="-14dip"
+                  android:visibility="gone"
                   />
     </RelativeLayout>
+    
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-30px">
+        <TextView android:id="@+id/name"
+                  android:textAppearance="?android:attr/textAppearanceLarge"
+                  android:textSize="@dimen/incall_card_name_text_size"
+                  android:singleLine="true"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingLeft="4dip"
+                  android:paddingRight="4dip"
+                  android:layout_centerHorizontal="true"
+                  />
 
-    <!-- Name (or the phone number, if we don't have a name to display). -->
-    <TextView android:id="@+id/name"
-              android:gravity="center_horizontal"
-              android:textAppearance="?android:attr/textAppearanceLarge"
-              android:textSize="28sp"
-              android:singleLine="true"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="-22dip"
-              android:paddingLeft="4dip"
-              android:paddingRight="4dip"
-              android:paddingBottom="4dip"
-              />
+        <ImageView android:id="@+id/voiceRecorderIcon"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"                   
+                   android:layout_toLeftOf="@id/name"
+                   android:layout_marginRight="6dip"
+                   android:layout_marginTop="@dimen/incall_card_button_margin_top"
+                   android:visibility="invisible"
+                   />
+
+        <Button android:id="@+id/manageConferenceUiButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/incall_btn_round"
+                android:layout_toRightOf="@id/name"
+                android:layout_marginTop="@dimen/incall_card_button_margin_top"
+                android:layout_marginLeft="@dimen/incall_card_button_margin_left"
+                />
+    </RelativeLayout>
 
     <!-- Label (like "Mobile" or "Work", if present) and phone number, side by side -->
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_gravity="center_horizontal"
-                  android:layout_marginTop="-6dip">
+                  >
         <TextView android:id="@+id/label"
-                  android:textAppearance="?android:attr/textAppearanceSmall"
-                  android:textSize="18sp"
-                  android:textColor="?android:attr/textColorSecondary"
+                  android:textColor="#A3A3A3"
+                  android:textSize="@dimen/incall_card_label_text_size"
                   android:singleLine="true"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:paddingRight="6dip"
                   />
         <TextView android:id="@+id/phoneNumber"
-                  android:textAppearance="?android:attr/textAppearanceSmall"
-                  android:textSize="18sp"
-                  android:textColor="?android:attr/textColorSecondary"
+                  android:textColor="#A3A3A3"
+                  android:textSize="@dimen/incall_card_label_text_size"
                   android:singleLine="true"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   />
     </LinearLayout>
 
-	<LinearLayout android:orientation="horizontal"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal">
-		<TextView android:id="@+id/recordflag"
-		    android:gravity="center_horizontal"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:textSize="14sp"
-			android:singleLine="true"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-
-		<TextView android:id="@+id/recordedTime"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="14sp"
-			android:textStyle="bold"
-			android:singleLine="true"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" />
-	</LinearLayout>
     <!-- Call type indication: a special label and/or branding
          for certain kinds of calls -->
     <TextView android:id="@+id/callTypeLabel"

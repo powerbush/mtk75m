@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ *
+ * MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -30,24 +65,33 @@ import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.Vibrator;
-import android.provider.Settings;
 import android.util.Log;
 
+//MTK begin:
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
+//MTK end
+
 import com.android.internal.telephony.Phone;
-import com.android.internal.telephony.PhoneFactory;
 /**
  * Ringer manager for the Phone app.
  */
 public class Ringer {
     private static final String LOG_TAG = "Ringer";
+/*    private static final boolean DBG =
+            (PhoneApp.DBG_LEVEL >= 1) && (SystemProperties.getInt("ro.debuggable", 0) == 1); */
     private static final boolean DBG = true;
-           // (PhoneApp.DBG_LEVEL >= 1) && (SystemProperties.getInt("ro.debuggable", 0) == 1);
 
     private static final int PLAY_RING_ONCE = 1;
     private static final int STOP_RING = 3;
 
     private static final int VIBRATE_LENGTH = 1000; // ms
     private static final int PAUSE_LENGTH = 1000; // ms
+//MTK add below line:
+    public static final String  VBIRT_MODE_CHANGE_ACTION="vbirtchange";
+    
+    private static boolean IsRingingAndVolumnZero = false;
 
     // Uri for the ringtone.
     Uri mCustomRingtoneUri;
@@ -63,11 +107,42 @@ public class Ringer {
     private long mFirstRingEventTime = -1;
     private long mFirstRingStartTime = -1;
 
+    private boolean mMute = false;
+    
     Ringer(Context context) {
         mContext = context;
         mPowerManager = IPowerManager.Stub.asInterface(ServiceManager.getService(Context.POWER_SERVICE));
+//MTK begin:
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(VBIRT_MODE_CHANGE_ACTION);
+        mContext.registerReceiver(mVbirtStateChangeReceiver, filter);
+//MTK end
+    }
+//MTK begin:
+    protected void finalize() {
+        try {
+	        mContext.unregisterReceiver(mVbirtStateChangeReceiver);
+        } catch (IllegalArgumentException e) {
+	    }
     }
 
+    private class VbirtStateChangeReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals(VBIRT_MODE_CHANGE_ACTION)){
+				Log.i("VbirtStateChangeReceiver", "onReceive");
+				  if (mVibratorThread != null) {
+		                mContinueVibrating = false;
+		                mVibratorThread = null;
+		            }
+			}
+		}
+    	
+    }
+    
+    private VbirtStateChangeReceiver mVbirtStateChangeReceiver = new VbirtStateChangeReceiver();
+//MTK end
     /**
      * After a radio technology change, e.g. from CDMA to GSM or vice versa,
      * the Context of the Ringer has to be updated. This is done by that function.
@@ -119,12 +194,21 @@ public class Ringer {
         }
     }
 
+    void setMute(boolean mute) {
+        mMute = mute;
+    }
+    
     /**
      * Starts the ringtone and/or vibrator
      */
     void ring() {
         if (DBG) log("ring()...");
 
+        if(mMute) {
+            log("mute, bail out...");
+            return;
+        }
+        
         synchronized (this) {
             try {
                 if (PhoneApp.getInstance().showBluetoothIndication()) {
@@ -135,6 +219,12 @@ public class Ringer {
             } catch (RemoteException ex) {
                 // the other end of this binder call is in the system process.
             }
+//MTK begin:
+            if(PhoneUtils.getAudioControlState() == PhoneUtils.AUDIO_OFFHOOK) {
+                // if Audio Control State is OFFHOOK, do not ring.
+                return;
+            }
+//MTK end
 
             if (shouldVibrate() && mVibratorThread == null) {
                 mContinueVibrating = true;
@@ -145,17 +235,12 @@ public class Ringer {
             AudioManager audioManager =
                     (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
-            //Don't ring and set new mode when current mode is MODE_IN_CALL.
-            //for bug15262(CR:NEWMS00193872)
-            if (AudioManager.MODE_IN_CALL == audioManager.getMode()) {
-                log("mode in call ,return." + "audioMode:" + audioManager.getMode());
-                return;
-            }
-            PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_RINGING);
-            if (audioManager.getStreamVolume(AudioManager.STREAM_RING) == 0
-                    || (null == mCustomRingtoneUri || "".equals(mCustomRingtoneUri))) {//for bug 12432:select silence in sound settings.
-                if (DBG)
-                    log("skipping ring because volume is zero or ringtoneuri is empty,mCustomRingtoneUri:"+mCustomRingtoneUri);
+            if (audioManager.getStreamVolume(AudioManager.STREAM_RING) == 0) {
+                if (DBG) log("skipping ring because volume is zero");
+//MTK add below one line:
+                PhoneUtils.setAudioMode();
+                IsRingingAndVolumnZero = true;
+                //PhoneUtils.setAudioMode(mContext, AudioManager.MODE_RINGTONE);
                 return;
             }
 
@@ -209,7 +294,7 @@ public class Ringer {
                 Message msg = mRingHandler.obtainMessage(STOP_RING);
                 msg.obj = mRingtone;
                 mRingHandler.sendMessage(msg);
-                PhoneUtils.setAudioMode(AudioManager.MODE_NORMAL);
+                PhoneUtils.setAudioMode();
                 mRingThread = null;
                 mRingHandler = null;
                 mRingtone = null;
@@ -223,6 +308,12 @@ public class Ringer {
                 if (DBG) log("- stopRing: cleaning up vibrator thread...");
                 mContinueVibrating = false;
                 mVibratorThread = null;
+//MTK begin:
+            } else if (IsRingingAndVolumnZero){
+                //PhoneUtils.setAudioMode(mContext, AudioManager.MODE_NORMAL);
+            	IsRingingAndVolumnZero = false;
+                PhoneUtils.setAudioMode();
+//MTK end
             }
             // Also immediately cancel any vibration in progress.
             mVibrator.cancel();
@@ -278,10 +369,9 @@ public class Ringer {
      * default ringtone.
      */
     void setCustomRingtoneUri (Uri uri) {
-      //for bug 12432:select silence in sound settings, set uri null.
-//        if (uri != null) {
+        if (uri != null) {
             mCustomRingtoneUri = uri;
-//        }
+        }
     }
 
     private void makeLooper() {
@@ -295,14 +385,6 @@ public class Ringer {
                         case PLAY_RING_ONCE:
                             if (DBG) log("mRingHandler: PLAY_RING_ONCE...");
                             if (mRingtone == null && !hasMessages(STOP_RING)) {
-                            //fix bug 21053 at 20120630 begin
-                            Uri ringtoneValue = Settings.System.getUriFor(PhoneFactory.getSetting(Settings.System.RINGTONE,
-                                        PhoneApp.getInstance().mCM.getPhoneInCall().getPhoneId()));
-						    if (DBG)
-							log("the current ringtones value is : " + ringtoneValue);
-						    if (ringtoneValue == null)
-							return;
-						    //fix bug 21053 at 20120630 end
                                 // create the ringtone with the uri
                                 if (DBG) log("creating ringtone: " + mCustomRingtoneUri);
                                 r = RingtoneManager.getRingtone(mContext, mCustomRingtoneUri);
@@ -313,19 +395,9 @@ public class Ringer {
                                 }
                             }
                             r = mRingtone;
-                            /* ===== fixed CR<NEWMS00109311> by luning at 2011.11.18 begin =====*/
-                            if (r == null) {
-                                Uri uri = new RingtoneManager(mContext).getDefaultUri();
-                                r = RingtoneManager.getRingtone(mContext, uri);
-                                synchronized (Ringer.this) {
-                                    mRingtone = r;
-                                }
-                            }
-                            /* ===== fixed CR<NEWMS00109311> by luning at 2011.11.18 end =====*/
                             if (r != null && !hasMessages(STOP_RING) && !r.isPlaying()) {
-                                PhoneUtils.setAudioMode(AudioManager.MODE_RINGTONE);
+                                PhoneUtils.setAudioMode();
                                 r.play();
-                                r.setLooping(true);
                                 synchronized (Ringer.this) {
                                     if (mFirstRingStartTime < 0) {
                                         mFirstRingStartTime = SystemClock.elapsedRealtime();

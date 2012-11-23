@@ -15,24 +15,15 @@
 -->
 
 <!-- Layout used as the dialog's content View for EditPhoneNumberPreference. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="5dip"
     android:orientation="vertical">
     
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
-                android:layout_width="match_parent" 
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-		android:layout_centerHorizontal="true"
-                 >
-    <RadioGroup 
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-                android:layout_centerHorizontal="true"
-		>
     <TextView android:id="@+android:id/message"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
@@ -67,6 +58,6 @@
             android:src="@drawable/ic_button_contacts"
             android:contentDescription="@string/selectContact" />
     </LinearLayout>
-    </RadioGroup>
-    </ScrollView>
+    
 </LinearLayout>
+</ScrollView>

@@ -22,6 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"
+                android:paddingTop="@dimen/manage_conference_padding_top"
                 >
     <!-- This original header (with timer) is currently not being used,
          but may be of use in the future. -->
@@ -85,6 +86,7 @@
         <!-- The actual list of callers; this embedded LinearLayout
              required since scrollview only supports a single child. -->
         <LinearLayout
+            android:id="@+id/caller_container"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -121,25 +123,47 @@
 
     </ScrollView>  <!-- End of scrolling list wrapper for the linear layout -->
 
+    <LinearLayout android:id="@+id/bottomButtons"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:layout_marginBottom="@dimen/manage_conference_button_margin_bottom"
+                  android:gravity="center_horizontal"
+                  >
+        
+        <Button android:id="@+id/disconnect_all"
+                android:text="@string/menu_disconnect_all"
+                android:layout_width="@dimen/manage_conference_button_width"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:layout_height="@dimen/manage_conference_button_height"
+                android:background="@drawable/incall_btn_end"
+                android:layout_marginRight="@dimen/manage_conference_button_margin"
+                android:textColor="#ECE2E2"
+                android:textSize="@dimen/incall_btn_end_call_text_size"
+                />
+        
+        <!-- The "Back to call" button -->
+        <Button android:id="@+id/manage_done"
+                android:text="@string/caller_manage_manage_done_text"
+                android:textSize="@dimen/incall_btn_end_call_text_size"
+                android:layout_width="@dimen/manage_conference_button_width"
+                android:layout_height="@dimen/manage_conference_button_height"
+                android:background="@drawable/incall_btn_return"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                />
+    </LinearLayout>
+
     <!-- The grey footer, background behind the "Back to call" button -->
     <View
         android:layout_width="match_parent"
         android:layout_height="54dip"
         android:gravity="center_vertical"
         android:layout_alignParentBottom="true"
-        android:background="@android:drawable/dark_header"/>
-
-    <!-- The "Back to call" button -->
-    <Button android:id="@+id/manage_done"
-            style="?android:attr/buttonStyleSmall"
-            android:text="@string/caller_manage_manage_done_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="14dip"
-            android:paddingBottom="18dip"
-            android:paddingLeft="42dip"
-            android:paddingRight="42dip"/>
-
+        android:background="@android:drawable/dark_header"
+        android:visibility="gone"/>
+    
 </RelativeLayout>

@@ -332,14 +332,23 @@
     <item msgid="935612021902787683">"GSM/WCDMA (modo automático)"</item>
     <item msgid="8912042051809329533">"Apenas WCDMA"</item>
     <item msgid="8776934131146642662">"Apenas GSM"</item>
-    <item msgid="4684679567848300935">"GSM/WCDA (WCDMA preferido)"</item>
   </string-array>
   <string-array name="gsm_umts_network_preferences_values">
     <item msgid="117293148930527265">"0"</item>
-    <item msgid="2264578612775462302">"1"</item>
-    <item msgid="1268081943590316978">"2"</item>
-    <item msgid="4469871047641902607">"3"</item>
+    <item msgid="2264578612775462302">"2"</item>
+    <item msgid="1268081943590316978">"1"</item>
   </string-array>
+  
+  <string name="umts_preferred_network_mode_dialogtitle">"Preferências de rede GSM/UMTS"</string>
+    <string-array name="umts_network_preferences_choices">
+        <item>"GSM/WCDMA (modo automático)"</item>
+        <item>"Apenas WCDMA"</item>
+    </string-array>
+    <string-array name="umts_network_preferences_values">
+        <item>"0"</item>
+        <item>"2"</item>
+    </string-array>
+  
     <string name="prefer_2g" msgid="8442550937280449639">"Usar apenas redes 2G"</string>
     <string name="prefer_2g_summary" msgid="1976491403210690759">"Economiza bateria"</string>
     <string name="cdma_system_select_title" msgid="5757657769327732833">"Seleccionar sistema"</string>
@@ -449,8 +458,8 @@
     <string name="oldPin2Label" msgid="8559146795026261502">"PIN2 antigo"</string>
     <string name="newPin2Label" msgid="4573956902204349054">"Novo PIN2"</string>
     <string name="confirmPin2Label" msgid="8100319484454787708">"Confirme o novo PIN2"</string>
-    <string name="badPuk2" msgid="4072035207011308856">"O PUK2 introduzido não está correcto. Tente novamente."</string>
-    <string name="badPin2" msgid="515218795152422178">"O PIN2 antigo introduzido não está correcto. Tente novamente."</string>
+    <string name="badPuk2" msgid="4072035207011308856">"O PUK2 que você digitou não está correto."</string>
+    <string name="badPin2" msgid="515218795152422178">"O PIN2 antigo que você digitou não está correto."</string>
     <string name="mismatchPin2" msgid="4177060915600342718">"O PIN2 introduzido não coincide. Tente novamente."</string>
     <string name="invalidPin2" msgid="8237110107480395938">"Introduza um PIN2 com 4 a 8 números."</string>
     <string name="invalidPuk2" msgid="1290977391033057871">"Introduza um PUK2 com 8 números."</string>
@@ -692,4 +701,376 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Para fazer uma chamada por internet, verifique primeiro a ligação à internet"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Para fazer chamadas por internet é preciso estar ligado a uma rede Wi-Fi (use as definições de redes sem fios)"</string>
     <string name="no_voip" msgid="8901474054537199865">"As cham. por internet não são suportadas"</string>
+
+	<string name="phone_setting">Configuração do telefone</string>
+    <string name="phone_setting_summary">Configuração do telefone para dispositivos</string>
+    <string name="eidt_default_message">Editar mensagem padrão</string> 
+    <string name="edit_message_before_sending">Editar mensagem antes do envio</string>  
+    <string name="send_message_after_reject">Enviar SMS</string> 
+    <string name="add_message">Adicionar mensagem</string>  
+    <string name="edit_message">Editar mensagem</string> 
+    <string name="delete_message">Excluir mensagem</string>
+    <string name="messages_to_sent">Mensagens a enviar</string> 
+    <string name="message">Mensagem</string>     
+    <string name="max_item">Impossível adicionar mais mensagem, excluir uma primeiro!</string>  
+
+    <string name="activity_not_found">"A aplicação não está instalada no telefone."</string>
+
+<string name="sim_toolkit">"Toolkit SIM"</string>
+
+<string name="simlock_returntocall">"Regressar à chamada"</string>
+<string name="simlock_emergency">"Chamada de emergência"</string>
+<string name="simlock_enterpincode">"Introduzir código PIN"</string>
+
+
+    <string name="fdn_contact_invalid">Nome ou número de contato inválido.</string>
+    <string name="fdn_contact_name_number_invalid">Nome e número não podem ficar vazios ao mesmo tempo.</string>
+    <string name="fdn_contact_number_invalid">Número de contato inválido.</string>
+    <string name="fdn_phone_book_busy">A agenda de telefone está ocupada agora,favor tente mais tarde.</string>
+    <string name="gemini_mobile_network_sim1_tab_tag">SIM1</string>
+    <string name="gemini_mobile_network_sim1_tab_label">SIM1</string>
+    <string name="gemini_mobile_network_sim2_tab_tag">SIM2</string>
+    <string name="gemini_mobile_network_sim2_tab_label">SIM2</string>
+    <string name="gemini_simid">simId</string>
+    <string name="sim_1">0</string>
+    <string name="sim_2">1</string>
+    <string name="menu_more">Mais</string>
+    <string name="menu_bluetooth_on">Bluetooth ligado</string>
+    <string name="menu_bluetooth_off">Bluetooth desligado</string>
+    <string name="menu_unhold">Desativar suspender</string>
+    <string name="menu_disconnect_hold">Terminar pressionado</string>
+    <string name="menu_disconnect_all">Terminar todos</string>
+    <string name="menu_ect">Transferir</string>
+    <string name="menu_answer_end_active">Atender, Terminar Ativo</string>
+    <string name="call_additional_sum">Configurações de número de telefone e chamada em espera</string>
+    <string name="mo_code_unconditional_cf_active">Envio de chamada\não condicional ativado</string>
+    <string name="mo_code_some_cf_active">Encaminhando Chamada\nEm Condicional</string>
+    <string name="mo_code_call_forwarded">Chamada encaminhada</string>
+    <string name="mo_code_call_is_waiting">Chamada em espera</string>
+    <string name="mo_code_cug_call">Grupo de Usuário Fechado</string>
+    <string name="mo_code_outgoing_calls_barred">Chamada de saída barrada</string>
+    <string name="mo_code_incoming_calls_barred">Chamada de entrada barrada</string>
+    <string name="mo_code_clir_suppression_rejected">Verificar identificador de chamada enviando serviço</string>
+    <string name="mo_code_call_deflected">chamada Chamada transferida</string>
+    <string name="mt_code_forwarded_call">É uma chamada encaminhada</string>
+    <string name="mt_code_cug_call">Grupo de Usuário Fechado</string>
+    <string name="mt_code_call_on_hold">Chamada retida</string>
+    <string name="mt_code_call_retrieved">Chamada recuperada</string>
+    <string name="mt_code_multi_party_call">Chamada em conferência</string>
+    <string name="mt_code_on_hold_call_released">Chamada mantida liberada</string>
+    <string name="mt_code_forward_check_received">Enviar mensagem SS verificada recebida</string>
+    <string name="mt_code_call_connecting_ect">Transferindo chamada</string>
+    <string name="mt_code_call_connected_ect">Tranferência de chamada ativa</string>
+    <string name="mt_code_deflected_call">É uma chamada desviada</string>
+    <string name="mt_code_additional_call_forwarded">Chamada de entrada adicional enviada</string>
+    <string name="mt_code_forwarded_cf">Chamada encaminhada</string>
+    <string name="mt_code_forwarded_cf_uncond">Chamada encaminhada em incondicional</string>
+    <string name="mt_code_forwarded_cf_cond">Chamada encaminhada em condicional</string>
+    <string name="mt_code_forwarded_cf_busy">Chamada ocupada encaminhada</string>
+    <string name="mt_code_forwarded_cf_no_reply">Encaminhamento de chamada quando sem resposta</string>
+    <string name="mt_code_forwarded_cf_not_reachable">Encaminhamento de chamada quando não alcançada</string>
+    <string-array name="clir_values">
+        <item><xliff:g>PADRÃO</xliff:g></item>
+        <item><xliff:g>OCULTAR</xliff:g></item>
+        <item><xliff:g>EXIBIR</xliff:g></item>
+    </string-array>
+    <string name="reset">Reiniciar</string>
+    <string name="reset_alert">Tem certeza de que deseja limpar o montante de uso de dados?</string>
+    <string name="reset_data_usage">Reiniciar montante de dados</string>
+    <string name="sum_cell_broadcast">Configurações da transmissão celular</string>
+    <string name="sum_cell_broadcast_control_on">Habilitar transmissão celular</string>
+    <string name="sum_cell_broadcast_control_off">Desabilitar transmissão celular</string>
+    <string name="sum_cell_broadcast_setting">Configuração de idioma e canal para transmissão celular</string>
+    <string name="subscription_title">TESTE de Assinatura CDMA</string>
+    <string name="subscription_summary">Alterar entre RUIM/SIM e NV</string>
+    <string name="subscription_dialogtitle">assinatura</string>
+    <string-array name="subscription_choices">
+        <item>RUIM/SIM</item>
+        <item>VA</item>
+    </string-array>
+    <string name="fdn_contact_max">Contato está cheio</string>
+    <string name="simContacts_emptyLoading_ex">Lendo contatos de %s\u2026</string>
+    <string name="sim1Contacts_emptyLoading">Lendo contatos de SIM1\u2026</string>
+    <string name="sim2Contacts_emptyLoading">Lendo contatos de SIM2\u2026</string>
+    <string name="one_retry_left">1 tentativa restante</string>
+    <string name="retries_left"><xliff:g id="number">%d</xliff:g> recuperações restantes</string>
+    <string name="pin2_unblocked">Desbloqueio PIN2 bem sucedido</string>
+    <string name="unblock_pin2">Desbloquear PIN2</string>
+    <string name="sim_permanently_locked">Informar código PUK2 incorreto mais de 10 vezes, o cartão SIM foi permanentemente travado.</string>
+    <string name="pin_length_indicate">(4-8 dígitos)</string>
+    <string name="puk_length_indicate">(8 dígitos)</string>
+    <string name="fake_phone_activity_phoneNumber_text">(650) 555-1234</string>
+    <string name="fake_phone_activity_infoText_text">Número de telefone de entrada</string>
+    <string name="fake_phone_activity_placeCall_text">Chamada de Entrada Falsa</string>
+    <string name="notification_voicemail">Correio de voz</string>
+    <string name="voice_mail_dialog_text">Você possui novo correio de voz de <xliff:g id="voicemail_sim_display_name">%s</xliff:g>. Deseja recebê-lo agora?</string>
+    <string name="importingSim1Contacts">Importando contatos de SIM1</string>
+    <string name="importingSim2Contacts">Importando contatos de SIM2</string>
+    <string name="absent_num">NÚMERO AUSENTE</string>
+    <string name="sip_call_options_title_single_sim">Opções de chamada de internet</string>
+    <string name="no_voip_vt">Chamada de internet não suporta telefonia por vídeo atualmente.</string>
+    <string name="no_voip_vt_title">Alerta</string>
+    <string name="lable_call_barring">Barramento de chamadas </string>
+    <string name="lable_all_outgoing">Todas as chamadas encaminhadas</string>
+    <string name="lable_all_outgoing_international">Chamadas encaminhadas internacionais</string>
+    <string name="lable_all_out_except">Chamadas encaminhadas internacionais exceto para PLMN de casa</string>
+    <string name="lable_all_incoming">Todas as chamadas recebidas</string>
+    <string name="lable_incoming_calls_except">Chamadas recebidas enquanto em roaming</string>
+    <string name="deactivate_all">Cancelar tudo</string>
+    <string name="change_password">Trocar senha de barramento</string>
+    <string name="call_barring_sum">Configurações de baramento de chamada de voz</string>
+    <string name="start_record">Iniciar gravação</string>
+    <string name="stop_record">Parar gravação</string>
+    <string name="str_db_playlist_name">Minhas gravações</string>
+    <string name="alert_device_error">Erro ocorreu em dispositivo de vídeo</string>
+    <string name="btn_confirminfo_title">Informações de confirmação</string>
+    <string name="btn_Alertinfo_title">Informações de alerta</string>
+    <string name="str_alertinfo_return">OK</string>
+    <string name="str_confirminfo_save">Save</string>
+    <string name="str_confirminfo_return">Descartar</string>
+    <string name="ext_media_badremoval_notification_title">Cartão SD inesperadamente removido</string>
+    <string name="lable_voice">VOZ</string>
+    <string name="lable_data">DADOS</string>
+    <string name="lable_fax">FAX</string>
+    <string name="lable_sms">SMS</string>
+    <string name="lable_data_sync">DADOS-SÍNCRONOS</string>
+    <string name="lable_data_async">DADOS-ASSÍNCRONOS</string>
+    <string name="lable_packet">PACOTE</string>
+    <string name="lable_pad">ALMOFADA</string>
+    <string name="lable_disable">Desativado</string>
+    <string name="lable_enable">Habilitado</string>
+    <string name="old_password_label">Senha antiga(4 números)</string>
+    <string name="new_password_label">Nova Senha(4 números)</string>
+    <string name="invalid_password">Digite uma senha de 4 números.</string>
+    <string name="confirm_password_label">Confirmar senha nova</string>
+    <string name="mismatch_password">A senha inserida não é compatível. Tente novamente.</string>
+    <string name="password_changed">Senha alterada com êxito</string>
+    <string name="call_correct">Senha incorreta</string>
+    <string name="enter_callbarring_password">Insira senha de barramento de chamada(4 números)</string>
+    <string name="wrong_password">Erro de senha</string>
+    <string name="call_cost_settings">Custo de chamada </string>
+    <string name="sum_call_cost">Informações do custo da chamada</string>
+    <string name="last_call_cost">Custo da última chamada</string>
+    <string name="total_call_cost">Custo total</string>
+    <string name="max_call_cost">Custo máximo</string>
+    <string name="reset_call_cost">Reiniciar custo de chamada </string>
+    <string name="set_ppu_currency">Ajustar moeda e preço por unidade</string>
+    <string name="enter_your_pin">Inserir PIN2 (4 a 8 números)</string>
+    <string name="reset_call_cost_success">Reinício de custo total bem sucedido! </string>
+    <string name="max_call_cost_set">Custo máximo ajustado</string>
+    <string name="input_max_cost">Entrada de custo máximo (0~16777215)</string>
+    <string name="show_ppu_menu">Entrada de Pagamento por unidade (0~100000.0)</string>
+    <string name="show_currency_menu">Entrada de moeda (3 caracteres)</string>
+    <string name="error_title">Erro</string>
+    <string name="call_cost_input_pin_error_msg"> PIN2 (4 a 8 números): Entrada Inválida.</string>
+    <string name="call_cost_input_ppu_error_msg">Pagamento por unidade(0-100000.0): Entrada Inválida.</string>
+    <string name="call_cost_input_currency_error_msg"> Moeda (3 caracteres): Entrada Inválida.</string>
+    <string name="call_cost_input_max_error_msg">Custo máximo (0-16777215) : Entrada Inválida.</string>
+    <string name="loading_data_error">erro de carregamento de dados.</string>
+    <string name="pin_retry_count">entradas restantes</string>
+    <string name="pin_one_retry_left">tentativas restantes</string>
+    <string name="pin_retry_error_info">SIM está bloqueado! PUK2 requerido</string>
+    <string name="your_recordings">Suas gravações</string>
+    <string name="audio_recordings">Gravações de áudio</string>
+    <string name="cell_broadcast">Transmissão celular</string>
+    <string name="cell_broadcast_settings">Configurações da transmissão celular</string>
+    <string name="cb_menu_language">Idioma</string>
+    <string name="cb_menu_add_channel">Adicionar Canal</string>
+    <string name="cb_menu_channel_list">Lista de canal</string>
+    <string name="cb_dialog_title_language_choice">Selecione o idioma</string>
+    <string name="cb_channel_dialog_channel_name">Nome do canal (1-10 caracteres)</string>
+    <string name="cb_channel_dialog_channel_number">Número do canal (0-999)</string>
+    <string name="cb_channel_dialog_channel_state">Habilitar o canal</string>
+    <string name="cb_channel_dialog_edit_channel">Editar Canal</string>
+    <string name="cb_menu_edit">Editar</string>
+    <string name="cb_menu_delete">Excluir</string>
+    <string name="cb_error_channel_num">Favor insira número do canal(0-999).</string>
+    <string name="cb_error_channel_name">O tamanho do nome do Canal não está correto(1-10caracteres).</string>
+    <string name="cb_error_language_select">Selecione pelo menos um idioma.</string>
+    <string name="cb_error_channel_id_exist">O id de canaç existe.</string>
+    <string name="cb_all_languages">Todos os Idiomas</string>
+    <string name="cb_default_new_channel_name">Novo Canal</string>
+    <string name="no_sdcard">Sem Cartão de Memória</string>
+    <string name="full_sdcard">Cartão de Memória está Cheio</string>
+    <string name="fdn_errorcode_unknown_info">Falha,erro desconhecido ocorreu,favor tente mais tarde.</string>
+    <string name="fdn_errorcode_number_info">Falha,o tamanho do número de contato é muito longo.</string>
+    <string name="fdn_errorcode_name_info">Falha,o tamanho do nome de contato é muito longo.</string>
+    <string name="fdn_errorcode_storage_info">Falha,armazenamento está cheio.</string>
+    <string name="fdn_errorcode_phb_info">Falha,Agenda de telefone não está pronta agora,favor tente mais tarde.</string>
+    <string name="fdn_errorcode_pin2_info">Falha,PIN2 inválido.</string>
+    <string name="net_or_simcard_busy">Rede ou cartão SIM ocupado,favor tente mais tarde.</string>
+    <string name="sim1">SIM1</string>
+    <string name="sim2">SIM2</string>
+    <string name="inCallTitleText1">SIM1 é utilizado</string>
+    <string name="inCallTitleText2">SIM2 é utilizado</string>
+    <string name="import_sim_contact_success">Importação de contato SIM com sucesso.</string>
+    <string name="vt_incoming_call">Recebendo chamada de vídeo</string>
+    <string name="vt_settings">Configurações de vídeo</string>
+    <string name="vt_local_video_zoom">Zoom de vídeo local</string>
+    <string name="vt_local_video_brightness">Brilho de vídeo local</string>
+    <string name="vt_local_video_effect">Efeito de vídeo local</string>
+    <string name="vt_local_video_nightmode">Modo noturno de vídeo local</string>
+    <string name="vt_peer_video_quality">Qualidade de vídeo de par</string>
+    <string name="vt_video_call">Chamada de vídeo</string>
+    <string name="vt_pic_replace_local">Imagem para substituição de vídeo local</string>
+    <string name="vt_pic_replace_local_description">Selecione uma imagem para exibir quando a câmera estiver fora de uso</string>
+    <string name="vt_enable_back_camera">Habilitar câmera traseira</string>
+    <string name="vt_enable_back_camera_description">Disponível para alternar câmeras se desligado</string>
+    <string name="vt_peer_video_bigger">Vídeo de par maior do que vídeo local</string>
+    <string name="vt_peer_video_bigger_description">Ligar para tornar o vídeo de par maior do que o vídeo local</string>
+    <string name="vt_outgoing_call">Encaminhando chamada de vídeo</string>
+    <string name="vt_outgoing_call_description">Exibir vídeo local ao fazer uma chamada de vídeo</string>
+    <string name="vt_incoming_call_description">Exibir vídeo local ao aceitar uma chamada de vídeo recebida</string>
+    <string name="vt_incoming_showme_always">Always (Sempre)</string>
+    <string name="vt_incoming_showme_ask">Perguntar</string>
+    <string name="vt_incoming_showme_disable">Desabilitar</string>
+    <string name="vt_call_settings">Configurações de chamada de vídeo</string>
+    <string name="vt_pic_replace_local_default">Imagem padrão</string>
+    <string name="vt_pic_replace_local_freezeme">Congelar-me</string>
+    <string name="vt_pic_replace_local_mypic">Minha imagem</string>
+    <string name="vt_local_video_display">Exibição de vídeo local</string>
+    <string name="vt_sd_null">Cartão SD está \nindisónível</string>
+    <string name="vt_sd_not_enough">Cartão SD está ficando\nsem espaço</string>
+    <string name="vt_peer_video_quality_normal">Normal</string>
+    <string name="vt_peer_video_quality_sharp">Nítido</string>
+    <string name="pref_camera_coloreffect_entry_none">Nenhum</string>
+    <string name="pref_camera_coloreffect_entry_mono">Mono</string>
+    <string name="pref_camera_coloreffect_entry_sepia">Sépia</string>
+    <string name="pref_camera_coloreffect_entry_negative">Negativo</string>
+    <string name="pref_camera_coloreffect_entry_solarize">Solarizado</string>
+    <string name="pref_camera_coloreffect_entry_posterize">Posterizado</string>
+    <string name="pref_camera_coloreffect_entry_whiteboard">Quadro branco</string>
+    <string name="pref_camera_coloreffect_entry_blackboard">Quadro negro</string>
+    <string name="pref_camera_coloreffect_entry_aqua">Água</string>
+    <string name="pref_camera_coloreffect_entry_pastel">Pastel</string>
+    <string name="pref_camera_coloreffect_entry_mosaic">Mosaico</string>
+    <string name="pref_camera_coloreffect_entry_redtint">Tinta vermelha</string>
+    <string name="pref_camera_coloreffect_entry_bluetint">Tinta azul</string>
+    <string name="pref_camera_coloreffect_entry_greentint">Tinta verde</string>
+    <string name="pref_camera_coloreffect_entry_sepiablue">Azul Sépia</string>
+    <string name="pref_camera_coloreffect_entry_sepiagreen">Verde Sépia</string>
+    <string name="vt_ask_show_local">Exibir vídeo local ao par?</string>
+    <string name="vt_ask_show_local_yes">Sim</string>
+    <string name="vt_ask_show_local_no">Não</string>
+    <string name="vt_change_my_pic">Alterar</string>
+    <string name="vt_pic_saved_to_sd">Captura de ecrã guardada no cartão SD</string>
+    <string name="vt_pic_saved_to_sd_fail">Não foi possível guardar a captura de ecrã</string>
+    <string name="vt_error_network">Rede inacessível.A chamada de vídeo será desconectada.</string>
+    <string name="vt_error_media">Vídeo não pode ser exibido apropriadamente.A chamada de vídeo será desconectada.</string>
+    <string name="vt_swap_video">Trocar vídeos</string>   
+    <string name="vt_local_video_contrast">Contraste de vídeo local</string>
+    <string name="vt_button_switch">Mudar câmara</string>
+    <string name="vt_menu_hide_me">Ocultar vídeo local</string>
+    <string name="vt_menu_show_me">Mostrar vídeo local</string>
+    <string name="vt_menu_snapshot">Capturar imagem do outro participante</string>
+    <string name="vt_out_dis">Chamada desligada. A rede 3G não está disponível no destinatário. Pode ligar através de chamada de voz.</string>
+    <string name="vt_dis_exit">Sair</string>
+    <string name="vt_dis_callback">Chamar</string>
+    <string name="vt_local_video_rep">Substituição do vídeo local</string>
+    <string name="vt_dis_peer_rep">Mostrar vídeo do outro participante</string>
+    <string name="vt_dis_peer_rep_des">Mostrar imagem para substituir o vídeo do outro participante quando não está disponível</string>
+    <string name="vt_peer_video_rep">Substituição do vídeo do outro participante</string>
+    <string name="vt_peer_video_rep_des">Definir uma imagem para mostrar quando o vídeo do outro participante não está disponível</string>
+    <string name="vt_vocie_answer">Atender voz</string>
+    <string name="vt_wait_voice">A aguardar ligação da chamada de voz</string>
+    <string name="vt_ask_voice_dial">O participante remoto seleccionou o atendimento por voz. Deseja ligar através de chamada de voz?</string>
+    <string name="vt_voice_connecting">A ligar a chamada de voz</string>
+    <string name="vt_auto_dropback">Voltar automaticamente</string>
+    <string name="vt_auto_dropback_des">Voltar automaticamente para a chamada de voz recebida</string>
+    <string name="vt_cannot_support_setting">A câmara actual não suporta esta configuração</string>
+    <string name="vt_network_unreachable">Rede inacessível</string>   
+    <string name="vt_iot_error_01">Não é possível efectuar uma chamada de vídeo</string>
+    <string name="vt_iot_error_02">O telefone está ocupado</string>
+    <string name="vt_iot_error_03">Sem resposta</string>
+    <string name="vt_iot_error_04">A rede está ocupada</string>
+    <string name="voice_call">Chamada de voz</string>
+    <string name="video_call">Chamada de Vídeo</string>
+    <string name="internet_call">Chamada de Internet</string>
+    <string name="others">Outras configurações</string>
+    <string name="sum_voice_call">Configurações relacionadas a chamada de voz</string>
+    <string name="sum_video_call">Configurações relacionadas a chamada de vídeo</string>
+    <string name="sum_internet_call">Configurações relacionadas a chamada de internet</string>
+    <string name="sum_others">As configurações são aplicadas tanto para chamada de voz quanto de vídeo</string>
+    <string name="voice_mail">Correio de voz</string>
+    <string name="sum_voice_mail">Serviço de número de correio de voz</string>
+    <string name="dtmf_hideDialpad">Ocultar Teclado</string>
+    <string name="incoming_call_widget_answer_text">Responder</string>
+    <string name="incoming_call_widget_reject_text">Rejeitar</string>
+    <string name="call_status_operator_name">Nome do operador</string>
+    <string name="call_status_ringing">Entrando...</string>
+    <string name="incall_conference_members">"%d membros"</string>
+    <string name="incall_conference_private">Privativo</string>
+    <string name="incall_end_conference">Terminar Conferência</string>
+    <string name="incall_sim_collision_dialog_title">Lembrete</string>
+    <string name="incall_sim_collision_dialog_message">Este SIM não é o cartão SIM de chamada de voz padrão. Deseja continuar a adicionar nova chamada por este SIM?</string>
+    <string name="callFailed_dsac_vt_incompatible_destination">Não é possível efectuar uma chamada de vídeo. O telefone para o qual está a ligar não suporta chamadas de vídeo, deseja efectuar uma chamada de voz?</string>
+    <string name="callFailed_dsac_vt_resource_unavailable">Não é possível efectuar uma chamada de vídeo. O telefone para o qual está a ligar encontra-se fora da área de serviço 3G, deseja efectuar uma chamada de voz?</string>
+    <string name="callFailed_dsac_vt_bear_not_authorized">Não é possível efectuar uma chamada de vídeo. A função de chamada de vídeo não está activada no seu telefone, deseja efectuar uma chamada de voz?</string>
+    <string name="callFailed_dsac_vt_bearer_not_avail">Não é possível efectuar uma chamada de vídeo. Deseja efectuar uma chamada de voz?</string>
+    <string name="callFailed_dsac_vt_out_of_3G_yourphone">O seu telefone está numa área sem rede 3G. Efectuar chamada de voz?</string>
+    <string name="voice_call_settings">Configurações de chamada de voz</string>
+    <string name="other_call_settings">Outras configurações</string>
+    <string name="vt_ss_settings">Outras configurações</string>
+    <string name="vt_cf_call_description">Configurações de encaminhamento de chamada de vídeo</string>
+    <string name="vt_cb_call_description">Configurações de baramento de chamada de vídeo</string>
+    <string name="vt_addtional_call_description">Configurações de número de telefone e chamada em espera</string>
+    <string name="test_number">18601258794</string>
+    <string name="test_operator">CMCC</string>
+    <string name="gemini_3g_indic">3G</string>
+    <string name="minutereminder_title">Lembrete de minuto</string>
+    <string name="minutereminder_turnon">Ligar lembrete de minuto em 50s de cada minuto</string>
+    <string name="minutereminder_turnoff">Desligar lembrete de minuto</string>
+    <string name="dm_lock">DM Bloqueado</string>
+    <string name="dm_unlock">DM Desbloqueado</string>
+    <string name="importingUSimContacts">Importando contatos USIM </string>
+    <string name="importingUSim1Contacts">Importando contatos USIM1</string>
+    <string name="importingUSim2Contacts">Importando contatos USIM2</string>
+    <string name="simlock_name">"Bloqueio SIM ME"</string>
+    <string name="simlock_ok">"OK"</string>
+    <string name="simlock_dismiss">"Descartar"</string>
+    <string name="simlock_retriesleft">"Permance: "</string>
+    <string name="pin_name">"PIN"</string>
+    <string name="pin2_name">"PIN2"</string>
+    <string name="simlock_newsim">"Novo SIM"</string>
+    <string name="simlock_nocard">"Nenhum"</string>
+    <string name="simlock_wrongcode">"Código errado."</string>
+    <string name="simlock_input4_8digits">"Digitar 4-8 dígitos."</string>
+    <string name="simlock_input8digits">"Digitar 8 dígitos."</string>
+    <string name="simlock_entersimmelock">"Digitar bloqueio SIM ME"</string>
+    <string name="simlock_for">"para"</string>
+    <string name="simlock_enterpin2code">"Digitar código PIN2"</string>
+    <string name="simlock_enterpuk2code">"Digitar código PUK2"</string>
+    <string name="simlock_enternewpin2code">"Digitar novo PIN2"</string>
+    <string name="simlock_enterconfirmpin2code">"Confirmar novo PIN2"</string>
+    <string name="simlock_enterpukcode">"Digitar código PUK"</string>
+    <string name="simlock_enternewpincode">"Digitar novo PIN"</string>
+    <string name="simlock_enterconfirmpincode">"Confirmar novo PIN"</string>
+    <string name="simlock_pinnotmatched">"Não Combina."</string>
+    <string name="simlock_unlocking">"Destravando..."</string>
+    <string name="tty_setting">"Configuração TTY"</string>
+    <string name="dual_mic_title">Redução de Ruído em Mic Duplo</string>
+    <string name="dual_mic_turnoff">Mic dplo desl</string>
+    <string name="dual_mic_turnon">Mic dplo lig</string>
+    <string name="confirm_device_info_full">Cartão SD está sem espaço, a gravação foi salva.</string>
+    <string name="confirm_save_info_saved">A gravação foi salva</string>
+
+    <!-- IP Prefix setting -->
+    <string name="ip_dial_error_toast_for_no_ip_prefix_number">Introduza primeiro o número de prefixo IP nas definições de chamada de Voz.</string>
+    <string name="ip_prefix_setting">Número de prefixo IP</string>
+    <string name="ip_prefix_setting_sum">Definições de número de prefixo IP</string>
+    <string name="enter_ip_prefix_number">Introduzir número de prefixo</string>
+    <string name="ip_prefix_edit_default_sum">Intoduzir número de prefixo para marcação por IP</string>
+    
+    <!-- 3G switch -->
+    <string name="confirm_3g_switch">Tem a certeza que deseja definir o serviço 3G para este SIM? Isto irá também definir automaticamente este SIM como SIM predefinido para chamadas de Vídeo.</string>
+    <string name="modem_switching">A mudança de SIM irá demorar aproximadamente 10 segundos. Aguarde…</string>
+    <string name="confirm_3g_switch_to_off">Tem a certeza que deseja desligar o serviço 3G? Isto irá também desligar automaticamente o serviço de chamada de Vídeo.</string>
+    <string name="service_3g_off">Desligar</string>
+    <string name="enable_3G_service">Activar 3G</string>
+    <string name="setting_for_3G_service">Serviço 3G</string>
+    
+    <string name="error_sdcard_access">"Impossível aceder ao cartão SD"</string>
+    <string name="cannot_answered_Video_Call">Não é possível atender a chamada de vídeo, porque já está a ser efectuada uma chamada de vídeo</string>
+    <string name="cannot_answered_Voice_Call">Não é possível atender a chamada de voz, porque já está a ser efectuada uma chamada de vídeo</string>
+
 </resources>

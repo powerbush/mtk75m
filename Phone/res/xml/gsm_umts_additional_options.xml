@@ -10,7 +10,6 @@
         android:defaultValue="DEFAULT"
         android:entries="@array/clir_display_values"
         android:entryValues="@array/clir_values"
-        android:enabled="false"
         android:dialogTitle="@string/labelCallerId"/>
 
     <com.android.phone.CallWaitingCheckBoxPreference

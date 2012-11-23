@@ -28,13 +28,20 @@
 
     </PreferenceScreen>
 
-<!--
-    <com.android.phone.Use2GOnlyCheckBoxPreference
+    <ListPreference
+        android:key="gsm_umts_preferred_network_mode_key"
+        android:title="@string/gsm_umts_network_preferences_title"
+        android:summary="@string/gsm_umts_network_preferneces_summary"
+        android:entries="@array/gsm_umts_network_preferences_choices"
+        android:entryValues="@array/gsm_umts_network_preferences_values"
+        android:dialogTitle="@string/gsm_umts_network_preferences_dialogtitle" />
+    
+    <!--com.android.phone.Use2GOnlyCheckBoxPreference
         android:key="button_prefer_2g_key"
         android:title="@string/prefer_2g"
         android:persistent="false"
-        android:summary="@string/prefer_2g_summary"/>
--->
+        android:summary="@string/prefer_2g_summary"/-->
+
     <PreferenceScreen
         android:key="button_carrier_sel_key"
         android:title="@string/networks"

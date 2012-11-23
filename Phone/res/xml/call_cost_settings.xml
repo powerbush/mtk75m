@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- New File, Added by jun.huang@archermind.com -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:phone="http://schemas.android.com/apk/res/com.android.phone"
+     android:title="@string/call_cost_settings">
+
+    <com.android.phone.CallCostLastPreference
+        android:key="button_last_call_cost_key"
+        android:title="@string/last_call_cost"
+        android:persistent="false"
+        android:summary="@string/disable"
+        android:singleLine="true"/>
+
+    <com.android.phone.CallCostTotalPreference
+        android:key="button_total_call_cost_key" 
+        android:title="@string/total_call_cost"
+        android:persistent="false" 
+        android:summary="@string/disable"
+        android:singleLine="true" />
+
+    <com.android.phone.CallCostMaxPreference
+        android:key="button_max_call_cost_key" 
+        android:title="@string/max_call_cost"
+        android:persistent="false" 
+        android:summary="@string/disable"
+        android:singleLine="true" />
+
+    <com.android.phone.CallCostResetPreference
+        android:key="button_reset_call_cost_key" 
+        android:title="@string/reset_call_cost"
+        android:persistent="false" 
+        android:singleLine="true" />
+
+
+    <com.android.phone.CallCostSetPpuCurrencyPreference
+        android:key="button_set_ppu_currency_key" 
+        android:title="@string/set_ppu_currency"
+        android:persistent="false" 
+        android:summary="@string/disable"
+        android:singleLine="true" />
+        
+</PreferenceScreen>
+

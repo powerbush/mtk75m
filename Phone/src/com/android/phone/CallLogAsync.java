@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ *
+ * MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -13,19 +48,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package com.android.phone;
 
+package com.android.phone;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.provider.CallLog.Calls;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.android.internal.telephony.CallerInfo;
-import com.android.internal.telephony.PhoneFactory;
+import com.mediatek.featureoption.FeatureOption;
+
 
 /**
  * Class to access the call logs database asynchronously since
@@ -102,40 +135,20 @@ public class CallLogAsync {
             this.callType = callType;
             this.timestamp = timestamp;
             this.durationInSec = (int)(durationInMillis / 1000);
-            this.videoCallFlag  = 0;
-            this.phoneId = PhoneFactory.getDefaultPhoneId();
+            this.simId = -1;  //Single Card & not support VT
+            this.vtCall = -1;
+            this.extra = false;
         }
-
-        public  AddCallArgs(Context context,
-                   CallerInfo ci,
-                   String number,
-                   int presentation,
-                   int callType,
-                   long timestamp,
-                   long durationInMillis,
-                   int videoCallFlag) {
-
-
-            this.context = context;
-            this.ci = ci;
-            this.number = number;
-            this.presentation = presentation;
-            this.callType = callType;
-            this.timestamp = timestamp;
-            this.durationInSec = (int)(durationInMillis / 1000);
-            this.videoCallFlag = videoCallFlag;
-            this.phoneId = PhoneFactory.getDefaultPhoneId();
-        }
-
+        
         public AddCallArgs(Context context,
-                           CallerInfo ci,
-                           String number,
-                           int presentation,
-                           int callType,
-                           long timestamp,
-                           long durationInMillis,
-                           int videoCallFlag,
-                           int phoneId) {
+                CallerInfo ci,
+                String number,
+                int presentation,
+                int callType,
+                long timestamp,
+                long durationInMillis,
+                int vtCall,
+                boolean extra) {
             this.context = context;
             this.ci = ci;
             this.number = number;
@@ -143,12 +156,51 @@ public class CallLogAsync {
             this.callType = callType;
             this.timestamp = timestamp;
             this.durationInSec = (int)(durationInMillis / 1000);
-            this.videoCallFlag = videoCallFlag;
-            // zhanglj add begin 2010-06-10 for add phone id to call log
-            this.phoneId = phoneId;
-            // zhanglj add end
+            this.simId = -1;   ////Single Card & support VT
+            this.vtCall = vtCall;
+            this.extra = extra;
+        } 
+        public AddCallArgs(Context context,
+                CallerInfo ci,
+                String number,
+                int presentation,
+                int callType,
+                long timestamp,
+                long durationInMillis,
+                int simId) {
+            this.context = context;
+            this.ci = ci;
+            this.number = number;
+            this.presentation = presentation;
+            this.callType = callType;
+            this.timestamp = timestamp;
+            this.durationInSec = (int)(durationInMillis / 1000);
+            this.simId = simId;   //Dual SIM Card & not support VT
+            this.vtCall = -1;
+            this.extra = false;
         }
-
+        public AddCallArgs(Context context,
+                CallerInfo ci,
+                String number,
+                int presentation,
+                int callType,
+                long timestamp,
+                long durationInMillis,
+                int simId,
+                int vtCall,
+                boolean extra) {
+            this.context = context;
+            this.ci = ci;
+            this.number = number;
+            this.presentation = presentation;
+            this.callType = callType;
+            this.timestamp = timestamp;
+            this.durationInSec = (int)(durationInMillis / 1000);
+            this.simId = simId;        //Dual SIM Card & support VT
+            this.vtCall = vtCall;
+            this.extra = extra;
+        }
+        
         // Since the members are accessed directly, we don't use the
         // mXxxx notation.
         public final Context context;
@@ -158,8 +210,9 @@ public class CallLogAsync {
         public final int callType;
         public final long timestamp;
         public final int durationInSec;
-        public final int videoCallFlag;
-        public final int phoneId;
+        public final int simId;
+        public final int vtCall;
+        public final boolean extra;
     }
 
     /**
@@ -179,16 +232,10 @@ public class CallLogAsync {
     /**
      * Non blocking version of CallLog.addCall(...)
      */
-    public AsyncTask addCall(AddCallArgs args){
-        AsyncTask act = addCall(args,-1);
-        return act;
-    }
-    
-    public AsyncTask addCall(AddCallArgs args,int msg){
+    public AsyncTask addCall(AddCallArgs args) {
         assertUiThread();
-        //return new AddCallTask().execute(args);
-        AsyncTask act = new AddCallTask(args.context,msg).execute(args);
-        return act;
+        Log.d(TAG, " AsyncTask addCall");
+        return new AddCallTask().execute(args);
     }
 
     /** Interface to retrieve the last dialed number asynchronously. */
@@ -210,32 +257,49 @@ public class CallLogAsync {
      * AsyncTask to save calls in the DB.
      */
     private class AddCallTask extends AsyncTask<AddCallArgs, Void, Uri[]> {
-        private Context mContext;
-        private int mMsg = -1;
-        public AddCallTask(Context context,int msg){
-            mContext = context;
-            mMsg = msg;
-        }
-
         @Override
         protected Uri[] doInBackground(AddCallArgs... callList) {
             int count = callList.length;
             Uri[] result = new Uri[count];
             for (int i = 0; i < count; i++) {
                 AddCallArgs c = callList[i];
+                result[i] = Calls.addCall(
+                        c.ci, c.context, c.number, c.presentation,
+                        c.callType, c.timestamp, c.durationInSec, c.simId, c.vtCall, false);
+                
+                Log.d(TAG, "Calls.addCall, number=" + c.number+" vtCall=" + c.vtCall
+                        + " presentation:" + c.presentation + " callType:" + c.callType
+                        + " timestamp:" + c.timestamp + " durationInSec:" + c.durationInSec
+                        + " simId: " + c.simId + " vtCall:" + c.vtCall);
 
-                result[i] = null;
-                try {
-                    // May block.
-                    result[i] = Calls.addCall(c.ci, c.context, c.number, c.presentation,
-                            c.callType, c.timestamp, c.durationInSec, c.videoCallFlag, c.phoneId);
-                } catch (android.database.sqlite.SQLiteDiskIOException sdioe) {
-                    Log.e(TAG, "addCall error " + sdioe.getLocalizedMessage());
-                } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "addCall error,IllegalArgumentException: " + e);
-                } catch (Exception e) {
-                    Log.e(TAG, "addCall error,Exception: " + e);
-                }
+//                if (c.simId < 0) { //single SIM
+//                    if (true == FeatureOption.MTK_VT3G324M_SUPPORT) {
+//                // May block.
+//                        Log.d(TAG, "Calls.addCall, single card, c.number="+c.number+"; vtCall="+c.vtCall);
+//                        result[i] = Calls.addCall(
+//                            c.ci, c.context, c.number, c.presentation,
+//                            c.callType, c.timestamp, c.durationInSec, c.vtCall, false);
+//                    } else {
+//                // May block.
+//                       Log.d(TAG, "Calls.addCall, single card not VT, c.number="+c.number);
+//                result[i] = Calls.addCall(
+//                    c.ci, c.context, c.number, c.presentation,
+//                    c.callType, c.timestamp, c.durationInSec);
+//                    }
+//                } else {  //dual SIM
+//                   if (true == FeatureOption.MTK_VT3G324M_SUPPORT) {
+//                       Log.d(TAG, "Calls.addCall, SimId= "+c.simId+";c.number="+c.number+"; vtCall="+c.vtCall);
+//                       result[i] = Calls.addCall(
+//                               c.ci, c.context, c.number, c.presentation,
+//                               c.callType, c.timestamp, c.durationInSec, c.simId, c.vtCall, false);
+//                       
+//                } else {
+//                       Log.d(TAG, "Calls.addCall, not VT, SimId= "+c.simId+";c.number="+c.number);
+//                result[i] = Calls.addCall(
+//                        c.ci, c.context, c.number, c.presentation,
+//                        c.callType, c.timestamp, c.durationInSec, c.simId);
+//                }
+//            }
             }
             return result;
         }
@@ -248,10 +312,6 @@ public class CallLogAsync {
             for (Uri uri : result) {
                 if (uri == null) {
                     Log.e(TAG, "Failed to write call to the log.");
-                    if(mMsg != -1){
-                        Toast.makeText(mContext, mMsg,Toast.LENGTH_LONG).show();
-                    }
-                    break;
                 }
             }
         }

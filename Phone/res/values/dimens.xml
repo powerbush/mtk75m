@@ -6,7 +6,10 @@
     <dimen name="otaactivate_layout_marginTop">10dip</dimen>
     <dimen name="otalistenprogress_layout_marginTop">5dip</dimen>
     <dimen name="otasuccessfail_layout_marginTop">10dip</dimen>
+    
+    <dimen name="ic_call_eme_button_padding">56dp</dimen>
 
-    <!-- add for inCall menu height-->
-    <dimen name="menu_height">64dip</dimen>
+    <dimen name="incall_card_name_max_length">270dip</dimen>
+    <dimen name="sim_name_border_padding_top">2dip</dimen>
+    <dimen name="sim_name_border_padding_left">3dip</dimen>
 </resources>

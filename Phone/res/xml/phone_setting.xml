@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:phone="http://schemas.android.com/apk/res/com.android.phone"
+     android:title="@string/phone_setting">
+	
+    <PreferenceScreen
+        android:key="button_ps_expand_key"
+        android:title="@string/eidt_default_message"
+        android:persistent="false">
+
+        <intent android:action="android.intent.action.MAIN"
+            android:targetPackage="com.android.phone"
+            android:targetClass="com.android.phone.MessageSetting"/>
+    </PreferenceScreen>
+
+    <CheckBoxPreference
+        android:key="edit_message_before_sending"
+        android:title="@string/edit_message_before_sending"
+        android:persistent="true"
+        />
+        
+</PreferenceScreen>

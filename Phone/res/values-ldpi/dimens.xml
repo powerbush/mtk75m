@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="menu_height">51px</dimen>
+    <dimen name="btn_grid_padding">2dp</dimen>
+    <dimen name="call_card_main_margin">0dp</dimen>
+    <dimen name="call_card_second_margin">0dp</dimen>
+    <dimen name="call_card_title_margin">-6dp</dimen>
+    <dimen name="dtmfdigits_height">56dp</dimen>
+    <dimen name="dtmfdigits_margin_top">4dp</dimen>
+    <dimen name="dtmfdigits_margin_bottom">2dp</dimen>
+    
+    <!-- added by xingping.zheng start -->
+    <dimen name="incall_btn_group_width">87dip</dimen>
+    <dimen name="incall_btn_group_height">54dip</dimen>
+    <dimen name="incall_btn_group_margin_bottom">10dip</dimen>
+    <dimen name="incall_btn_group_margin_internal">5dip</dimen>
+    <dimen name="incall_btn_group_margin_left">22dip</dimen>
+    <dimen name="incall_btn_group_margin_right">22dip</dimen>
+    <dimen name="incall_btn_group_text_size">10dip</dimen>
+    <dimen name="incall_btn_group_padding_top">1px</dimen>
+    
+    <dimen name="incall_btn_end_call_width">270dip</dimen>
+    <dimen name="incall_btn_end_call_height">40dip</dimen>
+    <dimen name="incall_btn_end_call_margin_top">10dip</dimen>
+    <dimen name="incall_btn_end_call_text_size">18dip</dimen>
+    
+    <dimen name="incall_status_height">54dip</dimen>
+    <dimen name="incall_status0_height">27dip</dimen>
+    <dimen name="incall_status_view0_margin_top">8dip</dimen>
+    <dimen name="incall_status_view1_margin_top">7dip</dimen>
+    <dimen name="incall_status_view4_margin_top">7dip</dimen>
+    <dimen name="incall_status_left_internal_margin">9dip</dimen>
+    <dimen name="incall_status_left_margin">15dip</dimen>
+    <dimen name="incall_status_right_internal_margin">8dip</dimen>
+    <dimen name="incall_status_right_margin">15dip</dimen>
+    <dimen name="incall_status_text_size0">18dip</dimen>
+    <dimen name="incall_status_text_size4">11dip</dimen>
+    
+    <dimen name="incall_card_margin_top">48dip</dimen>
+    <dimen name="incall_card_name_text_size">22dip</dimen>
+    <dimen name="incall_card_label_text_size">15dip</dimen>
+    <dimen name="incall_card_name_margin_top">4dip</dimen>
+    <dimen name="incall_card_name_margin_bottom">0dip</dimen>
+    <dimen name="incall_card_button_margin_left">13dip</dimen>
+    <dimen name="incall_card_button_margin_top">8dip</dimen>
+    
+    <dimen name="dtmf_bottom_buttons_margin_bottom">19dip</dimen>
+    <dimen name="dtmf_bottom_buttons_margin_top">19dip</dimen>
+    <dimen name="dtmf_bottom_buttons_margin_internal">12dip</dimen>
+    <dimen name="dtmf_end_button_width">120dip</dimen>
+    <dimen name="dtmf_end_button_height">39dip</dimen>
+    <dimen name="dtmf_hide_button_width">153dip</dimen>
+    <dimen name="dtmf_hide_button_height">39dip</dimen>
+    <dimen name="dtmf_dial_button_width">107dip</dimen>
+    <dimen name="dtmf_dial_button_height">50dip</dimen>
+    <dimen name="dtmf_dialpad_margin_top">55px</dimen>
+    <dimen name="dtmf_digits_margin">4dip</dimen>
+    <dimen name="dtmf_digits_height">50dip</dimen>
+    <dimen name="dtmf_digits_text_size">30sp</dimen>
+    
+    <dimen name="manage_conference_padding_top">54dip</dimen>
+    <dimen name="manage_conference_button_width">140dip</dimen>
+    <dimen name="manage_conference_button_height">39dip</dimen>
+    <dimen name="manage_conference_button_margin_bottom">19dip</dimen>
+    <dimen name="manage_conference_button_margin">14dip</dimen>
+    <dimen name="manage_conference_button_end_height">27dip</dimen>
+    <dimen name="manage_conference_button_end_width">64px</dimen>
+    <dimen name="manage_conference_button_private_width">80px</dimen>
+    
+    <dimen name="incoming_call_button_width">127dip</dimen>
+    <dimen name="incoming_call_button_height">39dip</dimen>
+    <dimen name="incoming_call_button_margin_bottom">40dip</dimen>
+    <dimen name="incoming_call_button_margin_internal">20dip</dimen>
+    <dimen name="incoming_call_button_margin">23dip</dimen>
+    <dimen name="incoming_call_slidingbar_width">273dip</dimen>
+    <dimen name="incoming_call_slidingbar_height">39dip</dimen>
+    <!-- added by xingping.zheng end -->
+</resources>

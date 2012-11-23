@@ -30,6 +30,29 @@
     <string name="recentCallsIconLabel">Call log</string>
     <!-- Title of FDN list screen -->
     <string name="fdnListLabel">FDN list</string>
+    <!-- FDN settings: error message displayed in a popup (toast) -->
+    <string name="fdn_contact_invalid">Invalid contact name or number.</string>
+    <string name="fdn_contact_name_number_invalid">Name and number can not be empty at the same time.</string>
+    <!-- FDN settings: error message displayed in a popup (toast) -->
+    <string name="fdn_contact_number_invalid">Invalid contact number.</string>
+    <string name="fdn_phone_book_busy">Phone book is busy now,please try later.</string>
+
+    <!-- Strings for Gemini Mobile Networks Settings -->
+    <!-- Gemini Mobile Networks tab activity sim1 tab tag -->
+    <string name="gemini_mobile_network_sim1_tab_tag">SIM1</string>
+    <!-- Gemini Mobile Networks tab activity sim1 tab label -->
+    <string name="gemini_mobile_network_sim1_tab_label">SIM1</string>
+    <!-- Gemini Mobile Networks tab activity sim1 tab tag -->
+    <string name="gemini_mobile_network_sim2_tab_tag">SIM2</string>
+    <!-- Gemini Mobile Networks tab activity sim1 tab label -->
+    <string name="gemini_mobile_network_sim2_tab_label">SIM2</string>
+    <!-- Strings for Gemini Intent Extra-->
+    <string name="gemini_simid">simId</string>
+    <!-- Strings for Gemini Intent Extra-->
+    <string name="sim_1">0</string>
+    <!-- Strings for Gemini Intent Extra-->
+    <string name="sim_2">1</string>
+    <!-- Strings for Gemini Intent Extra-->
 
     <!-- Call status -->
     <!-- Incoming call screen, name of "unknown" caller -->
@@ -72,7 +95,7 @@
     <!-- In-call screen: call failure reason (call denied because of current FDN setting) -->
     <string name="callFailed_fdn_only">Outgoing calls are restricted by FDN.</string>
     <!-- In-call screen: call failure reason (call denied because call barring is on) -->
-    <string name="callFailed_cb_enabled">You cannot make outgoing calls while call barring is on.</string>
+    <string name="callFailed_cb_enabled">Barred call</string>
     <!-- In-call screen: call failure reason (call denied because domain specific access control is on) -->
     <string name="callFailed_dsac_restricted">All calls are restricted by access control.</string>
     <!-- In-call screen: call failure reason (Emergency call denied because domain specific access control is on)-->
@@ -122,29 +145,33 @@
     <!-- Regular in-call menu items: -->
     <!-- In-call menu: Label for "speakerphone" menu item -->
     <string name="menu_speaker">Speaker</string>
+    <string name="menu_more">More</string>
     <!-- In-call menu: Label for "bluetooth" menu item -->
     <string name="menu_bluetooth">Bluetooth</string>
+    <!-- In-call menu: Label for "bluetooth" menu item -->
+    <string name="menu_bluetooth_on">Bluetooth on</string>
+    <!-- In-call menu: Label for "bluetooth" menu item -->
+    <string name="menu_bluetooth_off">Bluetooth off</string>
     <!-- In-call menu: Label for "mute" menu item -->
     <string name="menu_mute">Mute</string>
     <!-- In-call menu: Label for "hold" menu item -->
     <string name="menu_hold">Hold</string>
+    <!-- In-call menu: Label for "unhold" menu item -->
+    <string name="menu_unhold">Unhold</string>
     <!-- In-call menu: Label for "end call" menu item -->
-    <string name="menu_endCall">End call</string>
+    <string name="menu_endCall">End</string>
     <!-- In-call menu: Label for "swap calls" menu item -->
     <string name="menu_swapCalls">Swap calls</string>
     <!-- In-call menu: Label for "merge calls" menu item -->
     <string name="menu_mergeCalls">Merge calls</string>
-    
-    <string name="menu_phoneRecorder">Record</string>
-
     <!-- In-call menu: Label for "add call" menu item -->
     <string name="menu_addCall">Add call</string>
     <!-- In-call menu: Label for "manage conference call" menu item -->
     <string name="menu_manageConference">Manage conference call</string>
     <!-- In-call menu: Label for "show dialpad" menu item -->
-    <string name="menu_showDialpad">Show dialpad</string>
+    <string name="menu_showDialpad">Dialpad</string>
     <!-- In-call menu: Label for "hide dialpad" menu item -->
-    <string name="menu_hideDialpad">Hide dialpad</string>
+    <string name="menu_hideDialpad">Dialpad</string>
     <!-- Incoming call menu items: -->
     <!-- Incoming call menu: Label for "Hold and answer" menu item -->
     <string name="menu_answerAndHold">Hold current call\n&amp; answer</string>
@@ -162,6 +189,15 @@
     <!-- Incoming call menu: Label for "Ignore" menu item -->
     <string name="menu_ignore">Ignore</string>
 
+    <!-- Add by lei.wang@archermind.com -->
+    <!-- Disconnect Hold call menu: Label for "Disconnect hold" menu item -->
+    <string name="menu_disconnect_hold">End held</string>
+        <!-- Disconnect Active and hold call menu: Label for "Disconnect all" menu item -->
+    <string name="menu_disconnect_all">End all</string>
+        <!-- ECT menu: Label for "ECT" menu item -->
+    <string name="menu_ect">Transfer</string>
+    <!-- Add by lei.wang@archermind.com end-->
+    <string name="menu_answer_end_active">Answer, End Active</string>
     <!-- post dial -->
     <!-- In-call screen: body text of the dialog that appears when we encounter
          the "wait" character in a phone number to be dialed; this dialog asks the
@@ -253,6 +289,7 @@
     <string name="call_settings">Call settings</string>
     <!-- GSM Call settings screen, setting option name -->
     <string name="additional_gsm_call_settings">Additional settings</string>
+    <string name="call_additional_sum">Phone number and call waiting settings</string>
     <!-- GSM-only Call settings screen, setting option name-->
     <string name="sum_gsm_call_settings">Additional GSM only call settings</string>
     <!-- CDMA Call settings screen, setting option name -->
@@ -276,14 +313,40 @@
     <!-- Additional call settings screen, setting summary text when call waiting check box is clear -->
     <string name="sum_cw_disabled">During a call, notify me of incoming calls</string>
     <!-- Call forwarding settings screen, section heading -->
-    <string name="call_forwarding_settings">Call forwarding settings</string>
-    <!-- Call barring settings screen, section heading -->
-    <string name="call_barring_settings">Call barring settings</string>
+    <string name="call_forwarding_settings">Voice call forwarding settings</string>
     <!-- Call settings screen, setting option name -->
     <string name="labelCF">Call forwarding</string>
-    <!-- Call settings screen, setting option name -->
-    <string name="labelCB">Call barring settings</string>
 
+    <!-- Call settings toast, MO -->
+    <string name="mo_code_unconditional_cf_active">Call forwarding\nunconditional activated</string>
+    <string name="mo_code_some_cf_active">Call Forwarding\nOn Conditional</string>
+    <string name="mo_code_call_forwarded">Call forwarded</string>
+    <string name="mo_code_call_is_waiting">Waiting call</string>
+    <string name="mo_code_cug_call">Closed User Group</string>
+    <string name="mo_code_outgoing_calls_barred">Outgoing call barred</string>
+    <string name="mo_code_incoming_calls_barred">Incoming call barred</string>
+    <string name="mo_code_clir_suppression_rejected">Check caller ID sending service</string>
+    <string name="mo_code_call_deflected">call Call transferred</string>
+    
+    <!-- Call settings toast, MT -->
+    <string name="mt_code_forwarded_call">It is a forwarded call</string>
+    <string name="mt_code_cug_call">Closed User Group</string>
+    <string name="mt_code_call_on_hold">Call held</string>
+    <string name="mt_code_call_retrieved">Call retrieved</string>
+    <string name="mt_code_multi_party_call">Conference call</string>
+    <string name="mt_code_on_hold_call_released">Held call released</string>
+    <string name="mt_code_forward_check_received">Forward check SS message received</string>
+    <string name="mt_code_call_connecting_ect">Call transferring</string>
+    <string name="mt_code_call_connected_ect">Call transfer active</string>
+    <string name="mt_code_deflected_call">It is a deflected call</string>
+    <string name="mt_code_additional_call_forwarded">Additional incoming call forwarded</string>
+    <string name="mt_code_forwarded_cf">Call forwarded</string>    
+    <string name="mt_code_forwarded_cf_uncond">Call forwarded on unconditional</string>
+    <string name="mt_code_forwarded_cf_cond">Call forwarded on conditional</string>
+    <string name="mt_code_forwarded_cf_busy">Call busy forwarded</string>
+    <string name="mt_code_forwarded_cf_no_reply">Call forwarded on not reply</string>
+    <string name="mt_code_forwarded_cf_not_reachable">Call forwarded on not reachable</string>
+                
     <!-- Call forwarding settings screen, setting option name -->
     <string name="labelCFU">Always forward</string>
     <!-- Call forwarding dialog box, text field label -->
@@ -329,98 +392,7 @@
     <string name="sum_cfnrc_disabled">Disabled</string>
     <!-- Error message displayed after failing to disable forwarding calls when the phone is unreachable -->
     <string name="disable_cfnrc_forbidden">Your carrier does not support disabling call-forwarding when your phone is unreachable.</string>
-    <string name="network_wrong" msgid="">"Unexpected response from network"</string>
-    <string name="number_empty" msgid="">"Number is empty"</string>
-    <string name="cb_pw_error" msgid="">"Password is incorrect"</string>
-    <string name="cb_pw_correct" msgid="">"Password has been changed"</string>
-    <string name="cb_pw_no_match" msgid="">"Passwords do not match"</string>
 
-    <!-- Call barring settings screen, setting option name -->
-    <string name="labelAO">All outgoing</string>
-    <!-- Call barring dialog box, text field label -->
-    <string name="messageAO">Enter call barring password.</string>
-    <!-- Call barring settings screen, setting summary text when forwarding all calls -->
-    <string name="sum_ao_enabled_indicator">Forwarding all calls</string>
-    <!-- Call barring settings screen, setting summary text the Always forward is set -->
-    <string name="sum_ao_enabled">Enabled</string>
-    <!-- Call barring settings screen, setting summary text when Always forward is disabled -->
-    <string name="sum_ao_disabled">Disabled</string>
-    <!-- Error message displayed after failing to enable barring calls when the phone is busy -->
-    <string name="enable_ao_forbidden">Your carrier does not support enabling barring all outgoing call.</string>
-    <!-- Error message displayed after failing to disable barring calls when the phone is busy -->
-    <string name="disable_ao_forbidden">Your carrier does not support disabling barring all outgoing call.</string>
-
-    <!-- Call barring settings screen, setting option name -->
-    <string name="labelOI">Outgoing international</string>
-    <!-- Call barring dialog box, text field label -->
-    <string name="messageOI">Enter call barring password.</string>
-    <!-- Call barring settings screen, setting summary text when barring to specific number when busy -->
-    <string name="sum_oi_enabled">Enabled</string>
-    <!-- Call barring settings screen, setting summary text when barring when busy is disabled -->
-    <string name="sum_oi_disabled">Disabled</string>
-    <!-- Error message displayed after failing to enable barring calls when the phone is busy -->
-    <string name="enable_oi_forbidden">Your carrier does not support enabling barring outgoing international call.</string>
-    <!-- Error message displayed after failing to disable barring calls when the phone is busy -->
-    <string name="disable_oi_forbidden">Your carrier does not support disabling barring outgoing international call.</string>
-
-    <!-- Call barring settings screen, setting option name -->
-    <string name="labelOX">Outgoing international roaming</string>
-    <!-- Call barring dialog box, text field label -->
-    <string name="messageOX">Enter call barring password.</string>
-    <!-- Call barring settings screen, setting summary text when barring to a specific number when unanswered -->
-    <string name="sum_ox_enabled">Enabled</string>
-    <!-- Call barring settings screen, setting summary text when barring when unanswered is disabled -->
-    <string name="sum_ox_disabled">Disabled</string>
-    <!-- Error message displayed after failing to enable barring calls when the phone is busy -->
-    <string name="enable_ox_forbidden">Your carrier does not support enabling barring outgoing international roaming call.</string>
-    <!-- Error message displayed after failing to disable barring calls when the phone is busy -->
-    <string name="disable_ox_forbidden">Your carrier does not support disabling barring outgoing international roaming call.</string>
-
-    <!-- Call barring settings screen, setting option name -->
-    <string name="labelAI">All incoming</string>
-    <!-- Call barring dialog box, text field label -->
-    <string name="messageAI">Enter call barring password.</string>
-    <!-- Call barring settings screen, setting summary text when barring to a specific number when unreachable-->
-    <string name="sum_ai_enabled">Enabled</string>
-    <!-- Call barring settings screen, setting summary text when barring when unreachable is disabled -->
-    <string name="sum_ai_disabled">Disabled</string>
-    <!-- Error message displayed after failing to enable barring calls when the phone is busy -->
-    <string name="enable_ai_forbidden">Your carrier does not support enabling barring all incoming call.</string>
-    <!-- Error message displayed after failing to disable barring calls when the phone is busy -->
-    <string name="disable_ai_forbidden">Your carrier does not support disabling barring all incoming call.</string>
-
-    <!-- Call barring settings screen, setting option name -->
-    <string name="labelIR">Incoming calls when roaming</string>
-    <!-- Call barring dialog box, text field label -->
-    <string name="messageIR">Enter call barring password.</string>
-    <!-- Call barring settings screen, setting summary text when barring to a specific number when unreachable-->
-    <string name="sum_ir_enabled">Enabled</string>
-    <!-- Call barring settings screen, setting summary text when barring when unreachable is disabled -->
-    <string name="sum_ir_disabled">Disabled</string>
-    <!-- Error message displayed after failing to enable barring calls when the phone is busy -->
-    <string name="enable_ir_forbidden">Your carrier does not support enabling barring incoming calls when roaming call.</string>
-    <!-- Error message displayed after failing to disable barring calls when the phone is busy -->
-    <string name="disable_ir_forbidden">Your carrier does not support disabling barring incoming calls when roaming call.</string>
-    
-    <!-- Call barring settings screen, setting option name -->
-    <string name="labelAB">Deactivate all</string>
-    <!-- Call barring dialog box, text field label -->
-    <string name="messageAB">Enter call barring password.</string>
-    <!-- Call barring settings screen, setting summary text when barring to a specific number when unreachable-->
-    <string name="sum_ab_enabled">Enabled</string>
-    <!-- Call barring settings screen, setting summary text when barring when unreachable is disabled -->
-    <string name="sum_ab_disabled">Disabled</string>
-    <!-- Error message displayed after failing to enable barring calls when the phone is busy -->
-    <string name="enable_ab_forbidden">Your carrier does not support deactivating all.</string>
-    <!-- Error message displayed after failing to disable barring calls when the phone is busy -->
-    <string name="disable_ab_forbidden">Your carrier does not support activating all.</string>
-
-    <!-- Call barring settings screen, setting option name -->
-    <string name="labelChgPwd">Change password</string>
-    <string name="DlgChgPwd_oldpwd">Enter call barring password.</string>
-    <string name="DlgChgPwd_newpwd_first">Enter new password</string>
-    <string name="DlgChgPwd_newpwd_last">Confirm new password</string>
-    
     <!-- Title of the progress dialog displayed while updating Call settings -->
     <string name="updating_title">Call settings</string>
     <!-- Title of the alert dialog displayed if an error occurs while updating Call settings -->
@@ -484,17 +456,12 @@
     <string name="sum_voicemail_choose_provider">Choose voicemail service</string>
     <!-- Call settings screen, "Voicemail" screen, default option - My Carrier -->
     <string name="voicemail_default">My carrier</string>
-
+    
     <!-- networks setting strings -->
     <!-- Mobile network settings screen title -->
     <string name="mobile_networks">Mobile network settings</string>
-     <string name="mobile_networks_sim1">SIM1</string>
-     <string name="mobile_networks_sim2">SIM2</string>
-     <string name="mobile_networks_other">Other</string>
     <!-- Available networks screen title/heading -->
     <string name="label_available">Available networks</string>
-     <string name="label_available_sim1">SIM1 Available networks</string>
-     <string name="label_available_sim2">SIM2 Available networks</string>
     <!-- Mobile network settings screen, toast when searching for available networks -->
     <string name="load_networks_progress">Searching\u2026</string>
     <!-- Available networks screen, text when no networks are found -->
@@ -524,27 +491,24 @@
     <string name="preferred_network_mode_summary">Change the network operating mode</string>
     <string name="preferred_network_mode_dialogtitle">Preferred network mode</string>
     <string-array name="preferred_network_mode_choices">
-        <!-- <item>Global</item> -->
-        <!-- <item>EvDo only</item> -->
-        <!-- <item>CDMA w/o EvDo</item> -->
-        <!-- <item>CDMA / EvDo auto</item> -->
-        <!-- <item>GSM / WCDMA auto</item> -->
-        <!-- <item>WCDMA only</item> -->
-        <!-- <item>GSM only</item> -->
-        <!-- <item>GSM / WCDMA preferred</item> -->
-        <item>TD-SCDMA only</item>
+        <item>Global</item>
+        <item>EvDo only</item>
+        <item>CDMA w/o EvDo</item>
+        <item>CDMA / EvDo auto</item>
+        <item>GSM / WCDMA auto</item>
+        <item>WCDMA only</item>
         <item>GSM only</item>
-        <item>Auto</item>
+        <item>GSM / WCDMA preferred</item>
     </string-array>
     <string-array name="preferred_network_mode_values">
-        <!-- <item>"7"</item> -->
-        <!-- <item>"6"</item> -->
-        <!-- <item>"5"</item> -->
-        <!-- <item>"4"</item> -->
-        <!-- <item>"3"</item> -->
-        <item>"15"</item>
-        <item>"13"</item>
+        <item>"7"</item>
+        <item>"6"</item>
+        <item>"5"</item>
+        <item>"4"</item>
+        <item>"3"</item>
         <item>"2"</item>
+        <item>"1"</item>
+        <item>"0"</item>
     </string-array>
     <!-- Mobile network settings screen, data enabling checkbox name -->
     <string name="data_enabled">Data enabled</string>
@@ -567,10 +531,13 @@
 
     <!-- Screen option on the mobile network settings to go into data usage settings -->
     <string name="throttle_data_usage">Data usage</string>
+    <string name="reset">Reset</string>
+    <string name="reset_alert">Are you sure you want to clear the data usage amount?</string>
     <!-- Title for the data usage settings screen -->
     <string name="throttle_settings_title">Carrier data policy</string>
     <!-- Data usage settings screen option for checking the current usage -->
     <string name="throttle_current_usage">Data used in current period</string>
+    <string name="reset_data_usage">Reset data amount</string>
     <!-- Data usage settings screen option for time frame-->
     <string name="throttle_time_frame">Data use period</string>
     <!-- Data usage settings screen option for throttling rate-->
@@ -598,30 +565,13 @@
     <string name="enable_disable_cell_bc_sms">Cell Broadcast SMS</string>
     <string name="cell_bc_sms_enable">Cell Broadcast SMS enabled</string>
     <string name="cell_bc_sms_disable">Cell Broadcast SMS disabled</string>
+    <string name="sum_cell_broadcast">Cell broadcast settings</string>
+    <string name="sum_cell_broadcast_control_on">Enable cell broadcast</string>
+    <string name="sum_cell_broadcast_control_off">Disable cell broadcast</string>
+    <string name="sum_cell_broadcast_setting">Language and channel setting for cell broadcast</string>
 
     <string name="cb_sms_settings">Cell Broadcast SMS settings</string>
 
-
-    <string name="channel_list">Channel List</string>
-    <string name="refreshing">Refreshing ...</string>
-    <string name="channel_name">Channel name</string>
-    <string name="channel_number">Channel number</string>
-    <string name="info_input_channel_number">Please enter channel number</string>
-    <string name="info_input_channel_number_num">Please enter numbers only</string>
-    <string name="menu_add_channel">Add channel </string>
-    <string name="text_mode">Text mode </string>
-    <string name="pdu_mode">Pdu mode </string>
-    <string name="get_cb_config">Get CB config </string>
-    <string name="menu_add_address_to_contacts">Add <xliff:g id="name">%s</xliff:g> to Contacts</string>
-    <string name="edit">Edit</string>
-   
-    <string name="menu_delete_channel">Delete all</string>
-    <string name="menu_delete_sigle_channel">Delete</string>
-    <!-- Text to be used for negative response button in dialog boxes -->
-    <string name="no">Cancel</string>
-    <string name="confirm_dialog_title">Delete</string>
-     <!-- Delete message confirmation dialog message -->
-    <string name="confirm_delete_message">The message will be deleted.</string>
     <string name="enable_disable_emergency_broadcast">Emergency Broadcast</string>
     <string name="emergency_broadcast_enable">Emergency Broadcast enabled</string>
     <string name="emergency_broadcast_disable">Emergency Broadcast disabled</string>
@@ -655,24 +605,8 @@
     <string name="international_enable">International news enabled</string>
     <string name="international_disable">International news disabled</string>
 
-    <string name="list_language_title">Language setting</string>
+    <string name="list_language_title">Language</string>
     <string name="list_language_summary">Select the news language</string>
-       <!-- Cell broadcast SMS strings -->
-   
-
-    <!-- button for broadcast ; displays in conversation list -->
-    <string name="broadcast">Cell Broadcast SMS</string>
-    <!-- button for broadcast ; displays in conversation list -->
-    <string name="menu_cellbroadcastsms">Cell Broadcast</string>
-
-    <string name="language_eng">English</string>
-    <string name="language_fren">French</string>
-    <string name="language_spanish">Spanish</string>
-    <string name="language_japanese">Japanese</string>
-    <string name="language_korean">Korean</string>
-    <string name="language_chinese">Chinese</string>
-    <string name="language_hebrew">Hebrew</string>
-    <string name="same_setting">Please reset channel number,this is same with channel name </string>
     <string-array name="list_language_entries">
         <item>English</item>
         <item>French</item>
@@ -740,22 +674,31 @@
     <string name="enable_disable_multi_category">Multi-category</string>
     <string name="multi_category_enable">Multi-category enabled</string>
     <string name="multi_category_disable">Multi-category disabled</string>
-    <string name="cell_broadcast_empty">No channel information !</string>
+
     <!-- GSM/UMTS Options strings -->
-    <string name="gsm_umts_network_preferences_title">GSM/UMTS Network Preferences</string>
+    <string name="gsm_umts_network_preferences_title">Network Mode</string>
     <string name="gsm_umts_network_preferneces_summary">Not implemented yet! </string>
-    <string name="gsm_umts_network_preferences_dialogtitle">GSM/UMTS network preferences</string>
+    <string name="gsm_umts_network_preferences_dialogtitle">Network Mode</string>
     <string-array name="gsm_umts_network_preferences_choices">
         <item>GSM/WCDMA (auto mode)</item>
         <item>WCDMA only</item>
         <item>GSM only</item>
-        <item>GSM/WCDA (WCDMA preferred)</item>
     </string-array>
     <string-array name="gsm_umts_network_preferences_values">
         <item>"0"</item>
-        <item>"1"</item>
         <item>"2"</item>
-        <item>"3"</item>
+        <item>"1"</item>
+        <!--<item>"3"</item>-->
+    </string-array>
+    
+    <string name="umts_preferred_network_mode_dialogtitle">Network mode</string>
+    <string-array name="umts_network_preferences_choices">
+        <item>GSM/WCDMA (auto mode)</item>
+        <item>WCDMA only</item>
+    </string-array>
+    <string-array name="umts_network_preferences_values">
+        <item>"0"</item>
+        <item>"2"</item>
     </string-array>
 
     <!-- Mobile network settings screen, setting option name -->
@@ -814,10 +757,10 @@
         <item>"1"</item>
         <item>"2"</item>
     </string-array>
-    <string name="cdma_subscription_title">CDMA Subscription</string>
-    <string name="cdma_subscription_summary">Change between RUIM/SIM and NV</string>
-    <string name="cdma_subscription_dialogtitle">subscription</string>
-    <string-array name="cdma_subscription_choices">
+    <string name="subscription_title">CDMA Subscription TEST</string>
+    <string name="subscription_summary">Change between RUIM/SIM and NV</string>
+    <string name="subscription_dialogtitle">subscription</string>
+    <string-array name="subscription_choices">
         <item>RUIM/SIM</item>
         <item>NV</item>
     </string-array>
@@ -851,7 +794,7 @@
     <!-- Call settings screen, setting summary text -->
     <string name="sum_fdn">Manage Fixed Dialing Numbers</string>
     <!-- Call settings, FDN screen, setting option name -->
-    <string name="sum_fdn_change_pin">Change PIN for FDN access</string>
+    <string name="sum_fdn_change_pin">Change PIN2 for FDN access</string>
     <!-- Call settings, FDN screen, setting option name -->
     <string name="sum_fdn_manage_list">Manage phone number list</string>
     <string name="voice_privacy">Voice Privacy</string>
@@ -898,13 +841,18 @@
     <!-- "Delete FDN Contact" screen: status message displayed in a popup (toast) -->
     <string name="fdn_contact_deleted">Fixed dialing number deleted.</string>
     <!-- FDN settings: error message displayed in a popup (toast) -->
-    <string name="pin2_invalid">FDN not updated: you entered an incorrect PIN.</string>
+    <string name="pin2_invalid">Invalid PIN2!</string>
     <!-- FDN settings: error message displayed in a popup (toast) -->
     <string name="fdn_invalid_number">FDN not updated: number cannot exceed 20 digits.</string>
+    <!-- "Add FDN Contact"  when contact is full  -->
+    <string name="fdn_contact_max">Contact is full</string>
 
     <!-- ADN related strings -->
     <!-- Placeholder text displayed while loading the list of SIM contacts -->
+    <string name="simContacts_emptyLoading_ex">Reading contacts from %s\u2026</string>
     <string name="simContacts_emptyLoading">Reading from SIM card\u2026</string>
+    <string name="sim1Contacts_emptyLoading">Reading contacts from SIM1\u2026</string>
+    <string name="sim2Contacts_emptyLoading">Reading contacts from SIM2\u2026</string>    
     <!-- Call settings, string that appears on FDN contact list when there are no contacts on the SIM. -->
     <string name="simContacts_empty">No contacts on your SIM card.</string>
     <!-- Call settings: title of the dialog that lets you select contacts from the SIM. -->
@@ -945,7 +893,19 @@
     <string name="pin_changed">SIM PIN changed successfully</string>
     <!-- SIM PIN screen: error message displayed in a dialog -->
     <string name="puk_requested">Password incorrect, SIM is locked! PUK2 requested.</string>
+    <string name="one_retry_left">1 retry left</string>
 
+    <string name="retries_left"><xliff:g id="number">%d</xliff:g> retries left</string>
+    
+    <string name="pin2_unblocked">PIN2 unblock succeeded</string>
+    
+    <string name="unblock_pin2">Unblock PIN2</string>
+
+    <string name="sim_permanently_locked">Entering incorrect PUK2 code more than 10 times,SIM card has been permanently locked</string>
+    
+    <string name="pin_length_indicate">(4-8 digits)</string>
+    
+    <string name="puk_length_indicate">(8 digits)</string>
     <!-- SIM PIN2 strings -->
     <!-- SIM PIN2 screen: label for PIN entry widget -->
     <string name="enter_pin2_text">PIN2</string>
@@ -962,13 +922,9 @@
     <!-- SIM PIN2 screen: error message -->
     <string name="mismatchPin2">The PIN2s you entered do not match. Please try again.</string>
     <!-- SIM PIN2 screen: error message -->
-    <string name="invalidPin2">Type a PIN2 that is 4 to 8 numbers.</string>
+    <string name="invalidPin2">Type a PIN2 that is 4 to 8 digits.</string>
     <!-- SIM PIN2 screen: error message -->
-    <string name="promptWordOne">Remain </string>
-     <!-- SIM PIN2 screen: error message -->
-    <string name="promptWordTwo"> time(s)</string>
-    <!-- SIM PIN2 screen: error message -->
-    <string name="invalidPuk2">Type a PUK2 that is 8 numbers.</string>
+    <string name="invalidPuk2">Type a PUK2 that is 8 digits.</string>
     <!-- SIM PIN2 screen: status message displayed in a popup (toast) -->
     <string name="pin2_changed">PIN2 changed successfully</string>
     <!-- SIM PIN2 screen: label for PUK2 entry widget -->
@@ -1011,10 +967,6 @@
     <!-- Card titles -->
     <!-- In-call screen: status label for a call in the "dialing" state -->
     <string name="card_title_dialing">Dialing</string>
-    <!-- In-call screen: status label for a video call in the "dialing" state -->
-    <string name="card_title_dialing_video">Dialing video</string>
-    <!-- In-call screen: status label for a video call in the "alerting" state -->
-    <string name="card_title_alerting_video">User alerting</string>
     <!-- In-call screen: status label for a re-dialing call -->
     <string name="card_title_redialing">Retrying</string>
     <!-- In-call screen: status label for a call in progress -->
@@ -1023,8 +975,6 @@
     <string name="card_title_conf_call">Conference call</string>
     <!-- In-call screen: status label for an incoming call -->
     <string name="card_title_incoming_call">Incoming call</string>
-    <!-- In-call screen: status label for an incoming video call -->
-    <string name="card_title_incoming_video_call">Incoming video call</string>
     <!-- In-call screen: status label for an cdma call waiting -->
     <string name="card_title_cdma_call_waiting">Cdma callwaiting </string>
     <!-- In-call screen: status label displayed briefly after a call ends -->
@@ -1057,7 +1007,9 @@
     <!-- The "label" of the in-call Notification for an incoming ringing call -->
     <string name="notification_incoming_call">Incoming call</string>
     <!-- Label for the "Voicemail" notification item, when expanded. -->
+    <string name="notification_voicemail">Voicemail</string>
     <string name="notification_voicemail_title">New voicemail</string>
+    <string name="voice_mail_dialog_text">You have new voicemail from <xliff:g id="voicemail_sim_display_name">%s</xliff:g>. Do you want to get them now?</string>
     <!-- Label for the expanded "Voicemail" notification item,
          including a count of messages. -->
     <string name="notification_voicemail_title_count">New voicemail (<xliff:g id="count">%d</xliff:g>)</string>
@@ -1102,14 +1054,9 @@
     <string name="incall_error_supp_service_reject">Unable to reject call.</string>
     <!-- In-call screen: message displayed in an error dialog -->
     <string name="incall_error_supp_service_hangup">Unable to release call(s).</string>
-    <!-- In-call screen: message displayed in an error dialog -->
-    <string name="incall_error_dialvt_in_2gcall">A voicecall is runing already, we could not place a videocall!</string>
-    <!-- In-call screen: message displayed in an error dialog -->
-    <string name="incall_error_dialvt_in_3gcall">A videocall is runing already, we could not place a videocall!</string>
-    <!-- In-call screen: message displayed in an error dialog -->
-    <string name="incall_error_dial_in_3gcall">A videocall is runing already, we could not place a voicecall!</string>
-    <!-- In-call screen: message displayed in an error dialog -->
-    <string name="incall_error_aireplane_mode_on">To place a call, first turn off Airplane mode</string>
+
+    <!-- In-call screen: "call type" indication for a SIP call [CHAR LIMIT=30]  -->
+    <string name="incall_call_type_label_sip">Internet call</string>
 
     <!-- Dialog title for the "radio enable" UI for emergency calls -->
     <string name="emergency_enable_radio_dialog_title">Emergency call</string>
@@ -1180,6 +1127,8 @@
     <string name="importAllSimEntries">Import all</string>
     <!-- SIM Contacts: status message displayed while importing card -->
     <string name="importingSimContacts">Importing SIM contacts</string>
+    <string name="importingSim1Contacts">Importing SIM1 contacts</string>
+    <string name="importingSim2Contacts">Importing SIM2 contacts</string>
     <!-- Import a single contact entry from contacts to the SIM card -->
     <string name="importToFDNfromContacts">Import from contacts</string>
 
@@ -1190,7 +1139,7 @@
     <!-- Service option entries.  -->
     <string-array name="tty_mode_entries">
         <item>TTY Off</item>
-        <item>TTY Full</item>
+        <item>TTY Device</item>
         <item>TTY HCO</item>
         <item>TTY VCO</item>
     </string-array>
@@ -1370,164 +1319,7 @@
     <string name="slide_to_answer_hint">Answer</string>
     <!-- Incoming call hint shown on tab (must be kept very short): decline incoming call -->
     <string name="slide_to_decline_hint">Decline</string>
-    <string name="sim_state_not_changes">Sim card enable/disable state have no changes.</string>
-    <string name="sim_state_set_timeout">Sim card Status Setting timeout.</string>
-    <string name="data_enable_set">Data connection enable Setting</string>
-    <string name="data_enable_set_timeout">Data connection enable Setting Timeout.</string>
-    <string name="selectsim_settings_label">Standby Sim card Settings</string>
-    <string name="cb_error">Call barring rejected</string>
 
-
-
-
-
-
-
-
-<string name="video_camera_switch">Switch Camera</string>
-<string name="video_view_switch">Switch View</string>
-<string name="video_camera_close">Close Camera</string>
-<string name="video_camera_open">Open Camera</string>
-<string name="video_speaker_close">Close Speaker</string>
-<string name="video_speaker_open">Open Speaker</string>
-<string name="video_bluetooth_close">Close Bluetooth</string>
-<string name="video_bluetooth_open">Open Bluetooth</string>
-<string name="video_mute">Mute</string>
-<string name="video_unmute">Unmute</string>
-<string name="video_decline">Decline</string>
-<string name="video_falldown">Voice only</string>
-<string name="video_record">Record ...</string>
-<string name="video_start_record_both">Start Record Both</string>
-<string name="video_start_record_audio">Start Record Audio</string>
-<string name="video_stop_record">Stop Record</string>
-
-<!-- label shown when there is no sd card available to record to -->
-<string name="insert_sd_card">Please insert an SD card</string>
-<!-- label shown when there is not enough space to record something -->
-<string name="storage_is_full">Storage is full</string>
-
-<string name="video_btn_dialer">Keypad</string>
-<string name="video_btn_hangup">Hang Up</string>
-<string name="video_btn_answer">Answer</string>
-<string name="video_btn_decline">Decline</string>
-<string name="video_label_name">Name:</string>
-<string name="video_label_time">Call Time:</string>
-<string name="video_label_status">Status:</string>
-<string name="video_label_begintime">Begin Time:</string>
-<string name="video_dialog_incoming">Incoming call, accept or not?</string>
-<string name="video_dialog_incoming_accept">Accept</string>
-<string name="video_dialog_incoming_tovoice">Switch to voice</string>
-<string name="video_dialog_incoming_hangup">Hangup</string>
-
-<!-- Label for the "VideoPhone settings" screen in the Settings UI -->
-<string name="videophonesetting_label">VideoPhone Settings</string>
-
-<string name="videophone_setting">VideoPhone</string>
-<string name="videophone_setting_title">VideoPhone General Settings</string>
-<string name="videophone_setting_summary">Set options for videophone display, layout and etc.</string>
-<string name="videophone_callforward_setting_title">VideoPhone forward Settings</string>
-<string name="videophone_callbarring_setting_title">VideoPhone barring Settings</string>
-
-<string name="videophone_setting_title_static_image">Display Static Image</string>
-<string name="videophone_setting_title_static_image_set">Static Image Set</string>
-<string name="videophone_setting_title_remote_static_image_set">Remote_Static Image Set</string>
-<string name="videophone_setting_title_local_static_image_set">Local_Static Image Set</string>
-<string name="videophone_setting_title_delete_photo">Static Image Delete</string>
-<string name="videophone_setting_title_take_photo" >Take photo</string>
-<string name="videophone_setting_title_pick_photo">Select photo from Gallery</string>
-<string name="videophone_setting_photoPickerNotFoundText">No pictures are available on the phone.</string>
-<string name="videophone_setting_summary_static_image">Display staic image when remote camera closed</string>
-<string name="videophone_setting_title_layout">Video screen preferences</string>
-<string name="videophone_layout_my_small">My video small</string>
-<string name="videophone_layout_my_large">My video large</string>
-<string name="videophone_setting_default_image">Default Image</string>
-<string name="videophone_setting_picture_oversize">"Picture size cann't exceed 640 * 480"</string>
-<string name="videophone_setting_picture_widthtoosmall">"Picture width cann't less than 64"</string>
-<string name="videophone_setting_picture_heightoosmall">"Picture heigh cann't less than 64"</string>
-<string name="videophone_setting_picture_notjpg">"Only supoort jpg format picture"</string>
-
-<string name="videophone_setting_title_fallback">Voice call back request</string>
-<string name="videophone_fallback_always_ask">Ask me every time</string>
-<string name="videophone_fallback_always_callback">Always call back</string>
-<string name="videophone_fallback_never_callback">Never call back</string>
-
-<string name="videophone_setting_dialog_title_layout">Video preferences</string>
-<string name="videophone_setting_dialog_title_fallback">Voice call back request</string>
-
-<string name="videophone_setting_layout_defaultvalue">1</string>
-<string name="videophone_setting_fallback_defaultvalue">1</string>
-
-<string name="videophone_fallback_title">VideoPhone FallBack</string>
-<string name="videophone_never_fallback">Receiver request voice call. Give up redial automatically.</string>
-<string name="videophone_always_fallback">Receiver request voice call. Redial voice call automatically.</string>
-<string name="videophone_notin3g_never_fallback">"Current network doesn't support video call. Give up redial automatically."</string>
-<string name="videophone_notin3g_always_fallback">"Current network doesn't support video call. Redial voice call automatically."</string>
-<string name="videophone_fallback_menu_videocall">Video Call</string>
-<string name="videophone_fallback_menu_voicecall">Voice Call</string>
-<string name="videophone_fallback_menu_cancel">Cancel</string>
-<string name="videophone_fallback_question">What do you want to do?</string>
-
-<string name="videophone_failcause_1000">"Last video call hasn't normally ended, please retry after a while"</string>
-<string name="videophone_failcause_1">Unassigned number</string>
-<string name="videophone_failcause_3">User is unavailable</string>
-<string name="videophone_failcause_8">Call bared</string>
-<string name="videophone_failcause_17">User busy</string>
-<string name="videophone_failcause_19">"User you dialed isn't responding"</string>
-<string name="videophone_failcause_27">User is power off</string>
-<string name="videophone_failcause_34">Connection disconnected</string>
-<string name="videophone_failcause_63">Roaming call barred</string>
-<string name="videophone_failcause_79">VT unsupported by the other</string>
-<string name="videophone_failcause_default">User is unavailable</string>
-<string name="videophone_failcause_47">Sorry, video call unavailable</string>
-<string name="videophone_failcause_57">"The other side hasn't start the VT service"</string>
-<string name="videophone_failcause_58">VT unsupported by the other</string>
-<string name="videophone_failcause_88">User chooses voice call</string>
-<string name="videophone_failcause_minus_1">3G service not available</string>
-
-<string name="videophone_incoming_prompt">Incoming videocall</string>
-
-<string name="brightness">Screen Brightness</string>
-<string name="camera_brightness">Camera Brightness</string>
-<string name="camera_contrast">Camera Contrast</string>
-
-<string name="prompt_remotecamera_close">Remote camera is closed</string>
-<string name="prompt_remotecamera_open">Remote camera is opened</string>
-<string name="sutstitute_not_exist">Substitute picture does not exist</string>
-<string name="prompt_picture_format_error">"Substitute picture isn't jpeg, restore to default picture"</string>
-<string name="prompt_wait_voicecall">Please wait for voice call</string>
-<string name="prompt_record_finish">Recorder file has been save to </string>
-<string name="prompt_camera_fail">Open camera fail</string>
-<string name="prompt_no_freespace">Free space is no more than 500kb now, recording will be stopped.</string>
-
-    <!-- the name under which recordings will be visible in the media database is formatted like this --> 
-    <string name="audio_db_title_format"><xliff:g id="format">yyyy-MM-dd HH:mm:ss</xliff:g></string>
-    <!-- all recordings will show up in the media database with this 'artist' name -->
-    <string name="audio_db_artist_name">Your recordings</string>
-    <!-- all recordings will show up in the media database with this 'album' name -->
-    <string name="audio_db_album_name">Audio recordings</string>
-    <!-- all recordings will show up in the media database in a playlist with this name -->
-    <string name="audio_db_playlist_name">My recordings</string>
-    
-    <!-- application name and title of error dialogs-->
-    <string name="app_name">Phone App</string>
-    <!-- shown as the message in a dialog when the recording could not be added to the media database -->
-    <string name="error_mediadb_new_record">Unable to save recorded audio</string>
-    
-	<!-- Label for the Message Reject -->
-	<string name="hangup_reply_message_title">Message Reject</string>
-    	<string name="hangup_reply_message">Reply message Hangup</string>
-	<string name="hangup_reply_message_tip">when you click Incomming UI, will auto send a message to who call you.</string>
-
-	<string name="edit_message_content_for_hangup">Edit message content</string>
-	<string name="edit_message_content_introdution">Edit message content and point special person</string>
-	
-	<string name="label_message_reject">Content of message for hangup</string>
-	<string name="tip_input_content">You have no set message content</string>
-	<string name="label_button_edit">Edit</string>
-	<string name="label_button_ok">Ok</string>
-	<string name="label_button_add_special_reply">Add special number to reply</string>
-	<string name="reply_message_default">I am busy, call you a later!</string>
-	<string name="title_message_reply_for_hangup">Edit Message content</string>
     <!-- Use this as a default to describe the contact photo; currently for screen readers through accessibility. -->
     <string name="contactPhoto">contact photo</string>
     <!-- Use this to describe the separate conference call button; currently for screen readers through accessibility. -->
@@ -1535,7 +1327,6 @@
     <!--  Use this to describe the select contact button in EditPhoneNumberPreference; currently for screen readers through accessibility. -->
     <string name="selectContact">select contact</string>
 
-    <string name="standby_select">Standby power selection</string>
 
     <!-- Start of SIP related strings defined from here. -->
 
@@ -1555,6 +1346,7 @@
     <string name="sip_call_options">Configure call options</string>
     <!-- Title for the dialog of selecting the way we handle an outgoing call. [CHAR LIMIT=NONE] -->
     <string name="sip_call_options_title">Use Internet calling</string>
+    <string name="sip_call_options_title_single_sim">Internet calling options</string>
     <!-- Title for the dialog of selecting the way we handle an outgoing call (Wi-Fi only). [CHAR LIMIT=NONE] -->
     <string name="sip_call_options_wifi_only_title">Use Internet calling (Wi-Fi only)</string>
 
@@ -1727,15 +1519,17 @@
     <string name="no_wifi_available">You must be connected to a Wi-Fi network for Internet calls (use the Wireless &amp; Network settings)</string>
     <!-- Title of the alert dialog to notify user that Internet call is not supported. [CHAR LIMIT=40] -->
     <string name="no_voip">Internet calling not supported</string>
+    <string name="no_voip_vt">Internet calling not support video telephony currently.</string>
+    <string name="no_voip_vt_title">Alert</string>
 
     <!-- Do not translate the following strings. Used for the Internet call options. Need to be in-sync with Settings.System.SIP_ strings. -->
     <string translatable="false" name="sip_always">SIP_ALWAYS</string>
     <string translatable="false" name="sip_address_only">SIP_ADDRESS_ONLY</string>
     <string translatable="false" name="sip_ask_me_each_time">SIP_ASK_ME_EACH_TIME</string>
 
-    <!-- Do not translate the following strings. Used for SIP send-keepalive option values -->
-    <string translatable="false" name="sip_system_decide">Automatic</string>
-    <string translatable="false" name="sip_always_send_keepalive">Always send</string>
+    <!-- Used for SIP send-keepalive option summary and values -->
+    <string name="sip_system_decide">Automatic</string>
+    <string name="sip_always_send_keepalive">Always send</string>
 
     <!-- Do not translate the following strings. Used for the preference keys -->
     <string translatable="false" name="domain_address">SipDomain</string>
@@ -1751,101 +1545,366 @@
     <string translatable="false" name="advanced_settings_container">advanced settings container</string>
     <string translatable="false" name="auth_username">AuthUserName</string>
     <!-- End of SIP settings related strings -->
-    <string name="send_message">Reject call with message</string>
 
-    <string name="menu_endbgcall">End background call</string>
-    <string name="menu_endallcalls">End all calls</string>
-    <!-- add by liguxiang 10-25-11 for NEWMS00132670 && NEWMS00132673 end-->
-    <!-- lino add for NEWMS00139449 begin 2011-11-11 begin -->
-    <string name="adn_full">ADN is full</string>
-    <!-- lino add for NEWMS00139449 begin 2011-11-11 end -->
+<string name="lable_call_barring">Call barring </string>
+	<string name="lable_all_outgoing">All outgoing calls</string>
+	<string name="lable_all_outgoing_international">International outgoing calls</string>
+	<string name="lable_all_out_except">International outgoing calls except to home PLMN</string>
+	<string name="lable_all_incoming">All incoming calls</string>
+	<string name="lable_incoming_calls_except">Incoming calls while roaming</string>
+	<string name="deactivate_all">Cancel all</string>
+	<string name="change_password">Change barring password</string>
+	<string name="call_barring_sum">Voice call barring settings</string>
 
-    <!-- add by niezhong 12-06-11 begin -->
-    <string name="china_mobile_provider">CHINA MOBILE</string>
-    <string name="chn_cugsm_provider">CHN-CUGSM</string>
-    <string name="network_inhibit">FORBIDDEN</string>
-    <string name="network_unknown">UNKNOWN</string>
-    <!-- add by niezhong 12-06-11 end -->
+    <string name="start_record">Start recording</string>
+    <string name="stop_record">Stop recording</string>
+    <string name="str_db_playlist_name">My recordings</string>  
+    <string name="alert_device_error">Error occurred on audio device</string>
+    <string name="btn_confirminfo_title">Confirm information</string>
+    <string name="btn_Alertinfo_title">Alert information</string>
+    <string name="str_alertinfo_return">OK</string>
+    <string name="str_confirminfo_save">Save</string>
+    <string name="str_confirminfo_return">Discard</string>
+    <string name="ext_media_badremoval_notification_title">SD card unexpectedly removed</string>
 
-    <string name="disk_full">"Disk is full.Can not add Call logs"</string>
-    <string name="add_calllog_error">"Can not add Call logs!Internal error or Disk is full."</string>
+    <string translatable="false" name="lable_voice">VOICE</string>
+    <string translatable="false" name="lable_data">DATA</string>
+    <string translatable="false" name="lable_fax">FAX</string>
+    <string translatable="false" name="lable_sms">SMS</string>
+    <string translatable="false" name="lable_data_sync">DATA-SYNC</string>
+    <string translatable="false" name="lable_data_async">DATA-ASYNC</string>
+    <string translatable="false" name="lable_packet">PACKET</string>
+    <string translatable="false" name="lable_pad">PAD</string>
+	
+	<!-- Call barring settings screen, setting option name -->
+    <string name="lable_disable">Disabled</string>
+    <string name="lable_enable">Enabled</string>
+	<string name="old_password_label">Old password(4 numbers)</string>
+	<string name="new_password_label">New password(4 numbers)</string>
+	<string name="invalid_password">Type a password that is 4 numbers.</string>
+	<string name="confirm_password_label">Confirm new password</string>
+	<string name="mismatch_password">The password you entered do not match. Please try
+		again.</string>
+	<string name="password_changed">Password changed successfully</string>
+    <string name="call_correct">Password correct</string>
+    <string name="enter_callbarring_password">Enter call barring password(4 numbers)</string>
+    <string name="wrong_password">Password error</string>
+    
+    <string name="call_cost_settings">Call cost </string>
+    <string name="sum_call_cost">Call cost information</string>
+    <string name="last_call_cost">Last call cost</string>
+    <string name="total_call_cost">Total cost</string>
+    <string name="max_call_cost">Max cost</string>
+    <string name="reset_call_cost">Reset call cost </string>
+    <string name="set_ppu_currency">Set currency and price per unit</string>
+    <string name="enter_your_pin">Enter PIN2 (4 to 8 numbers)</string>
+    <string name="reset_call_cost_success">Reset total call cost successful! </string>
+    <string name="max_call_cost_set">Max cost set</string>
+    <string name="input_max_cost">Input max cost (0~16777215)</string>
+    <string name="show_ppu_menu">Input Pay per unit (0~100000.0)</string>
+    <string name="show_currency_menu">Input currency (3 characters)</string>
+    <string name="error_title">Error</string>
+    <string name="call_cost_input_pin_error_msg">PIN2 (4 to 8 numbers) : Invalid Input.</string>
+    <string name="call_cost_input_ppu_error_msg">Pay per unit(0-100000.0): Invalid Input.</string>
+    <string name="call_cost_input_currency_error_msg">Currency (3 characters) : Invalid Input.</string>
+    <string name="call_cost_input_max_error_msg">Max cost (0-16777215) : Invalid Input.</string>
+    <string name="loading_data_error">Loading data error.</string>
+    <string name="pin_retry_count">retries left</string>
+    <string name="pin_one_retry_left">retry left</string>
+    <string name="pin_retry_error_info">SIM is locked! PUK2 requested</string>
+    <string name="your_recordings">Your recordings</string>
+    <string name="audio_recordings">Audio recordings</string>
 
-    <string name="fast_dial">fast call</string>
-    <string name="fast_dial_settings">fast call setting</string>
-    <string name="fast_dial_changed">#fast call phone number has changed</string>
-    <string name="fast_dial_no_changed">fast call phone number not changed。</string>
-    <string name="fast_dial_change_failed">fast call phone number set failure。</string>
-    <string name="fast_dial_2">2#fast call</string>
-    <string name="fast_dial_3">3#fast call</string>
-    <string name="fast_dial_4">4#fast call</string>
-    <string name="fast_dial_5">5#fast call</string>
-    <string name="fast_dial_6">6#fast call</string>
-    <string name="fast_dial_7">7#fast call</string>
-    <string name="fast_dial_8">8#fast call</string>
-    <string name="fast_dial_9">9#fast call</string>
-    <string name ="no_fast_dial">fast call phone number not set at current SIM</string>
-    <string name ="not_set">Not set</string>
+    <string name="cell_broadcast">Cell broadcast</string>
+    <string name="cell_broadcast_settings">Cell broadcast settings</string>
+    <string name="cb_menu_language">Language</string>
+    <string name="cb_menu_add_channel">Add Channel</string>
+    <string name="cb_menu_channel_list">Channel list</string>
+    <string name="cb_dialog_title_language_choice">Select language</string>
+    <string name="cb_channel_dialog_channel_name">Channel name (1-10 characters)</string>
+    <string name="cb_channel_dialog_channel_number">Channel number (0-999)</string>
+    <string name="cb_channel_dialog_channel_state">Enable the channel</string>
+    <string name="cb_channel_dialog_edit_channel">Edit Channel</string>
+    <string name="cb_menu_edit">Edit</string>
+    <string name="cb_menu_delete">Delete</string>
+    <string name="cb_error_channel_num">Please input channel number(0-999).</string>
+    <string name="cb_error_channel_name">The length of Channel name is not correct(1-10characters).</string>
+    <string name="cb_error_language_select">Please select at least one language.</string>
+    <string name="cb_error_channel_id_exist">The channel id exists.</string>
+    <string name="cb_all_languages">All Languages</string>
+    <string name="cb_default_new_channel_name">New Channel</string>
+    <string name="no_sdcard">No Memory Card</string>
+    <string name="full_sdcard">Memory Card is Full</string>
 
-    <string name="call_number">To: </string>
-    <string name="place_a_call1">Subscription 1</string>
-    <string name="place_a_call2">Subscription 2</string>
-    <string name="cancel_call">Cancel</string>
-    <string name="sub_1">SIM1</string>
-    <string name="sub_2">SIM2</string>
-        <!-- for ds call setting -->
+	<string name="fdn_errorcode_unknown_info">Failed,unknown error occured,please try later.</string>
+    <string name="fdn_errorcode_number_info">Failed,the length of contact number is too long.</string>
+    <string name="fdn_errorcode_name_info">Failed,the length of contact name is too long.</string>
+    <string name="fdn_errorcode_storage_info">Failed,storage is full.</string>
+    <string name="fdn_errorcode_phb_info">Failed,Phone book is not ready now,please try later.</string>
+    <string name="fdn_errorcode_pin2_info">Failed,invalid PIN2.</string>
+    
+    <string name="net_or_simcard_busy">Network or SIM card is busy,please try later.</string>
     <string name="sim1">SIM1</string>
     <string name="sim2">SIM2</string>
-    <string name="other_setting">Other call settings</string>
-    <string name="sim1_call_settings">SIM1 Call settings</string>
-    <string name="sim2_call_settings">SIM2 Call settings</string>
-    <string name = "updating_dualsim_title">Dual-Sim Setting</string>
 
-    <string name="toast_message_name_too_long">Name is too long, please modify it.</string>
-    <string name="toast_message_name_number_null">Name and number can not be both empty,please modify it.</string>
-    <string name="toast_message_data_business_on">Data connection is on ,please turn it off When you select network.</string>
-    <!-- add by donghw start -->
-    <string name="set_ip_dailing_title">IP dialing</string>
-    <string name="ip_dailing">IP numbers list</string>
-    <string name="ip_dailing_setting_title">Set IP dialing </string>
-    <string name="ip_dailing_one_title">IP number 1 </string>
-    <string name="ip_dailing_two_title">IP number 2</string>
-    <string name="ip_dailing_three_title">IP number 3</string>
-    <string name="ip_dailing_four_title">IP number 4</string>
-    <string name="ip_dailing_five_title">IP number 5</string>
-    <string name="ip_dailing_save_button_text">Save</string>
-    <string name = "dialing_selector">Dialing Selector</string>
-    <string name = "directly_call">Direct Dialing</string>
-    <string name = "ip_call">IP Dialing:</string>
-    <!-- add by donghw end -->
-    <string name="emergency_call">Emergency call</string>
-    <string name="reply_message_cannot_be_empty">Content cannot be empty</string>
-    <string name="auto_send_message">Automatically send information</string>
-	<string name="auto_send_message_tip">Whether to automatically send a preset message</string>
-    <!-- for UPLMN_setting -->
-    <string name="UPLMN_setting">"UPLMN setting"</string>
-    <!-- for cell broadcast -->
-    <string name="open_cb">Opening Cell Broadcast SMS</string>
-    <string name="close_cb">Closing Cell Broadcast SMS</string>
-    <string name="init_setting">Initialization settings</string>
-    <string name="record_flag">Recording</string>
-    <!-- add for call setting call vibrate-->
-    <string name="call_vibrate_title">Vibration</string>
-    <string name="call_vibrate_summary">Vibrate when answers/hangs up</string>
+    <string name="inCallTitleText1">SIM1 is used</string>
+    <string name="inCallTitleText2">SIM2 is used</string>
+
+    <!-- mtk80794 for change feature ALPS00120835 -->
+    <string name="import_sim_contact_success">Import SIM contact successfully.</string>
+    
+    <string name="vt_incoming_call">Incoming video call</string>
+    <string name="vt_settings">Video settings</string>
+    <string name="vt_local_video_zoom">Local video zoom</string>
+    <string name="vt_local_video_brightness">Local video brightness</string>
+    <string name="vt_local_video_effect">Local video effect</string>
+    <string name="vt_local_video_nightmode">Local video night mode</string>
+    <string name="vt_peer_video_quality">Peer video quality</string>
+    <string name="vt_video_call">Video call</string>
+    <string name="vt_pic_replace_local">Picture for replacing local video</string>
+    <string name="vt_pic_replace_local_description">Set a picture to display when camera off use</string>
+    <string name="vt_enable_back_camera">Enable back camera</string>
+    <string name="vt_enable_back_camera_description">Available to switch cameras if turn on</string>
+    <string name="vt_peer_video_bigger">Peer video bigger than local video</string>
+    <string name="vt_peer_video_bigger_description">Turn on to make peer video bigger than local video</string>
+    <string name="vt_outgoing_call">Outgoing video call</string>
+    <string name="vt_outgoing_call_description">Display local video when make a video call</string>
+    <string name="vt_incoming_call_description">Display local video when accept an incoming video call</string>
+    <string name="vt_incoming_showme_always">Always</string>
+    <string name="vt_incoming_showme_ask">Ask</string>
+    <string name="vt_incoming_showme_disable">Disable</string>
+    <string name="vt_call_settings">Video call settings</string>
+    <string name="vt_pic_replace_local_default">Default picture</string>
+    <string name="vt_pic_replace_local_freezeme">Freeze me</string>
+    <string name="vt_pic_replace_local_mypic">My picture</string>
+    <string name="vt_local_video_display">Local video display</string>
+    <string name="vt_sd_null">SD card is\nunavailable</string>
+    <string name="vt_sd_not_enough">SD card is running\nout of space</string>
+    <string name="vt_peer_video_quality_normal">Normal</string>
+    <string name="vt_peer_video_quality_sharp">Sharp</string>    
+    <string name="pref_camera_coloreffect_entry_none">None</string>
+    <string name="pref_camera_coloreffect_entry_mono">Mono</string>
+    <string name="pref_camera_coloreffect_entry_sepia">Sepia</string>
+    <string name="pref_camera_coloreffect_entry_negative">Negative</string>
+    <string name="pref_camera_coloreffect_entry_solarize">Solarize</string>
+    <string name="pref_camera_coloreffect_entry_posterize">Posterize</string>
+    <string name="pref_camera_coloreffect_entry_whiteboard">Whiteboard</string>
+    <string name="pref_camera_coloreffect_entry_blackboard">Blackboard</string>
+    <string name="pref_camera_coloreffect_entry_aqua">Aqua</string>
+    <string name="pref_camera_coloreffect_entry_pastel">Pastel</string>
+    <string name="pref_camera_coloreffect_entry_mosaic">Mosaic</string>
+    <string name="pref_camera_coloreffect_entry_redtint">Red tint</string>
+    <string name="pref_camera_coloreffect_entry_bluetint">Blue tint</string>
+    <string name="pref_camera_coloreffect_entry_greentint">Green tint</string>   
+    <string name="pref_camera_coloreffect_entry_sepiablue">Sepia Blue</string>
+    <string name="pref_camera_coloreffect_entry_sepiagreen">Sepia Green</string>
+    <string name="vt_ask_show_local">Show local video to peer?</string>
+    <string name="vt_ask_show_local_yes">Yes</string>
+    <string name="vt_ask_show_local_no">No</string>
+    <string name="vt_change_my_pic">Change</string>
+    <string name="vt_pic_saved_to_sd">Snapshot saved to SD card</string>
+    <string name="vt_pic_saved_to_sd_fail">Failed to save snapshot</string>
+    <string name="vt_error_network">Network unreachable.The video call will disconnect.</string>
+    <string name="vt_error_media">Video cannot be displayed properly.The video call will disconnect.</string>
+    <string name="vt_swap_video">Swap videos</string>   
+    <string name="vt_local_video_contrast">Local video contrast</string>
+    <string name="vt_button_switch">Switch camera</string>
+    <string name="vt_menu_hide_me">Hide local video</string>
+    <string name="vt_menu_show_me">Show local video</string>
+    <string name="vt_menu_snapshot">Peer snapshot</string>
+    <string name="vt_out_dis">Call is disconnected. 3G network is not available at either side. You can call back via voice call.</string>
+    <string name="vt_dis_exit">Exit</string>
+    <string name="vt_dis_callback">Call back</string>
+    <string name="vt_local_video_rep">Local video replacement</string>
+    <string name="vt_dis_peer_rep">Display peer replacement</string>
+    <string name="vt_dis_peer_rep_des">Display picture for replacing peer video when it is unavailable</string>
+    <string name="vt_peer_video_rep">Peer video replacement</string>
+    <string name="vt_peer_video_rep_des">Set a picture to display when peer video unavailable</string>
+    <string name="vt_vocie_answer">Voice answer</string>
+    <string name="vt_wait_voice">Waiting for voice call connecting</string>
+    <string name="vt_ask_voice_dial">Remote side has selected voice answering. Would you like to call back via voice call?  </string>
+    <string name="vt_voice_connecting">Voice call connecting</string>
+    <string name="vt_auto_dropback">Auto drop back</string>
+    <string name="vt_auto_dropback_des">Drop back to voice call connecting automatically</string>
+    <string name="vt_cannot_support_setting">The current camera cannot support this setting</string>
+    <string name="vt_network_unreachable">Network unreachable.</string>
+    
+    <string name="vt_iot_error_01">Video call cannot be setup</string>
+    <string name="vt_iot_error_02">The phone is busy</string>
+    <string name="vt_iot_error_03">There is no answer</string>
+    <string name="vt_iot_error_04">The network is busing</string>
+    
+    <!-- Gemini enhancement string-->
+    <string name="voice_call">Voice Call</string>
+    <string name="video_call">Video Call</string>
+    <string name="internet_call">Internet Call</string>
+    <string name="others">Other settings</string>
+    <string name="sum_voice_call">Voice call related settings</string>
+    <string name="sum_video_call">Video call related settings</string>
+    <string name="sum_internet_call">Internet call related settings</string>
+    <string name="sum_others">Settings are applied for both voice and video call</string>
+    <string name="voice_mail">Voice mail</string>
+    <string name="sum_voice_mail">Voice mail service and number</string>
+    
+    <!-- Added by xingping.zheng start -->
+    <string name="dtmf_hideDialpad">Hide Dialpad</string>
+    <string name="incoming_call_widget_answer_text">Answer</string>
+    <string name="incoming_call_widget_reject_text">Reject</string>
+    <string name="call_status_operator_name">Operator name</string>
+    <string name="call_status_ringing">Incoming...</string>
+    <string name="incall_conference_members">"%d members"</string>
+    <string name="incall_conference_private">Private</string>
+    <string name="incall_end_conference">End Conference</string>
+    <string name="incall_sim_collision_dialog_title">Reminder</string>
+    <string name="incall_sim_collision_dialog_message">This SIM is not the default voice call SIM card. Would you like to continue to add new call via this SIM?</string>
+    <!-- Added by xingping.zheng end -->
+
+    <!-- Added for VT dropback-->
+    <string name="callFailed_dsac_vt_incompatible_destination">Video call cannot be setup.Video telephone is unsupported on the phone you calling, dial with voice call?</string>
+    <string name="callFailed_dsac_vt_resource_unavailable">Video call cannot be setup.The phone you have dialed is out of 3G service area, dial with voice call?</string>
+    <string name="callFailed_dsac_vt_bear_not_authorized">Video call cannot be setup.Video telephone is unactivated on your phone, dial with voice call?</string>
+    <string name="callFailed_dsac_vt_bearer_not_avail">Video call cannot be setup. Dial with voice call?</string>
+    <string name="callFailed_dsac_vt_out_of_3G_yourphone">Your phone is out of 3G service area, dial with voice call?</string>
+    
+    <!-- added for auto reject -->
+    <string name="auto_reject_title">Block incoming calls</string>
+    <string name="auto_reject_sum">Block different incoming calls directly</string>
+    <string name="auto_reject_title_voice">Voice calls</string>
+    <string name="auto_reject_title_video">Video calls</string>
+    <string name="auto_reject_title_sip">Internet calls</string>
+    <string name="auto_reject_sum_voice">Set to block all voice incoming calls directly</string>
+    <string name="auto_reject_sum_video">Set to block all video incoming calls directly</string>
+    <string name="auto_reject_sum_sip">Set to block all Internet incoming calls directly</string>
+
+    <string name="voice_call_settings">Voice call settings</string>
+    <string name="other_call_settings">Other settings</string>
+
+    <string name ="vt_ss_settings">Other settings</string>
+    <string name ="vt_cf_call_description">Video call forwarding settings</string>
+    <string name ="vt_cb_call_description">Video call barring settings</string>
+    <string name ="vt_addtional_call_description">Phone number and call waiting settings</string>
+    <string name="test_number">18601258794</string>
+    <string name="test_operator">CMCC</string>
+    <string name="gemini_3g_indic">3G</string>
+    
+    <!-- Minute Reminder strings -->
+    <string name="minutereminder_title">Minute reminder</string>
+    <string name="minutereminder_turnon">Turn on minute reminder at 50s of every minute</string>
+    <string name="minutereminder_turnoff">Turn off minute reminder</string>
+
+    <string name="dm_lock">DM Locked</string>
+    <string name="dm_unlock">DM Unlock</string>
 
 
-	<string name="title_dial_from_cotacts">Call not sent</string>
-	<string name="error_airplane_mode_on">To place a call, first turn off Airplane mode.</string>
-	<string name="error_no_active_sim">"No actived sim card. To place a call, first active the sim card."</string>
-	<string name="error_radio_off">"Radio off.Please dial an emergency number."</string>
-	<string name="error_no_active_sim_cb">"No actived sim card."</string>
-	<string name="sim_card_unlock">"Unlock sim card"</string>
-	<string name="sim_card_lock">"lock sim card"</string>
-	<string name="sim_lock_or_unlock">"lock or unlock sim card"</string>
-	<string name="sim_card_lock_title">"lock sim card"</string>
-	<string name="sim_card_lock_summary">"lock sim card"</string>
-	<string name="sim_card_unlock_title">"unlock sim card"</string>
-	<string name="sim_card_unlock_summary">"unlock sim card"</string>
-	<string name="sim_lock_state_is_new">"No need to change sim lock state."</string>
-	<string name="sim_lock_process_success">success,please reboot DUT</string>
-	<string name="sim_lock_process_failed">failed</string>
+    <!-- Added for USIM-->
+    <string name="importingUSimContacts">Importing USIM contacts</string>
+    <string name="importingUSim1Contacts">Importing USIM1 contacts</string>
+    <string name="importingUSim2Contacts">Importing USIM2 contacts</string>
+    
+	<string name="phone_setting">Phone settings</string>
+    <string name="phone_setting_summary">Phone settings for device</string>
+    <string name="eidt_default_message">Edit default message</string> 
+    <string name="edit_message_before_sending">Edit message before sending</string>  
+    <string name="send_message_after_reject">Send message</string> 
+    <string name="add_message">Add Message</string> 
+    <string name="delete_message">Delete Message</string> 
+    <string name="edit_message">Edit Message</string> 
+    <string name="messages_to_sent">Messages to sent</string> 
+    <string name="message">Message</string> 
+    <string name="max_item">Can not add more message, please delete one first!</string> 
+    
+<!-- SIM ME Lock power on -->
+    <string name="simlock_name">"SIM ME lock"</string>
+    <string name="simlock_ok">"OK"</string>    
+    <string name="simlock_dismiss">"Dismiss"</string>
+    <string name="simlock_retriesleft">"Remains: "</string>
+    <string name="pin_name">"PIN"</string>
+    <string name="pin2_name">"PIN2"</string>
+    <string name="simlock_newsim">"New SIM"</string>
+    <string name="simlock_nocard">"None"</string>
+    <string name="simlock_emergency">"Emergency call"</string>   
+    <string name="simlock_wrongcode">"Wrong code."</string>
+    <string name="simlock_input4_8digits">"Input 4-8 digits."</string>
+    <string name="simlock_input8digits">"Input 8 digits."</string>
+    <string name="simlock_entersimmelock">"Enter SIM ME lock"</string>
+    <string name="simlock_for">"for"</string>
+    <string name="simlock_enterpin2code">"Enter PIN2 code"</string>
+    <string name="simlock_enterpincode">"Enter PIN code"</string>
+    <string name="simlock_enterpuk2code">"Enter PUK2 code"</string>
+    <string name="simlock_enternewpin2code">"Enter new PIN2"</string>
+    <string name="simlock_enterconfirmpin2code">"Confirm new PIN2"</string>
+    <string name="simlock_enterpukcode">"Enter PUK code"</string>
+    <string name="simlock_enternewpincode">"Enter new PIN"</string>
+    <string name="simlock_enterconfirmpincode">"Confirm new PIN"</string>
+    <string name="simlock_pinnotmatched">"Don\'t Match."</string>
+    <string name="simlock_unlocking">"Unlocking..."</string>
+    <string name="simlock_returntocall">"Return to call"</string>
+<!--  STK package -->
+	<string name="sim_toolkit">"SIM Toolkit"</string>
+    <string name="activity_not_found">Application is not installed on your phone.</string>
+   
+    
+<!-- TTY setting -->    
+    <string name="tty_setting">"TTY Setting"</string>
+    
+<!-- Dual mic setting -->    
+    <string name="dual_mic_title">Dual Mic Noise Reduction</string>
+    <string name="dual_mic_turnoff">Dual mic off</string>
+    <string name="dual_mic_turnon">Dual mic on</string>
+    <string name="confirm_device_info_full">SD card is out of space, the recording has been saved.</string>
+    <string name="confirm_save_info_saved">The recording has been saved</string>
+    
+    <string name="simlock_firstsim">"for the first SIM"</string>
+    <string name="simlock_secondsim">"for the second SIM"</string>
+    <string name="simlock_newsiminsert">"This is a new SIM card inserted"</string>
+    <string name="simlock_moreinfo">"More info"</string>
+    <string name="simlock_unlockmardedcard">"Unlock marked SIM card"</string>
+  
+    <string name="vt_start_time_from">Start from</string>
+    <!-- 3G switch -->
+    <string name="confirm_3g_switch">Are you sure you want to set 3G service to this SIM? This will also set the default SIM for Video call to this SIM automatically.</string>
+    <string name="modem_switching">Switching SIM will take around 10 seconds to complete. Please wait...</string>
+    <string name="modem_switching_tip">Switching SIM will take around 10 seconds and stay at switching screen</string>
+    <string name="confirm_3g_switch_to_off">Are you sure you want to turn off 3G service? This will also turn off Video call service automatically.</string>
+    <string name="service_3g_off">Off</string>
+    <string name="enable_3G_service">Enable 3G</string>
+    <string name="setting_for_3G_service">3G service</string>
+
+    <!-- IP Prefix setting -->
+    <string name="ip_prefix_setting">IP prefix number</string>
+    <string name="ip_prefix_setting_sum">IP prefix number settings</string>
+    <string name="enter_ip_prefix_number">Enter prefix number</string>
+    <string name="ip_dial_error_toast_for_no_ip_prefix_number">Please enter IP prefix number first in voice call settings.</string>
+    <string name="ip_prefix_edit_default_sum">Enter prefix number for IP dial</string>
+    <!-- the network is forbidden -->
+    <string name="network_forbidden">forbidden</string>
+    
+    <!-- CTA: plmn list edit -->
+    <string name="plmn_list_setting_title">Preferences</string>
+    <string name="plmn_list_setting_add_plmn">Add new PLMN</string>
+    <string name="plmn_list_setting_add_from_plmn_list">Add from PLMN list</string>
+    <string name="category_plmn_list">PLMN List</string>
+    <string name="dialog_network_mode_title">Service</string>
+    <string name="dialog_network_priority_title">Priority</string>
+    <string name="plmn_mcc_mnc">"MCC/MNC"</string>
+    <string name="plmn_mcc_mnc_error">"MCC/MNC must not empty!"</string>
+    <string name="removing_network">Removing network</string>
+    <string name="update_plmn_setting">PLMN setting</string>
+    <string-array name="td_network_mode_choices">
+        <item>GSM</item>
+        <item>TD-SCDMA</item>
+        <item>Dual mode</item>
+    </string-array>
+    <string-array name="td_network_mode_values">
+        <item>"0"</item>
+        <item>"1"</item>
+        <item>"2"</item>
+    </string-array>
+    <string name="error_sdcard_access">Unable to access SD card</string>
+    <string name="enable_sip_dialog_message">Internet call is disabled, would you like to enable it?</string>
+    
+ <!--Video call or voice call cannot be answered -->
+    <string name="cannot_answered_Video_Call">Video call cannot be answered since there is already a voice call</string>
+    <string name="cannot_answered_Voice_Call">Voice call cannot be answered since there is already a video call</string>
+     
 </resources>

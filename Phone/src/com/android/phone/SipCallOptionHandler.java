@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ *
+ * MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /**
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -17,8 +52,6 @@
 package com.android.phone;
 
 import com.android.internal.telephony.CallManager;
-import com.android.internal.telephony.ITelephony;
-import com.android.internal.telephony.MsmsConstants;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.PhoneFactory;
 import com.android.phone.sip.SipProfileDb;
@@ -38,11 +71,9 @@ import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.os.ServiceManager;
 import android.provider.Settings;
 import android.telephony.PhoneNumberUtils;
-import android.text.TextUtils;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,14 +81,19 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.mediatek.CellConnService.CellConnMgr;
+import com.mediatek.featureoption.FeatureOption;
 import java.util.List;
+
+import android.os.SystemProperties;
 
 /**
  * SipCallOptionHandler select the sip phone based on the call option.
  */
 public class SipCallOptionHandler extends Activity implements
-        DialogInterface.OnClickListener, DialogInterface.OnCancelListener,
+        DialogInterface.OnClickListener, DialogInterface.OnCancelListener, DialogInterface.OnDismissListener,
         CompoundButton.OnCheckedChangeListener {
 
     static final String TAG = "SipCallOptionHandler";
@@ -66,7 +102,8 @@ public class SipCallOptionHandler extends Activity implements
     static final int DIALOG_START_SIP_SETTINGS = 2;
     static final int DIALOG_NO_INTERNET_ERROR = 3;
     static final int DIALOG_NO_VOIP = 4;
-    static final int DIALOG_SIZE = 5;
+    static final int DIALOG_NOT_SUPPORT_SIP_VT = 5;
+    static final int DIALOG_SIZE = 6;
 
     private Intent mIntent;
     private List<SipProfile> mProfileList;
@@ -79,7 +116,9 @@ public class SipCallOptionHandler extends Activity implements
     private TextView mUnsetPriamryHint;
     private boolean mUseSipPhone = false;
     private boolean mMakePrimary = false;
-
+    /* added by xingping.zheng start */
+    private CellConnMgr mCellConnMgr;
+    /* added by xingping.zheng end   */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,40 +129,18 @@ public class SipCallOptionHandler extends Activity implements
             finish();
             return;
         }
-
+        /* added by xingping.zheng start */
+        mCellConnMgr = new CellConnMgr();
+        mCellConnMgr.register(this);
+        /* added by xingping.zheng end   */
         // set this flag so this activity will stay in front of the keyguard
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-
-        //for IP Dial
-        boolean isVideoCall = mIntent.getBooleanExtra(OutgoingCallBroadcaster.EXTRA_IS_VIDEOCALL, false);
-        boolean isStkCall = mIntent.getBooleanExtra("StkCallFlag", false);
-        boolean isNeedToAirplaneModeOff = mIntent.getBooleanExtra("isNeedToAirplaneModeOff", false);
-        IpDailingUtils ipUtils = new IpDailingUtils(this);
-
-        if (!isVideoCall && !isStkCall && !isNeedToAirplaneModeOff && ipUtils.getIsIpDial()) {
-            String ipNumbers = ipUtils.getAllIpNumberString();
-            if (!TextUtils.isEmpty(ipNumbers)) {
-                String ipNumber[] = ipNumbers.split("\\|");
-                int count = 0;
-                for (String num : ipNumber) {
-                    if (!TextUtils.isEmpty(num) && TextUtils.isDigitsOnly(num)) {
-                        count++;
-                    }
-                }
-                if (count != 0) {
-                    // start ipdialing dialog activity, and pause the dialing
-                    Intent newIntent = new Intent();
-                    newIntent.setClass(this, IpDialCallDialog.class);
-                    newIntent.putExtra(IpDialCallDialog.DIAL_TYPE, 1);
-                    newIntent.putExtra(OutgoingCallBroadcaster.EXTRA_NEW_CALL_INTENT, mIntent);
-                    newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(newIntent);
-                    finish();
-                    return;
-                }
-            }
+        
+        
+        if(mIntent.getBooleanExtra("is_vt_call", false)) {
+            setResultAndFinish();
+            return;
         }
-        //for IP Dail end
 
         // If we're trying to make a SIP call, return a SipPhone if one is
         // available.
@@ -146,7 +163,6 @@ public class SipCallOptionHandler extends Activity implements
         //       CallManager would then find the best match for every
         //       outgoing call.)
 
-        int phoneId = mIntent.getIntExtra(MsmsConstants.SUBSCRIPTION_KEY, 0);//we had better to set default PhoneId
         boolean voipSupported = SipManager.isVoipSupported(this);
         mSipProfileDb = new SipProfileDb(this);
         mSipSharedPreferences = new SipSharedPreferences(this);
@@ -155,20 +171,23 @@ public class SipCallOptionHandler extends Activity implements
         Uri uri = mIntent.getData();
         String scheme = uri.getScheme();
         mNumber = PhoneNumberUtils.getNumberFromIntent(mIntent, this);
-		ITelephony iTele = ITelephony.Stub.asInterface(ServiceManager
-				.getService(PhoneFactory.getServiceName(
-						Context.TELEPHONY_SERVICE, phoneId)));
-        boolean isInCellNetwork = false;
-		try {
-			if (iTele != null) {
-				isInCellNetwork = iTele.isRadioOn();
-			}
-		} catch (RemoteException e) {
-			Log.e(TAG, "RemoteException when isRadioOn is called !");
-		}
+        
+        //Add protect for VT
+        if ((PhoneNumberUtils.isUriNumber(mNumber) && mIntent.getBooleanExtra("is_vt_call", false))
+             || (mIntent.getBooleanExtra("is_vt_call", false) && mCallOption.equals(Settings.System.SIP_ALWAYS)))
+        {
+        	showDialog(DIALOG_NOT_SUPPORT_SIP_VT);
+        	//finish();
+        	return ;
+        }
+        
+        boolean isInCellNetwork = PhoneApp.getInstance().phoneMgr.isRadioOn();
         boolean isKnownCallScheme= "tel".equals(scheme) || "sip".equals(scheme);
         boolean isRegularCall =
                 "tel".equals(scheme) && !PhoneNumberUtils.isUriNumber(mNumber);
+        Log.d(TAG, "isInCellNetwork = "+isInCellNetwork+" isRegularCall = "+isRegularCall+" isKnownCallScheme = "+isKnownCallScheme+" voipSupported = "+voipSupported);
+        //For performance tune: Put this extra to tell IncallScreen this intent is from us
+        mIntent.putExtra("launch_from_SipCallHandlerEx", true);
 
         // Bypass the handler if the call scheme is not sip or tel.
         if (!isKnownCallScheme) {
@@ -185,6 +204,14 @@ public class SipCallOptionHandler extends Activity implements
             }
             return;
         }
+        
+        //First check the internet call is enable/disable
+        if (mCallOption.equals(Settings.System.SIP_ALWAYS) || (!isRegularCall) && mCallOption.equals(Settings.System.SIP_ADDRESS_ONLY)) {
+            if (!isEnableInternetCall()) {
+                this.showOpenInternet();
+                return;
+            }
+        }
 
         // Since we are not sure if anyone has touched the number during
         // the NEW_OUTGOING_CALL broadcast, we just check if the provider
@@ -196,6 +223,10 @@ public class SipCallOptionHandler extends Activity implements
         if (!PhoneUtils.hasPhoneProviderExtras(mIntent)) {
             if (!isNetworkConnected()) {
                 if (!isRegularCall) {
+                    if (!this.isEnableInternetCall()) {
+                        this.showOpenInternet();
+                        return;
+                    }
                     showDialog(DIALOG_NO_INTERNET_ERROR);
                     return;
                 }
@@ -222,7 +253,15 @@ public class SipCallOptionHandler extends Activity implements
                 mUseSipPhone = false;
             }
         }
+        Log.v(TAG, "mUseSipPhone = "+mUseSipPhone);
         setResultAndFinish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        super.onDestroy();
+        mCellConnMgr.unregister();
     }
 
     @Override
@@ -287,6 +326,15 @@ public class SipCallOptionHandler extends Activity implements
                     .setOnCancelListener(this)
                     .create();
             break;
+        case DIALOG_NOT_SUPPORT_SIP_VT:
+        	dialog = new AlertDialog.Builder(this)
+            .setTitle(R.string.no_voip_vt_title)
+            .setMessage(R.string.no_voip_vt)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton(android.R.string.ok, this)
+            .setOnCancelListener(this)
+            .create();
+        	break;
         default:
             dialog = null;
         }
@@ -331,6 +379,11 @@ public class SipCallOptionHandler extends Activity implements
                     R.array.phone_type_values)[id];
             Log.v(TAG, "User pick phone " + selection);
             if (selection.equals(getString(R.string.internet_phone))) {
+                //first check internet call is enable
+                if (!isEnableInternetCall()) {
+                    this.showOpenInternet();
+                    return ;
+                }
                 mUseSipPhone = true;
                 startGetPrimarySipPhoneThread();
                 return;
@@ -342,11 +395,17 @@ public class SipCallOptionHandler extends Activity implements
             finish();
             return;
         } else {
-            if (id == DialogInterface.BUTTON_POSITIVE) {
+            if (id == DialogInterface.BUTTON_POSITIVE && dialog != mDialogs[DIALOG_NOT_SUPPORT_SIP_VT]) {
                 // Redirect to sip settings and drop the call.
                 Intent newIntent = new Intent(this, SipSettings.class);
                 newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(newIntent);
+            }else if (id == DialogInterface.BUTTON_POSITIVE && dialog == mDialogs[DIALOG_NOT_SUPPORT_SIP_VT])
+            {
+            	Intent newIntent = new Intent();
+            	newIntent.setAction("com.android.phone.action.TOUCH_DIALER");
+            	newIntent.putExtra("phone_number", mNumber);
+            	startActivity(newIntent);
             }
             finish();
             return;
@@ -389,6 +448,11 @@ public class SipCallOptionHandler extends Activity implements
         runOnUiThread(new Runnable() {
             public void run() {
                 if (mOutgoingSipProfile != null) {
+                    
+                    if (!isEnableInternetCall()) {
+                        showOpenInternet();
+                        return;
+                    }
                     if (!isNetworkConnected()) {
                         showDialog(DIALOG_NO_INTERNET_ERROR);
                         return;
@@ -403,15 +467,115 @@ public class SipCallOptionHandler extends Activity implements
                                 mOutgoingSipProfile.getUriString());
                     }
                 }
+                
+                if (mUseSipPhone && !isEnableInternetCall()) {
+                    showOpenInternet();
+                    return;
+                }
+                
                 if (mUseSipPhone && mOutgoingSipProfile == null) {
                     showDialog(DIALOG_START_SIP_SETTINGS);
                     return;
                 } else {
-                    startActivity(mIntent);
+                    /* added by xingping.zheng start */
+                    if(mUseSipPhone) {
+                        startActivity(mIntent);
+                        finish();
+                    }
+                    else {
+                        //handle the case for ip dialer
+                        if (!handleIpDialer(mIntent)) {
+                            finish();
+                            return ;
+                        }
+                        log("setResultAndFinish");
+                        if( null != PhoneApp.getInstance().phoneMgr){
+                            if(FeatureOption.MTK_GEMINI_SUPPORT){
+                                if(!PhoneApp.getInstance().phoneMgr.isSimInsert(Phone.GEMINI_SIM_1) && 
+                                        !PhoneApp.getInstance().phoneMgr.isSimInsert(Phone.GEMINI_SIM_2)){
+                                    startActivity(mIntent);
+                                    finish();
+				                    return;
+                                }
+                            } else {
+                                if(!PhoneApp.getInstance().phoneMgr.isSimInsert(Phone.GEMINI_SIM_1)){
+                                    startActivity(mIntent);
+                                    finish();
+                                    return;
+                                }
+                            }
+                        }
+                        if(FeatureOption.MTK_GEMINI_SUPPORT){
+                        	if(null != mIntent ){
+	                        	int simId = mIntent.getIntExtra(Phone.GEMINI_SIM_ID_KEY, -1);
+	                        	if(simId == Phone.GEMINI_SIM_1 || simId == Phone.GEMINI_SIM_2){                    
+			                        if (TelephonyManager.getDefault().getSimStateGemini(simId) == TelephonyManager.SIM_STATE_READY
+			                                && !roamingRequest(simId)) {
+			                        	startActivity(mIntent);
+	                                    finish();
+	                                    return;
+			                        }
+	                        	}
+                        	}
+                        } else {
+	                        if (TelephonyManager.getDefault().getSimState() == TelephonyManager.SIM_STATE_READY) {
+	                        	startActivity(mIntent);
+                                finish();
+                                return;
+	                        }
+                        }
+                        int level = 302;
+                        if(FeatureOption.MTK_GEMINI_SUPPORT)
+                            level = 306; 
+                        int result = mCellConnMgr.handleCellConn(0, level, new Runnable() {
+                            public void run() {
+                                int result = mCellConnMgr.getResult();
+                                log("setResultAndFinish, run result = "+result);
+                                if(result == com.mediatek.CellConnService.CellConnMgr.RESULT_STATE_NORMAL) {
+                                    log("setResultAndFinish, startActivity");
+                                    startActivity(mIntent);
+                                }
+                                finish();
+                            }
+                        });
+                        return;
+                    }
+                    /* added by xingping.zheng end   */
                 }
-                finish();
             }
         });
+    }
+    
+    private boolean handleIpDialer(Intent it) {
+        
+        if (!it.getBooleanExtra("is_ip_dial", false)) {
+            //going on the call
+            return true;
+        }
+        
+        String prefix = Settings.System.getString(this.getContentResolver(),"ipprefix");
+        if (prefix == null || "".equals(prefix)) {
+            
+            Toast.makeText(this,
+                    R.string.ip_dial_error_toast_for_no_ip_prefix_number,
+                    Toast.LENGTH_SHORT).show();
+            
+            Intent itSetting = new Intent(Intent.ACTION_MAIN);
+            itSetting.setClass(this, CallFeaturesSetting.class);
+            this.startActivity(itSetting);
+            return false;
+        } else {
+            String number = PhoneNumberUtils.getNumberFromIntent(it, this);
+            if (number == null) {
+                return false;
+            }
+            if (!number.startsWith(prefix)) {
+                number = prefix + number;
+            }
+
+            it.setData(Uri.fromParts("tel", number, null));
+            return true;
+        }
     }
 
     private boolean isNetworkConnected() {
@@ -459,5 +623,84 @@ public class SipCallOptionHandler extends Activity implements
             if (p.getUriString().equals(primarySipUri)) return p;
         }
         return null;
+    }
+    
+    public boolean isEnableInternetCall() {
+        return 1 == Settings.System.getInt(getContentResolver(), Settings.System.ENABLE_INTERNET_CALL, 0);
+    }
+    
+    public void showOpenInternet() {
+        Dialog mTurnOnSipDialog;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.incall_sim_collision_dialog_title)
+                   .setMessage(R.string.enable_sip_dialog_message)
+                   .setNegativeButton(android.R.string.no, (DialogInterface.OnClickListener)null)
+                   .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                       
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        Intent intent = new Intent();
+                        intent.setClassName("com.android.phone", "com.android.phone.SipCallSetting");
+                        startActivity(intent);
+                    }
+                });
+            mTurnOnSipDialog = builder.create();
+            mTurnOnSipDialog.setOnCancelListener(this);
+            mTurnOnSipDialog.setOnDismissListener(this);
+            mTurnOnSipDialog.show();
+            return ;
+    }
+
+    void log(String msg) {
+        Log.d(TAG, msg);
+    }
+
+    public void onDismiss(DialogInterface dialog) {
+        // TODO Auto-generated method stub
+        finish();
+    }
+    
+    private boolean isRoamingNeeded(int slot) {
+        Log.d(TAG, "isRoamingNeeded slot = " + slot);
+        if (slot == Phone.GEMINI_SIM_2) {
+            Log.d(TAG, "isRoamingNeeded = " + SystemProperties.getBoolean("gsm.roaming.indicator.needed.2", false));
+            return SystemProperties.getBoolean("gsm.roaming.indicator.needed.2", false);
+        } else {
+            Log.d(TAG, "isRoamingNeeded = " + SystemProperties.getBoolean("gsm.roaming.indicator.needed", false));
+            return SystemProperties.getBoolean("gsm.roaming.indicator.needed", false);
+        }
+    }
+    
+    private boolean roamingRequest(int slot) {
+        Log.d(TAG, "roamingRequest slot = " + slot);
+        boolean bRoaming = false;
+        if (true == FeatureOption.MTK_GEMINI_SUPPORT) {
+            bRoaming = TelephonyManager.getDefault().isNetworkRoamingGemini(slot);
+        } else {
+            bRoaming = TelephonyManager.getDefault().isNetworkRoaming();
+        }
+
+        if (bRoaming) {
+            Log.d(TAG, "roamingRequest slot = " + slot + " is roaming");
+        } else {
+            Log.d(TAG, "roamingRequest slot = " + slot + " is not roaming");
+            return false;
+        }
+
+        if (0 == Settings.System.getInt(this.getContentResolver(),
+                Settings.System.ROAMING_REMINDER_MODE_SETTING, -1)
+                && isRoamingNeeded(slot)) {
+            Log.d(TAG, "roamingRequest reminder once and need to indicate");
+            return true;
+        }
+
+        if (1 == Settings.System.getInt(this.getContentResolver(),
+                Settings.System.ROAMING_REMINDER_MODE_SETTING, -1)) {
+            Log.d(TAG, "roamingRequest reminder always");
+            return true;
+        }
+
+        Log.d(TAG, "roamingRequest result = false");
+        return false;
     }
 }

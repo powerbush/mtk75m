@@ -225,7 +225,7 @@
     <string name="roaming_warning" msgid="7820963598559553967">"¿Deseas permitir el roaming de datos? Ten en cuenta que podrás incurrir en gastos significativos."</string>
     <string name="gsm_umts_options" msgid="6538311689850981686">"Opciones de GSM/UMTS"</string>
     <string name="cdma_options" msgid="4016822858172249884">"Opciones de CDMA"</string>
-    <string name="throttle_data_usage" msgid="3715677828160555808">"Utilización de datos"</string>
+    <string name="throttle_data_usage" msgid="3715677828160555808">"Utilización de datos "</string>
     <string name="throttle_settings_title" msgid="2761975408383706589">"Política de datos del proveedor"</string>
     <string name="throttle_current_usage" msgid="8762280193043815361">"Datos utilizados en el período actual"</string>
     <string name="throttle_time_frame" msgid="1915198770363734685">"Período de utilización de datos"</string>
@@ -386,7 +386,7 @@
     <item msgid="7494167883478914080">"0"</item>
     <item msgid="6043847456049107742">"1"</item>
   </string-array>
-    <string name="fdn" msgid="7878832555095183202">"Números de marc. fijos"</string>
+    <string name="fdn" msgid="7878832555095183202">"Números de marcac. fija"</string>
     <string name="manage_fdn_list" msgid="8777755791892122369">"Lista de NMF"</string>
     <string name="fdn_activation" msgid="2156479741307463576">"Activación de NMF"</string>
     <string name="fdn_enabled" msgid="5238109009915521240">"Los números de marcación fija están activados"</string>
@@ -414,17 +414,17 @@
     <string name="name" msgid="7329028332786872378">"Nombre"</string>
     <string name="number" msgid="7905950798349903858">"Número"</string>
     <string name="save" msgid="4094274636321939086">"Guardar"</string>
-    <string name="add_fdn_contact" msgid="2481915899633353976">"Agregar número de marcación fija"</string>
-    <string name="adding_fdn_contact" msgid="7627379633721940991">"Agregando número de marcación fija..."</string>
-    <string name="fdn_contact_added" msgid="7458335758501736665">"Número de marcación fija agregado"</string>
-    <string name="edit_fdn_contact" msgid="7976936035587081480">"Editar número de marcación fija"</string>
-    <string name="updating_fdn_contact" msgid="8370929876849803600">"Actualizando número de marcación fija..."</string>
-    <string name="fdn_contact_updated" msgid="5497828782609005017">"Número de marcación fija actualizado"</string>
-    <string name="delete_fdn_contact" msgid="6668958073074151717">"Eliminar número de marcación fija"</string>
-    <string name="deleting_fdn_contact" msgid="5669163206349319969">"Eliminando número de marcación fija..."</string>
-    <string name="fdn_contact_deleted" msgid="7154162327112259569">"Número de marcación fija eliminado"</string>
-    <string name="pin2_invalid" msgid="7176360264228076810">"FDN (Número fijo) desactualizado: Ingresaste un NIP incorrecto."</string>
-    <string name="fdn_invalid_number" msgid="9193130794297997290">"FDN (Número fijo) desactualizado: El número no puede exceder los 20 dígitos."</string>
+    <string name="add_fdn_contact" msgid="2481915899633353976">"Agregar contacto de marcación fija"</string>
+    <string name="adding_fdn_contact" msgid="7627379633721940991">"Agregando contacto de marcación fija..."</string>
+    <string name="fdn_contact_added" msgid="7458335758501736665">"Contacto de marcación fija agregado."</string>
+    <string name="edit_fdn_contact" msgid="7976936035587081480">"Editar contacto de marcación fija"</string>
+    <string name="updating_fdn_contact" msgid="8370929876849803600">"Actualizando contacto de marcación fija..."</string>
+    <string name="fdn_contact_updated" msgid="5497828782609005017">"Contacto de marcación fija actualizado."</string>
+    <string name="delete_fdn_contact" msgid="6668958073074151717">"Eliminar contacto de marcación fija"</string>
+    <string name="deleting_fdn_contact" msgid="5669163206349319969">"Eliminando contacto de marcación fija..."</string>
+    <string name="fdn_contact_deleted" msgid="7154162327112259569">"Contacto de marcación fija eliminado."</string>
+    <string name="pin2_invalid" msgid="7176360264228076810">"PIN2 no válido."</string>
+    <string name="fdn_invalid_number" msgid="9193130794297997290">"El número no puede exceder los 20 dígitos."</string>
     <string name="simContacts_emptyLoading" msgid="2203331234764498011">"Leyendo la tarjeta SIM..."</string>
     <string name="simContacts_empty" msgid="5270660846489561932">"No hay contactos en tu tarjeta SIM."</string>
     <string name="simContacts_title" msgid="1861472842524839921">"Seleccionar contactos para importar"</string>
@@ -533,6 +533,8 @@
     <string name="importSimEntry" msgid="6614358325359736031">"Importar"</string>
     <string name="importAllSimEntries" msgid="1503181169636198673">"Importar todo"</string>
     <string name="importingSimContacts" msgid="7374056215462575769">"Importando contactos SIM"</string>
+    <string name="importingSim1Contacts">"Importando contactos SIM1"</string>
+    <string name="importingSim2Contacts">"Importando contactos SIM2"</string>
     <string name="importToFDNfromContacts" msgid="2130620207013368580">"Importar desde contactos"</string>
     <string name="hac_mode_title" msgid="8740268574688743289">"Ayudas auditivas"</string>
     <string name="hac_mode_summary" msgid="6833851160514929341">"Activar compatibilidad de ayuda auditiva"</string>
@@ -560,7 +562,7 @@
     <string name="ota_activate" msgid="1368528132525626264">"Activar"</string>
     <string name="ota_title_activate_success" msgid="3344632328991980578">"¡Se activó el teléfono!"</string>
     <string name="ota_title_problem_with_activation" msgid="7095824491970084367">"Problema con la activación"</string>
-    <string name="ota_listen" msgid="162923839877584937">"Sigue las instrucciones habladas hasta que escuches que la activación se completó."</string>
+    <string name="ota_listen" msgid="162923839877584937">"Escucha las instrucciones para activar tu teléfono. Permanece en línea hasta que escuches la confirmación de que tu teléfono se activó."</string>
     <string name="ota_dialpad" msgid="3530900997110658409">"Teclado numérico"</string>
     <string name="ota_speaker" msgid="6904589278542719647">"Altavoces"</string>
     <string name="ota_progress" msgid="4644512049143969504">"Espera mientras se programa tu teléfono"</string>
@@ -593,7 +595,7 @@
     <string name="alert_dialog_yes" msgid="6674268047820703974">"Sí"</string>
     <string name="alert_dialog_no" msgid="1476091437797628703">"No"</string>
     <string name="alert_dialog_dismiss" msgid="2491494287075907171">"Descartar"</string>
-    <string name="voicemail_settings" msgid="2288633492587133022">"Config. de correo de voz"</string>
+    <string name="voicemail_settings" msgid="2288633492587133022">"Config. De correo de voz"</string>
     <string name="voicemail_number_not_set" msgid="1604580506447265808">"&lt;no establecido&gt;"</string>
     <string name="voicemail_provider" msgid="6299679757491942924">"Serv. de correo de voz"</string>
     <string name="voicemail_settings_for" msgid="9018656268027893088">"Configuraciones para <xliff:g id="PROVIDER_NAME">%s</xliff:g>"</string>
@@ -692,4 +694,15 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Para hacer una llamada por Internet, primero verifica tu conectividad"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Debes estar conectado a un red WiFi para hacer llamadas por Internet (usa Configuración de Redes inalámbricas y redes)"</string>
     <string name="no_voip" msgid="8901474054537199865">"No admite llamadas por Internet"</string>
+
+    <string name="activity_not_found">"La aplicación no está instalada en tu computadora."</string>
+
+
+<string name="sim_toolkit">"Kit de herramientas de SIM"</string>
+
+<string name="simlock_returntocall">"Regresar a llamada"</string>
+<string name="simlock_emergency">"Llamada de emergencia"</string>
+<string name="simlock_enterpincode">"Ingresar el código de PIN"</string>
+
+<string name="error_sdcard_access">"No se ha podido acceder a la tarjeta SD"</string>
 </resources>

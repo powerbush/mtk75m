@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -20,22 +55,15 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.telephony.PhoneNumberUtils;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
-import android.provider.Settings;
-import android.provider.Settings.System;
-
-import com.android.internal.telephony.CallManager;
-import com.android.internal.telephony.MsmsConstants;
 import com.android.internal.telephony.Phone;
-import com.android.internal.telephony.PhoneFactory;
+import com.mediatek.featureoption.FeatureOption;
 
 /**
  * OutgoingCallBroadcaster receives CALL and CALL_PRIVILEGED Intents, and
@@ -60,15 +88,8 @@ public class OutgoingCallBroadcaster extends Activity {
 
     public static final String EXTRA_ALREADY_CALLED = "android.phone.extra.ALREADY_CALLED";
     public static final String EXTRA_ORIGINAL_URI = "android.phone.extra.ORIGINAL_URI";
-	  public static final String EXTRA_IS_VIDEOCALL = "android.phone.extra.IS_VIDEOCALL";
     public static final String EXTRA_NEW_CALL_INTENT = "android.phone.extra.NEW_CALL_INTENT";
     public static final String EXTRA_SIP_PHONE_URI = "android.phone.extra.SIP_PHONE_URI";
-    public static final String FAST_DIAL = "com.android.phone.extra.FAST_DIAL";
-    public static final String SIM_SELECTED = "com.android.phone.extra.SIM_SELECTED";
-    public static final String EXTRA_SUB1_IS_ACTIVE = "android.phone.extra.SUB1_IS_ACTIVE";
-    public static final String EXTRA_SUB2_IS_ACTIVE = "android.phone.extra.SUB2_IS_ACTIVE";
-
-
 
     /**
      * Identifier for intent extra for sending an empty Flash message for
@@ -81,6 +102,11 @@ public class OutgoingCallBroadcaster extends Activity {
      * until this is replaced with the ITelephony API.
      */
     public static final String EXTRA_SEND_EMPTY_FLASH = "com.android.phone.extra.SEND_EMPTY_FLASH";
+    /** Identifier for the "VT call" intent extra. 
+     * if the current call is VT, the value of extra is true
+     * else is false
+     * */
+    static final String IS_VT_CALL = "is_vt_call";
 
     /**
      * OutgoingCallReceiver finishes NEW_OUTGOING_CALL broadcasts, starting
@@ -91,6 +117,11 @@ public class OutgoingCallBroadcaster extends Activity {
         private static final String TAG = "OutgoingCallReceiver";
 
         public void onReceive(Context context, Intent intent) {
+            if (DBG) Log.v(TAG, "onReceive: " + intent);
+        	if (null != intent && intent.getBooleanExtra("launch_from_dialer", false)) {
+                if (DBG) Log.v(TAG, "onReceive: launch_from_dialer return");
+        		return;
+        	}
             doReceive(context, intent);
             finish();
         }
@@ -101,7 +132,6 @@ public class OutgoingCallBroadcaster extends Activity {
             boolean alreadyCalled;
             String number;
             String originalUri;
-			boolean isStkCall = false;
 
             alreadyCalled = intent.getBooleanExtra(
                     OutgoingCallBroadcaster.EXTRA_ALREADY_CALLED, false);
@@ -138,21 +168,23 @@ public class OutgoingCallBroadcaster extends Activity {
                 }
             }
 
+            originalUri = intent.getStringExtra(OutgoingCallBroadcaster.EXTRA_ORIGINAL_URI);
+
             if (number == null) {
                 if (DBG) Log.v(TAG, "CALL cancelled (null number), returning...");
-                return;
+                if(originalUri == null || !PhoneUtils.isVoicemailNumber(Uri.parse(originalUri)))
+                    return;
             } else if (TelephonyCapabilities.supportsOtasp(app.phone)
                     && (app.phone.getState() != Phone.State.IDLE)
                     && (app.phone.isOtaSpNumber(number))) {
                 if (DBG) Log.v(TAG, "Call is active, a 2nd OTA call cancelled -- returning.");
                 return;
-            } else if (PhoneNumberUtils.isEmergencyNumber(number)) {
+			} else if (PhoneNumberUtils.isEmergencyNumber(PhoneNumberUtils
+					.extractCLIRPortion(number))) {
                 Log.w(TAG, "Cannot modify outgoing call to emergency number " + number + ".");
                 return;
             }
 
-            originalUri = intent.getStringExtra(
-                    OutgoingCallBroadcaster.EXTRA_ORIGINAL_URI);
             if (originalUri == null) {
                 Log.e(TAG, "Intent is missing EXTRA_ORIGINAL_URI -- returning.");
                 return;
@@ -165,75 +197,46 @@ public class OutgoingCallBroadcaster extends Activity {
             number = PhoneNumberUtils.stripSeparators(
                     PhoneNumberUtils.convertKeypadLettersToDigits(number));
 
-            if (DBG) Log.v(TAG, "CALL to " + number /*"xxxxxxx"*/ + " proceeding.");
-            
-            boolean isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEOCALL, false);
-            int resId = 0;
-            if (isVideoCall) {
-    			if (PhoneUtils.isVideoCall()) {
-					Log.e(TAG, "Cann't make another videocall, during video call");
-					resId = R.string.incall_error_dialvt_in_3gcall;
-    			} else {
-    			    for (Phone phone : CallManager.getInstance().getAllPhones()) {
-                        if (phone != null) {
-                            if (phone.getState() != Phone.State.IDLE){
-            					Log.e(TAG, "Cann't make another videocall, during voice call");
-            					resId = R.string.incall_error_dialvt_in_2gcall;
-                            }
-                        }
-                    }
-                }
-            } else {
-    			if (PhoneUtils.isVideoCall()) {
-    				Log.e(TAG, "Cann't make another voice, during video call");
-                    resId = R.string.incall_error_dial_in_3gcall;
-    			}
-            }
-            if (resId != 0) {
-        		Toast txtToast = Toast.makeText(getWindow().getContext(), getString(resId), Toast.LENGTH_LONG);
-        		txtToast.show();
-                return;
-            }
-            
-            if (PhoneApp.getInstance().getInVideoCallScreen() != null) {
-				Log.e(TAG, "Cann't make another call, because getInVideoCallScreen() != null");
-				return;
-            }
+            if (DBG) Log.v(TAG, "CALL to " + /*number*/ "xxxxxxx" + " proceeding.");
+
             startSipCallOptionsHandler(context, intent, uri, number);
         }
     }
-
 
     private void startSipCallOptionsHandler(Context context, Intent intent,
             Uri uri, String number) {
         Intent newIntent = new Intent(Intent.ACTION_CALL, uri);
         newIntent.putExtra(Intent.EXTRA_PHONE_NUMBER, number);
 
+        int simId = intent.getIntExtra(Phone.GEMINI_SIM_ID_KEY, -1);
+        newIntent.putExtra(Phone.GEMINI_SIM_ID_KEY, simId);
+		if (FeatureOption.MTK_VT3G324M_SUPPORT == true) {
+			Log.d(TAG, "doReceive: IS_VT_CALL : "
+					+ intent.getBooleanExtra(IS_VT_CALL, false));
+			newIntent.putExtra(IS_VT_CALL, intent.getBooleanExtra(IS_VT_CALL,
+					false));
+		}
+            
+        if (intent.getBooleanExtra("is_ip_dial", false)) {
+            newIntent.putExtra("is_ip_dial", intent.getBooleanExtra("is_ip_dial", false));
+        }
+        
         PhoneUtils.checkAndCopyPhoneProviderExtras(intent, newIntent);
 
-		boolean isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEOCALL, false);
+        newIntent.setClass(context, InCallScreen.class);
+        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		if (isVideoCall) {
-			newIntent.setClass(context, InVideoCallScreen.class);
-		} else {
-			newIntent.setClass(context, InCallScreen.class);
-		}
-		newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		boolean isStkCall = intent.getBooleanExtra("StkCallFlag", false);
-		Log.v(TAG, "isStkCall = " + isStkCall);
-		newIntent.putExtra("StkCallFlag", isStkCall);
-        boolean isNeedToAirplaneModeOff = intent.getBooleanExtra("isNeedToAirplaneModeOff", false);
-        Log.v(TAG, "isNeedToAirplaneModeOff = " + isNeedToAirplaneModeOff);
-        newIntent.putExtra("isNeedToAirplaneModeOff", isNeedToAirplaneModeOff);
-		//to do 
-		int phoneId = intent.getIntExtra(MsmsConstants.SUBSCRIPTION_KEY, 0);
-		newIntent.putExtra(MsmsConstants.SUBSCRIPTION_KEY,phoneId);
-		
         Intent selectPhoneIntent = new Intent(EXTRA_NEW_CALL_INTENT, uri);
-        selectPhoneIntent.setClass(context, SipCallOptionHandler.class);
+        if (!FeatureOption.MTK_GEMINI_SUPPORT)
+        {
+            selectPhoneIntent.setClass(context, SipCallOptionHandler.class);
+        }else {
+        	selectPhoneIntent.setClass(context, SipCallHandlerEx.class);
+        }
         selectPhoneIntent.putExtra(EXTRA_NEW_CALL_INTENT, newIntent);
         selectPhoneIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (DBG) Log.v(TAG, "startSipCallOptionsHandler(): " + "calling startActivity: " + selectPhoneIntent);
+        if (DBG) Log.v(TAG, "startSipCallOptionsHandler(): " +
+                "calling startActivity: " + selectPhoneIntent);
         context.startActivity(selectPhoneIntent);
     }
 
@@ -247,6 +250,11 @@ public class OutgoingCallBroadcaster extends Activity {
         if (DBG) Log.v(TAG, "onCreate: this = " + this + ", icicle = " + icicle);
         if (DBG) Log.v(TAG, " - getIntent() = " + intent);
         if (DBG) Log.v(TAG, " - configuration = " + configuration);
+
+/* Fion add start */
+        int simId = intent.getIntExtra(Phone.GEMINI_SIM_ID_KEY, -1);
+        Log.w(TAG, "simId: "+simId);
+
 
         if (icicle != null) {
             // A non-null icicle means that this activity is being
@@ -275,66 +283,8 @@ public class OutgoingCallBroadcaster extends Activity {
             return;
         }
 
+        String action = intent.getAction();
         String number = PhoneNumberUtils.getNumberFromIntent(intent, this);
-
-        //now to check which phone we will used
-        boolean fromBlueooth = isIntentFromBluetooth(intent);
-        boolean sipCall = isSIPCall(number, intent);
-        boolean sendEmptyFlash = intent.getBooleanExtra(EXTRA_SEND_EMPTY_FLASH, false);
-        boolean isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEOCALL, false);
-        boolean isStkCall = intent.getBooleanExtra("StkCallFlag", false);
-        boolean isFastDial = intent.getBooleanExtra(FAST_DIAL, false);
-        //get default sim id. -1 will be always ask
-        int defaultPhoneId = TelephonyManager.getDefaultSim(this,TelephonyManager.MODE_TEL);
-        int phoneId = PhoneApp.getInstance().getVoiceSubscription();
-
-        if (isVideoCall) {
-            defaultPhoneId = TelephonyManager.getDefaultSim(this,TelephonyManager.MODE_VTEL);
-            phoneId = PhoneApp.getInstance().getVideoSubscription();
-        }
-        Log.d(TAG, "defaultPhoneId is:" + defaultPhoneId);
-        //show dialog when defaultPhoneId == -1 or has no active card
-        boolean ask = (defaultPhoneId == -1 || PhoneApp.getInstance().getActiveSubCount() == 0)
-                && !fromBlueooth && !sipCall && !isStkCall;
-        boolean simSelected = intent.getBooleanExtra(OutgoingCallBroadcaster.SIM_SELECTED, false);
-        if (ask && !simSelected) {
-        	 if (DBG) Log.d(TAG, "Start multisimdialer activity and get the sub selected by user");
-             Intent intentMSim = new Intent(this, MsmsDialerActivity.class);
-             intentMSim.setData(intent.getData());
-             intentMSim.setAction(intent.getAction());
-             intentMSim.putExtra(EXTRA_SEND_EMPTY_FLASH, sendEmptyFlash);
-             intentMSim.putExtra(EXTRA_IS_VIDEOCALL, isVideoCall);
-             intentMSim.putExtra("StkCallFlag", isStkCall);
-             intentMSim.putExtra(FAST_DIAL, isFastDial);
-             intentMSim.putExtra(EXTRA_SUB1_IS_ACTIVE, PhoneFactory.isCardReady(0));
-             intentMSim.putExtra(EXTRA_SUB2_IS_ACTIVE, PhoneFactory.isCardReady(1));
-             int requestCode = 1;
-//             startActivityForResult(intentMSim, requestCode);
-             startActivity(intentMSim);
-             finish();
-         }else {
-             if (simSelected) {
-                 phoneId = intent.getIntExtra(Phone.PHONE_ID,PhoneFactory.RAW_DEFAULT_PHONE_ID);
-             }
-             Log.d(TAG, "subscription when there is:" + phoneId);
-
-	        if (isFastDial && !simSelected) {
-	            SharedPreferences fastDialSp = getApplicationContext().getSharedPreferences("fast_dial_numbers" + phoneId,
-	                    Context.MODE_WORLD_READABLE);
-	            number = fastDialSp.getString("fast_dial_" + number, "");
-	            intent.setData(Uri.fromParts("tel", number, null));
-	            Log.d(TAG, "single phone fast dial number:" + number);
-	        }
-			processIntent(intent,phoneId);
-         }
-    }
-     
-    private void processIntent(Intent intent,int phoneId) {
-    	String action = intent.getAction();
-        intent.putExtra(Phone.PHONE_ID, phoneId);
-        if (DBG)Log.d(TAG, "outGoingcallBroadCaster action is :"+ action);
-        String number = PhoneNumberUtils.getNumberFromIntent(intent, this);
-        if (DBG)Log.d(TAG, " number from Intent : "+ number);
         // Check the number, don't convert for sip uri
         // TODO put uriNumber under PhoneNumberUtils
         if (number != null) {
@@ -343,26 +293,9 @@ public class OutgoingCallBroadcaster extends Activity {
                 number = PhoneNumberUtils.stripSeparators(number);
             }
         }
-
-        final boolean emergencyNumber = (number != null) && PhoneNumberUtils.isEmergencyNumber(number);
-
-        //call emergency call use the sim card that has emergencyNubmer.
-        //get phoneId for ds emergency call
-        if (emergencyNumber && PhoneFactory.getPhoneCount() > 1) {
-            int existSubCount = PhoneApp.getInstance().getExistSubCount();
-            int activeSubCount = PhoneApp.getInstance().getActiveSubCount();
-            if (existSubCount != 0 && (isCardStandby(phoneId) || activeSubCount == 0)
-                    && !PhoneNumberUtils.isSimEmergencyNumber(number, phoneId)) {
-                for (int i = 0; i < existSubCount; i++) {
-                    if (PhoneNumberUtils.isSimEmergencyNumber(number, i)) {
-                        phoneId = i;
-                        break;
-                    }
-                }
-            }
-            if (DBG) Log.i(TAG, "onCreate: emergencyNumber phoneId= " + phoneId);
-            intent.putExtra(Phone.PHONE_ID, phoneId);
-        }
+		final boolean emergencyNumber = (number != null)
+				&& PhoneNumberUtils.isEmergencyNumber(PhoneNumberUtils
+						.extractCLIRPortion(number));
 
         boolean callNow;
 
@@ -403,6 +336,9 @@ public class OutgoingCallBroadcaster extends Activity {
                 invokeFrameworkDialer.setAction(Intent.ACTION_DIAL);
                 invokeFrameworkDialer.setData(intent.getData());
 
+                invokeFrameworkDialer.putExtra(Phone.GEMINI_SIM_ID_KEY,simId);
+        /* Fion add end */		
+		
                 if (DBG) Log.v(TAG, "onCreate(): calling startActivity for Dialer: "
                                + invokeFrameworkDialer);
                 startActivity(invokeFrameworkDialer);
@@ -422,7 +358,6 @@ public class OutgoingCallBroadcaster extends Activity {
                 finish();
                 return;
             }
-            intent.setAction(action);
             callNow = true;
         } else {
             Log.e(TAG, "Unhandled Intent " + intent + ".");
@@ -445,15 +380,14 @@ public class OutgoingCallBroadcaster extends Activity {
          * send an empty flash or something else is fishy.  Whatever the problem, there's no
          * number, so there's no point in allowing apps to modify the number. */
         if (number == null || TextUtils.isEmpty(number)) {
-            if (intent.getBooleanExtra(FAST_DIAL, false)) {
-                Toast.makeText(getApplicationContext(), R.string.no_fast_dial, Toast.LENGTH_LONG).show();
-                intent.putExtra(EXTRA_SEND_EMPTY_FLASH, true);
-            }
             if (intent.getBooleanExtra(EXTRA_SEND_EMPTY_FLASH, false)) {
                 Log.i(TAG, "onCreate: SEND_EMPTY_FLASH...");
+                // PhoneUtils.sendEmptyFlash(PhoneApp.getInstance().phone);   // Used for Android2.2
                 PhoneUtils.sendEmptyFlash(PhoneApp.getPhone());
                 finish();
                 return;
+            } else if(PhoneUtils.isVoicemailNumber(intent.getData())) {
+                callNow = false;
             } else {
                 Log.i(TAG, "onCreate: null or empty number, setting callNow=true...");
                 callNow = true;
@@ -464,8 +398,6 @@ public class OutgoingCallBroadcaster extends Activity {
             intent.setClass(this, InCallScreen.class);
             if (DBG) Log.v(TAG, "onCreate(): callNow case, calling startActivity: " + intent);
             startActivity(intent);
-            finish();
-            return;
         }
 
         // For now, SIP calls will be processed directly without a
@@ -494,18 +426,20 @@ public class OutgoingCallBroadcaster extends Activity {
         broadcastIntent.putExtra(EXTRA_ALREADY_CALLED, callNow);
         broadcastIntent.putExtra(EXTRA_ORIGINAL_URI, uri.toString());
 
-		boolean isVideoCall;
-		isVideoCall = intent.getBooleanExtra(EXTRA_IS_VIDEOCALL, false);
-		broadcastIntent.putExtra(EXTRA_IS_VIDEOCALL, isVideoCall);
-		boolean isStkCall = intent.getBooleanExtra("StkCallFlag", false);
-        broadcastIntent.putExtra("StkCallFlag", isStkCall);
-        broadcastIntent.putExtra(MsmsConstants.SUBSCRIPTION_KEY,phoneId);
-        boolean isNeedToAirplaneModeOff = intent.getBooleanExtra("isNeedToAirplaneModeOff", false);
-        broadcastIntent.putExtra("isNeedToAirplaneModeOff", isNeedToAirplaneModeOff);
-        if (DBG) Log.v(TAG, "Broadcasting intent " + broadcastIntent + ".");
-        sendOrderedBroadcast(broadcastIntent, PERMISSION,
-                new OutgoingCallReceiver(), null, Activity.RESULT_OK, number, null);
-        // The receiver will finish our activity when it finally runs.
+        if( FeatureOption.MTK_VT3G324M_SUPPORT == true )
+        {
+        	Log.d(TAG, "onCreate: IS_VT_CALL : "+intent.getBooleanExtra(IS_VT_CALL, false));
+        	broadcastIntent.putExtra(IS_VT_CALL, intent.getBooleanExtra(IS_VT_CALL, false) );
+        }
+        if (intent.getBooleanExtra("is_ip_dial", false)) {
+            broadcastIntent.putExtra("is_ip_dial", true);
+        }
+
+         broadcastIntent.putExtra(Phone.GEMINI_SIM_ID_KEY,simId);
+
+        if (DBG) Log.v(TAG, "Broadcasting intent: " + broadcastIntent + ".");
+        sendOrderedBroadcast(broadcastIntent, PERMISSION, new OutgoingCallReceiver(),
+                null, Activity.RESULT_OK, number, null);
     }
 
     // Implement onConfigurationChanged() purely for debugging purposes,
@@ -516,50 +450,4 @@ public class OutgoingCallBroadcaster extends Activity {
         super.onConfigurationChanged(newConfig);
         if (DBG) Log.v(TAG, "onConfigurationChanged: newConfig = " + newConfig);
     }
-    
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Collect subscription data from the intent and use it
-        if (resultCode == RESULT_CANCELED) {
-            Log.d(TAG, "activity cancelled or backkey pressed ");
-            finish();
-        } else if (resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            int phoneId = extras.getInt(Phone.PHONE_ID);
-            Log.d(TAG, "subscription selected from multiSimDialer : " + phoneId);
-            processIntent(data,phoneId);
-        }
-    }
-
-	public static final String BLUETOOTH = "Bluetooth";
-
-	private boolean isIntentFromBluetooth(Intent intent) {
-		boolean btIntent = false;
-		Bundle extras = intent.getExtras();
-		if (extras != null) {
-			if ((extras.getString(BLUETOOTH) != null) && (extras.getString(BLUETOOTH).equals("true"))) {
-				btIntent = true;
-				if (DBG)Log.d(TAG, "isIntentFromBluetooth " + btIntent + "intent :" + extras.getString(BLUETOOTH));
-			}
-		}
-		return btIntent;
-	}
-
-	private boolean isSIPCall(String number, Intent intent) {
-		boolean sipCall = false;
-		String scheme = "";
-		if (intent.getData() != null) {
-			scheme = intent.getData().getScheme();
-			if ((scheme != null) && ("sip".equals(scheme) || PhoneNumberUtils.isUriNumber(number))) {
-				sipCall = true;
-			}
-		}
-		if (DBG)Log.d(TAG, "isSIPCall : " + sipCall);
-		return sipCall;
-	}
-
-    private boolean isCardStandby(int phoneId) {
-        return System.getInt(getContentResolver(),
-                PhoneFactory.getSetting(System.SIM_STANDBY, phoneId), 1) == 1;
-    }
-
 }

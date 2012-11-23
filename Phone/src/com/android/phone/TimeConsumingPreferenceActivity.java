@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ * 
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 package com.android.phone;
 
 import com.android.internal.telephony.CommandException;
@@ -8,13 +43,14 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.util.Log;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
+import com.mediatek.xlog.Xlog;
 
 interface  TimeConsumingPreferenceListener {
     public void onStarted(Preference preference, boolean reading);
+    public void onUpdate(TimeConsumingPreferenceListener tcp, boolean flag);
     public void onFinished(Preference preference, boolean reading);
     public void onError(Preference preference, int error);
     public void onException(Preference preference, CommandException exception);
@@ -23,8 +59,8 @@ interface  TimeConsumingPreferenceListener {
 public class TimeConsumingPreferenceActivity extends PreferenceActivity
                         implements TimeConsumingPreferenceListener, DialogInterface.OnClickListener,
                         DialogInterface.OnCancelListener {
-    private static final String LOG_TAG = "TimeConsumingPreferenceActivity";
-    private final boolean DBG = (PhoneApp.DBG_LEVEL >= 2);
+    private static final String LOG_TAG = "Settings/TimeConsumingPreferenceActivity";
+    private final boolean DBG = true;
 
     private static final int BUSY_READING_DIALOG = 100;
     private static final int BUSY_SAVING_DIALOG = 200;
@@ -33,13 +69,20 @@ public class TimeConsumingPreferenceActivity extends PreferenceActivity
     static final int RESPONSE_ERROR = 400;
     static final int RADIO_OFF_ERROR = 500;
     static final int FDN_CHECK_FAILURE = 600;
+    static final int PASSWORD_ERROR = 700;
+    static final int FDN_FAIL = 800;
 
-    private final ArrayList<String> mBusyList=new ArrayList<String> ();
-
+    private final ArrayList<String> mReadBusyList=new ArrayList<String> ();
+    private final ArrayList<String> mSaveBusyList=new ArrayList<String> ();
+    
     protected boolean mIsForeground = false;
+    /*the two line code following is add by lemon mtk54102*/
+    private TimeConsumingPreferenceListener mTCPL = null;
+    protected boolean mIsUpdate = false;
 
     @Override
     protected Dialog onCreateDialog(int id) {
+	mIsUpdate = false;
         if (id == BUSY_READING_DIALOG || id == BUSY_SAVING_DIALOG) {
             ProgressDialog dialog = new ProgressDialog(this);
             dialog.setTitle(getText(R.string.updating_title));
@@ -60,7 +103,7 @@ public class TimeConsumingPreferenceActivity extends PreferenceActivity
         }
 
         if (id == RESPONSE_ERROR || id == RADIO_OFF_ERROR || id == EXCEPTION_ERROR
-                || id == FDN_CHECK_FAILURE) {
+                || id == PASSWORD_ERROR || id == FDN_FAIL || id == FDN_CHECK_FAILURE) {
             AlertDialog.Builder b = new AlertDialog.Builder(this);
 
             int msgId;
@@ -76,6 +119,14 @@ public class TimeConsumingPreferenceActivity extends PreferenceActivity
                 case RADIO_OFF_ERROR:
                     msgId = R.string.radio_off_error;
                     // Set Button 3
+                    b.setNeutralButton(R.string.close_dialog, this);
+                    break;
+                case PASSWORD_ERROR:
+                    msgId =com.android.internal.R.string.passwordIncorrect;
+                    b.setNeutralButton(R.string.close_dialog, this);
+                    break;
+                case FDN_FAIL:
+                    msgId = com.mediatek.R.string.fdnFailMmi;
                     b.setNeutralButton(R.string.close_dialog, this);
                     break;
                 case FDN_CHECK_FAILURE:
@@ -107,63 +158,113 @@ public class TimeConsumingPreferenceActivity extends PreferenceActivity
 
     @Override
     public void onResume() {
+    	Xlog.d(LOG_TAG, "onResume");
         super.onResume();
+     
         mIsForeground = true;
+        
+    	if(mReadBusyList.size() == 1) {
+            showDialog(BUSY_READING_DIALOG);
+            Xlog.d(LOG_TAG, "showDialog(BUSY_READING_DIALOG)");
+    	} 
+    	
+    	if(mSaveBusyList.size() == 1) {
+            showDialog(BUSY_SAVING_DIALOG);
+            Xlog.d(LOG_TAG, "showDialog(BUSY_SAVING_DIALOG)");
+    	}
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mIsForeground = false;
+    	Xlog.d(LOG_TAG, "onPause");
     }
 
     public void onClick(DialogInterface dialog, int which) {
+    	Xlog.d(LOG_TAG, "onClick");
         dialog.dismiss();
+	if(mIsUpdate 
+	    && mTCPL instanceof GsmUmtsCallForwardOptions){
+            Xlog.d(LOG_TAG, "update call forward settings");
+	    mIsUpdate = false;
+            ((GsmUmtsCallForwardOptions) mTCPL).refreshSettings(true);
+	}
+    }
+
+    public void onUpdate(TimeConsumingPreferenceListener tcp, boolean flag){
+	    mIsUpdate = flag;
+	    mTCPL = tcp;
     }
 
     public void onStarted(Preference preference, boolean reading) {
         if (DBG) dumpState();
-        if (DBG) Log.d(LOG_TAG, "onStarted, preference=" + preference.getKey()
+        if (DBG) Xlog.d(LOG_TAG, "onStarted, preference=" + preference.getKey()
                 + ", reading=" + reading);
-        mBusyList.add(preference.getKey());
 
-//        if (mIsForeground) {
-              if (reading) {
-                  showDialog(BUSY_READING_DIALOG);
-              } else {
-                  showDialog(BUSY_SAVING_DIALOG);
-              }
-//        }
+        if (reading) {
+        	mReadBusyList.add(preference.getKey());
+        	
+        	if((mReadBusyList.size() == 1) && mIsForeground) {
+                showDialog(BUSY_READING_DIALOG);
+                Xlog.d(LOG_TAG, "showDialog(BUSY_READING_DIALOG)");
+        	}
+
+            
+
+        } else {
+        	mSaveBusyList.add(preference.getKey());
+        	
+        	if((mSaveBusyList.size() == 1) && mIsForeground) {
+                showDialog(BUSY_SAVING_DIALOG);
+                Xlog.d(LOG_TAG, "showDialog(BUSY_SAVING_DIALOG)");
+        	}
+
+        }
 
     }
 
     public void onFinished(Preference preference, boolean reading) {
         if (DBG) dumpState();
-        if (DBG) Log.d(LOG_TAG, "onFinished, preference=" + preference.getKey()
+        if (DBG) Xlog.d(LOG_TAG, "onFinished, preference=" + preference.getKey()
                 + ", reading=" + reading);
-        mBusyList.remove(preference.getKey());
 
-        if (DBG) Log.d(LOG_TAG, " mBusyList.isEmpty() = " + mBusyList.isEmpty()
-	        + ", mIsForeground = " + mIsForeground);
-        if (mBusyList.isEmpty()) {
-            if (reading) {
-                dismissDialogSafely(BUSY_READING_DIALOG);
-            } else {
-                dismissDialogSafely(BUSY_SAVING_DIALOG);
+
+        if (reading) {
+            mReadBusyList.remove(preference.getKey());
+            
+            if(mReadBusyList.isEmpty()) {
+            	removeDialog(BUSY_READING_DIALOG);
+                Xlog.d(LOG_TAG, "removeDialog(BUSY_READING_DIALOG)");
             }
+            
+        } else {
+            mSaveBusyList.remove(preference.getKey());
+            
+            if(mSaveBusyList.isEmpty()) {
+            	removeDialog(BUSY_SAVING_DIALOG);
+                Xlog.d(LOG_TAG, "removeDialog(BUSY_SAVING_DIALOG)");
+            }
+
         }
     }
 
     public void onError(Preference preference, int error) {
         if (DBG) dumpState();
-        if (DBG) Log.d(LOG_TAG, "onError, preference=" + preference.getKey() + ", error=" + error);
+        if (DBG) Xlog.d(LOG_TAG, "onError, preference=" + preference.getKey() + ", error=" + error);
 
         if (mIsForeground) {
+        	try {
             showDialog(error);
+        	}catch (Throwable e)
+        	{
+        		Xlog.d(LOG_TAG, "Catch the throwable: " + e.toString());
+        	}
         }
     }
 
     public void onException(Preference preference, CommandException exception) {
+    	Xlog.d(LOG_TAG, "onException");
         if (exception.getCommandError() == CommandException.Error.FDN_CHECK_FAILURE) {
             onError(preference, FDN_CHECK_FAILURE);
         } else {
@@ -176,21 +277,16 @@ public class TimeConsumingPreferenceActivity extends PreferenceActivity
         finish();
     }
 
-    private void dismissDialogSafely(int id) {
-        try {
-            dismissDialog(id);
-        } catch (IllegalArgumentException e) {
-            // This is expected in the case where we were in the background
-            // at the time we would normally have shown the dialog, so we didn't
-            // show it.
-        }
-    }
 
     void dumpState() {
-        Log.d(LOG_TAG, "dumpState begin");
-        for (String key : mBusyList) {
-            Log.d(LOG_TAG, "mBusyList: key=" + key);
+
+        for (String key : mReadBusyList) {
+            Xlog.d(LOG_TAG, "mReadBusyList: key=" + key);
         }
-        Log.d(LOG_TAG, "dumpState end");
+        
+        for (String key : mSaveBusyList) {
+            Xlog.d(LOG_TAG, "mSaveBusyList: key=" + key);
+        }
+
     }
 }

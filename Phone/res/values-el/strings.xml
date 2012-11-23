@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--  Copyright (C) 2007 The Android Open Source Project
+<!-- Copyright (C) 2009 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -12,8 +12,7 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
- -->
-
+-->
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="contactsIconLabel" msgid="9129800048701196916">"Επαφές"</string>
@@ -217,7 +216,7 @@
     <item msgid="2568449734331711605">"0"</item>
   </string-array>
     <string name="data_enabled" msgid="5972538663568715366">"Ενεργοποίηση δεδομένων"</string>
-    <string name="data_enable_summary" msgid="5022018967714633874">"Ενεργοποίηση της πρόσβασης δεδομένων μέσω του δικτύου κινητής τηλεφωνίας"</string>
+    <string name="data_enable_summary" msgid="5022018967714633874">"Ενεργοποίηση της πρόσβασης δεδομένων μέσω του δικτύου κινητής τηλεφωνίας"</string>  
     <string name="roaming" msgid="8871412572928323707">"Περιαγωγή δεδομένων"</string>
     <string name="roaming_enable" msgid="7331106985174381987">"Σύνδεση στις υπηρεσίες δεδομένων κατά την περιαγωγή"</string>
     <string name="roaming_disable" msgid="1843417228755568110">"Σύνδεση στις υπηρεσίες δεδομένων κατά την περιαγωγή"</string>
@@ -375,6 +374,17 @@
     <item msgid="5741268642513143762">"1"</item>
     <item msgid="419525200910932450">"2"</item>
   </string-array>
+    <string name="subscription_title" msgid="5813493350326486">"ΔΟΚΙΜΗ συνδρομής CDMA"</string>
+    <string name="subscription_summary" msgid="8435941016743418124">"Αλλαγή μεταξύ RUIM/SIM και NV"</string>
+    <string name="subscription_dialogtitle" msgid="531571450448009255">"συνδρομή"</string>
+  <string-array name="subscription_choices">
+    <item msgid="6540107472553796600">"RUIM/SIM"</item>
+    <item msgid="1433427108940308332">"NV"</item>
+  </string-array>
+  <string-array name="subscription_values">
+    <item msgid="4377788417250295786">"0"</item>
+    <item msgid="1193066664940329729">"1"</item>
+  </string-array>
     <string name="cdma_subscription_title" msgid="445607520753045412">"Συνδρομή CDMA"</string>
     <string name="cdma_subscription_summary" msgid="2530890766115781140">"Αλλαγή μεταξύ RUIM/SIM και NV"</string>
     <string name="cdma_subscription_dialogtitle" msgid="2699527950523333110">"συνδρομή"</string>
@@ -414,17 +424,17 @@
     <string name="name" msgid="7329028332786872378">"Όνομα"</string>
     <string name="number" msgid="7905950798349903858">"Αριθμός"</string>
     <string name="save" msgid="4094274636321939086">"Αποθ/ση"</string>
-    <string name="add_fdn_contact" msgid="2481915899633353976">"Προσθήκη καθορισμένου αριθμού κλήσης"</string>
-    <string name="adding_fdn_contact" msgid="7627379633721940991">"Προσθήκη καθορισμένου αριθμού κλήσης…"</string>
-    <string name="fdn_contact_added" msgid="7458335758501736665">"Ο καθορισμένος αριθμός κλήσης προστέθηκε."</string>
-    <string name="edit_fdn_contact" msgid="7976936035587081480">"Επεξεργασία καθορισμένου αριθμού κλήσης"</string>
-    <string name="updating_fdn_contact" msgid="8370929876849803600">"Ενημέρωση καθορισμένου αριθμού κλήσης…"</string>
-    <string name="fdn_contact_updated" msgid="5497828782609005017">"Ο καθορισμένος αριθμός κλήσης ενημερώθηκε."</string>
-    <string name="delete_fdn_contact" msgid="6668958073074151717">"Διαγραφή καθορισμένου αριθμού κλήσης"</string>
-    <string name="deleting_fdn_contact" msgid="5669163206349319969">"Διαγραφή καθορισμένου αριθμού κλήσης…"</string>
-    <string name="fdn_contact_deleted" msgid="7154162327112259569">"Ο καθορισμένος αριθμός κλήσης διαγράφηκε."</string>
-    <string name="pin2_invalid" msgid="7176360264228076810">"Το FDN δεν ενημερώθηκε: εισαγάγατε εσφαλμένο PIN."</string>
-    <string name="fdn_invalid_number" msgid="9193130794297997290">"Το FDN δεν ενημερώθηκε: ο αριθμός δεν μπορεί να περιέχει περισσότερα από 20 ψηφία."</string>
+    <string name="add_fdn_contact" msgid="2481915899633353976">"Προσθήκη επαφής κλήσης καθορισμένων αριθμών"</string>
+    <string name="adding_fdn_contact" msgid="7627379633721940991">"Προσθήκη επαφής κλήσης καθορισμένων αριθμών..."</string>
+    <string name="fdn_contact_added" msgid="7458335758501736665">"Η επαφή κλήσης καθορισμένων αριθμών προστέθηκε."</string>
+    <string name="edit_fdn_contact" msgid="7976936035587081480">"Επεξεργασία επαφής κλήσης καθορισμένων αριθμών"</string>
+    <string name="updating_fdn_contact" msgid="8370929876849803600">"Ενημέρωση επαφής κλήσης καθορισμένων αριθμών..."</string>
+    <string name="fdn_contact_updated" msgid="5497828782609005017">"Η επαφή κλήσης καθορισμένων αριθμών ενημερώθηκε."</string>
+    <string name="delete_fdn_contact" msgid="6668958073074151717">"Διαγραφή επαφής κλήσης καθορισμένων αριθμών"</string>
+    <string name="deleting_fdn_contact" msgid="5669163206349319969">"Διαγραφή επαφής κλήσης καθορισμένων αριθμών..."</string>
+    <string name="fdn_contact_deleted" msgid="7154162327112259569">"Η επαφή κλήσης καθορισμένων αριθμών διαγράφηκε."</string>
+    <string name="pin2_invalid" msgid="7176360264228076810">"Ο αριθμός PIN2 δεν είναι έγκυρος!"</string>
+    <string name="fdn_invalid_number" msgid="9193130794297997290">"Ο αριθμός δεν μπορεί να ξεπερνάει τα 20 ψηφία."</string>
     <string name="simContacts_emptyLoading" msgid="2203331234764498011">"Ανάγνωση από κάρτα SIM…"</string>
     <string name="simContacts_empty" msgid="5270660846489561932">"Δεν υπάρχουν επαφές στην κάρτα SIM."</string>
     <string name="simContacts_title" msgid="1861472842524839921">"Επιλέξτε επαφές για εισαγωγή"</string>
@@ -493,7 +503,7 @@
     <string name="notification_network_selection_text" msgid="2607085729661923269">"Επιλεγμένο δίκτυο (<xliff:g id="OPERATOR_NAME">%s</xliff:g>) μη διαθέσιμο"</string>
     <string name="incall_error_power_off" msgid="6550191216405193368">"Για να πραγματοποιήσετε μια κλήση, απενεργοποιήστε πρώτα τη λειτουργία πτήσης."</string>
     <string name="incall_error_emergency_only" msgid="4678640422710818317">"Δεν έχετε εγγραφεί στο δίκτυο."</string>
-    <string name="incall_error_out_of_service" msgid="8587993036435080418">"Το δίκτυο κινητής τηλεφωνίας δεν είναι διαθέσιμο."</string>
+    <string name="incall_error_out_of_service" msgid="8587993036435080418">"Το δίκτυο κινητής τηλεφωνίας δεν είναι διαθέσιμο."</string>    
     <string name="incall_error_no_phone_number_supplied" msgid="4197432103471807739">"Η κλήση δεν πραγματοποιήθηκε, δεν έγινε εισαγωγή έγκυρου αριθμού."</string>
     <string name="incall_error_call_failed" msgid="4313552620858880999">"H κλήση δεν πραγματοποιήθηκε."</string>
     <string name="incall_status_dialed_mmi" msgid="3672498861336189563">"Έναρξη ακολουθίας MMI..."</string>
@@ -533,6 +543,8 @@
     <string name="importSimEntry" msgid="6614358325359736031">"Εισαγωγή"</string>
     <string name="importAllSimEntries" msgid="1503181169636198673">"Εισαγωγή όλων"</string>
     <string name="importingSimContacts" msgid="7374056215462575769">"Εισαγωγή επαφών από κάρτα SIM"</string>
+    <string name="importingSim1Contacts">"Εισαγωγή επαφών από κάρτα SIM1"</string>
+    <string name="importingSim2Contacts">"Εισαγωγή επαφών από κάρτα SIM2"</string>
     <string name="importToFDNfromContacts" msgid="2130620207013368580">"Εισαγωγή από επαφές"</string>
     <string name="hac_mode_title" msgid="8740268574688743289">"Βοηθήματα ακρόασης"</string>
     <string name="hac_mode_summary" msgid="6833851160514929341">"Ενεργοποίηση συμβατότητας βοηθήματος ακρόασης"</string>
@@ -556,11 +568,11 @@
     <string name="ota_skip_activation_dialog_title" msgid="2943366608272261306">"Παράβλεψη ενεργοποίησης;"</string>
     <string name="ota_skip_activation_dialog_message" msgid="2440770373498870550">"Εάν παραλείψετε την ενεργοποίηση, δεν θα μπορείτε να πραγματοποιήσετε κλήσεις ή να συνδεθείτε σε δίκτυα δεδομένων κινητής τηλεφωνίας (αν και θα μπορείτε να συνδεθείτε σε δίκτυα Wi-Fi). Μέχρι να ενεργοποιήσετε το τηλέφωνό σας, θα σας ζητείται να το ενεργοποιήσετε κάθε φορά που θα το θέτετε σε λειτουργία."</string>
     <string name="ota_skip_activation_dialog_skip_label" msgid="3458532775091563208">"Παράβλεψη"</string>
-    <string name="ota_skip_activation_dialog_continue_label" msgid="4343765820509664362">"Ενεργοποίηση"</string>
+    <string name="ota_skip_activation_dialog_continue_label" msgid="4343765820509664362">"Ενεργοποίηση"</string>    
     <string name="ota_activate" msgid="1368528132525626264">"Ενεργοποίηση"</string>
     <string name="ota_title_activate_success" msgid="3344632328991980578">"Το τηλέφωνο ενεργοποιήθηκε!"</string>
     <string name="ota_title_problem_with_activation" msgid="7095824491970084367">"Πρόβλημα κατά την ενεργοποίηση"</string>
-    <string name="ota_listen" msgid="162923839877584937">"Ακολουθήστε τις φωνητικές οδηγίες μέχρι να ακούσετε ότι η ενεργοποίηση ολοκληρώθηκε."</string>
+    <string name="ota_listen" msgid="162923839877584937">"Ακούστε τις οδηγίες για να ενεργοποιήσετε το τηλέφωνό σας. Μην κλείσετε τη γραμμή μέχρι να ακούσετε την επιβεβαίωση ότι το τηλέφωνό σας ενεργοποιήθηκε."</string>
     <string name="ota_dialpad" msgid="3530900997110658409">"Πληκτρολόγιο"</string>
     <string name="ota_speaker" msgid="6904589278542719647">"Ηχείο"</string>
     <string name="ota_progress" msgid="4644512049143969504">"Περιμένετε μέχρι να ολοκληρωθεί ο προγραμματισμός του τηλεφώνου σας."</string>
@@ -692,4 +704,16 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Για να πραγματοποιήσετε μια κλήση μέσω Διαδικτύου, ελέγξτε πρώτα τη σύνδεσή σας στο Διαδίκτυο"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Για κλήσεις μέσω Διαδικτύου πρέπει να είστε συνδεδεμένοι σε δίκτυο Wi-Fi (χρησιμοποιήστε το στοιχείο Ασύρματο δίκτυο και Ρυθμίσεις δικτύου)"</string>
     <string name="no_voip" msgid="8901474054537199865">"Η κλ. μέσω Διαδικτύου δεν υποστηρίζεται"</string>
+
+    <string name="activity_not_found">"Η εφαρμογή δεν έχει εγκατασταθεί στο τηλέφωνό σας."</string>
+
+<string name="sim_toolkit">"SIM Toolkit"</string>
+
+<string name="simlock_returntocall">"Επιστροφή στην κλήση"</string>
+<string name="simlock_emergency">"Κλήση έκτακτης ανάγκης"</string>
+<string name="simlock_enterpincode">"Πληκτρολογήστε τον κωδικό αριθμό PIN"</string>
+
+<string name="error_sdcard_access">"Δεν είναι δυνατή η πρόσβαση στην κάρτα SD"</string>
+<string name="cannot_answered_Video_Call">Δεν είναι δυνατή η απάντηση κλήσης βίντεο επειδή υπάρχει ήδη μια φωνητική κλήση</string>
+<string name="cannot_answered_Voice_Call">Δεν είναι δυνατή η απάντηση φωνητικής κλήσης επειδή υπάρχει ήδη μια κλήση βίντεο</string>
 </resources>

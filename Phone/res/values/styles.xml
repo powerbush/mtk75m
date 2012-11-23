@@ -19,6 +19,10 @@
     <drawable name="separator_green">#FF008115</drawable>
     <drawable name="grayBg">#FF333333</drawable>
 
+    <style name="DualSimCallSettingTheme" parent="@android:Theme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
     <style name="Incoming">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@null</item>
@@ -36,7 +40,7 @@
 
     <style name="info_label">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:textAppearance">@style/TextAppearance.info_label</item>
         <item name="android:paddingRight">4dip</item>
     </style>
@@ -64,6 +68,11 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="TextAppearance.InCallButton">
+        <item name="android:textColor">@android:color/primary_text_dark</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 
     <style name="incall_top_button" parent="android:Widget.Button">
         <item name="android:gravity">center_vertical</item>
@@ -102,14 +111,6 @@
         <item name="disableButtonText">@string/disable</item>
         <item name="changeNumButtonText">@string/change_num</item>
         <item name="confirmMode">activation</item>
-    </style>
-    
-    <!-- Preference Style for the password preferences -->
-    <style name="EditPassWordPreference">
-        <item name="aenableButtonText">@string/enable</item>
-        <item name="adisableButtonText">@string/disable</item>
-        <item name="acancelButtonText">@string/cancel</item>
-        <item name="aconfirmMode">activation</item>
     </style>
 
     <!-- Preference Style for the emergency callback mode -->
@@ -233,22 +234,13 @@
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_marginTop">10dip</item>
     </style>
+    
+    <style name="InCallButtonGroupStyle">
+        <item name="android:layout_width">@dimen/incall_btn_group_width</item>
+        <item name="android:layout_height">@dimen/incall_btn_group_height</item>
+        <item name="android:textSize">@dimen/incall_btn_group_text_size</item>
+        <item name="android:paddingTop">@dimen/incall_btn_group_padding_top</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
 
-	<!-- Style for small view in videocall screnn -->
-    <style name="SmallView">
-        <item name="android:layout_width">132dip</item>
-        <item name="android:layout_height">108dip</item>
-        <item name="android:layout_gravity">center_vertical|left</item>
-        <item name="android:layout_marginTop">10dip</item>
-        <item name="android:layout_marginLeft">5dip</item>
-    </style>
-	
-	<!-- Style for large view in videocall screnn -->
-    <style name="LargeView">
-        <item name="android:layout_width">264dip</item>
-        <item name="android:layout_height">216dip</item>
-        <item name="android:layout_gravity">center_vertical|left</item>
-        <item name="android:layout_marginTop">10dip</item>
-        <item name="android:layout_marginLeft">5dip</item>
-    </style>
 </resources>

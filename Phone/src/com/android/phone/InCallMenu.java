@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -17,7 +52,6 @@
 package com.android.phone;
 
 import android.content.Context;
-import android.os.Environment;
 import android.net.sip.SipManager;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -25,6 +59,11 @@ import com.android.internal.telephony.Call;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.CallManager;
 
+//MTK begin:
+import android.os.Environment;
+import com.android.internal.telephony.gemini.GeminiPhone;
+import com.mediatek.featureoption.FeatureOption;
+//MTK end
 /**
  * Helper class to manage the options menu for the InCallScreen.
  *
@@ -39,8 +78,8 @@ import com.android.internal.telephony.CallManager;
  */
 class InCallMenu {
     private static final String LOG_TAG = "PHONE/InCallMenu";
-    private static final boolean DBG = false;
-
+    //private static final boolean DBG = false;
+    private static final boolean DBG = true;
     /**
      * Reference to the InCallScreen activity that owns us.  This will be
      * null if we haven't been initialized yet *or* after the InCallScreen
@@ -58,7 +97,11 @@ class InCallMenu {
      */
     InCallMenuItemView mManageConference;
     InCallMenuItemView mShowDialpad;
-//    InCallMenuItemView mEndCall;
+
+//MTK add below one line: by delong.liu@archermind.com
+    InCallMenuItemView mRecord;
+
+    InCallMenuItemView mEndCall;
     InCallMenuItemView mAddCall;
     InCallMenuItemView mSwapCalls;
     InCallMenuItemView mMergeCalls;
@@ -70,13 +113,11 @@ class InCallMenu {
     InCallMenuItemView mAnswerAndEnd;
     InCallMenuItemView mAnswer;
     InCallMenuItemView mIgnore;
-
-	InCallMenuItemView mPhoneRecorder;
-
-//  add for end bg call and end all calls start
-    InCallMenuItemView mEndbgcall;
-    InCallMenuItemView mEndallcalls;
-//  add for end bg call and end all calls end
+//MTK begin: by lei.wang@archermind.com
+    InCallMenuItemView mDisconnectHold; // disconnect hold call
+    InCallMenuItemView mDisconnectAll;  // disconnect active and hold call
+    InCallMenuItemView mECT;            // EAC function
+//MTK end   
     InCallMenu(InCallScreen inCallScreen) {
         if (DBG) log("InCallMenu constructor...");
         mInCallScreen = inCallScreen;
@@ -132,26 +173,18 @@ class InCallMenu {
         mShowDialpad.setOnClickListener(mInCallScreen);
         mShowDialpad.setText(R.string.menu_showDialpad); // or "Hide dialpad" if it's open
         mShowDialpad.setIconResource(R.drawable.ic_menu_dial_pad);
-
-//        mEndCall = new InCallMenuItemView(wrappedContext);
-//        mEndCall.setId(R.id.menuEndCall);
-//        mEndCall.setOnClickListener(mInCallScreen);
-//        mEndCall.setText(R.string.menu_endCall);
-//        mEndCall.setIconResource(R.drawable.ic_menu_end_call);
-        
-        // add for end bg call and end all calls start
-        mEndbgcall = new InCallMenuItemView(wrappedContext);
-        mEndbgcall.setId(R.id.endbgcall);
-        mEndbgcall.setOnClickListener(mInCallScreen);
-        mEndbgcall.setText(R.string.menu_endbgcall);
-        mEndbgcall.setIconResource(R.drawable.ic_menu_end_call);
-        
-        mEndallcalls = new InCallMenuItemView(wrappedContext);
-        mEndallcalls.setId(R.id.endallcalls);
-        mEndallcalls.setOnClickListener(mInCallScreen);
-        mEndallcalls.setText(R.string.menu_endallcalls);
-        mEndallcalls.setIconResource(R.drawable.ic_menu_end_call);
-        // add for end bg call and end all calls end
+//MTK begin:
+        mRecord = new InCallMenuItemView(wrappedContext);
+        mRecord.setId(R.id.record);
+        mRecord.setOnClickListener(mInCallScreen);
+        mRecord.setText(R.string.start_record);
+        mRecord.setIconResource(R.drawable.ic_menu_soundrecorder);
+//MTK end
+        mEndCall = new InCallMenuItemView(wrappedContext);
+        mEndCall.setId(R.id.menuEndCall);
+        mEndCall.setOnClickListener(mInCallScreen);
+        mEndCall.setText(R.string.menu_endCall);
+        mEndCall.setIconResource(R.drawable.ic_menu_end_call);
 
         mAddCall = new InCallMenuItemView(wrappedContext);
         mAddCall.setId(R.id.menuAddCall);
@@ -171,12 +204,6 @@ class InCallMenu {
         mMergeCalls.setText(R.string.menu_mergeCalls);
         mMergeCalls.setIconResource(R.drawable.ic_menu_merge_calls);
 
-        mPhoneRecorder = new InCallMenuItemView(wrappedContext);
-        mPhoneRecorder.setId(R.id.menuPhoneRecorder);
-        mPhoneRecorder.setOnClickListener(mInCallScreen);
-        mPhoneRecorder.setText(R.string.menu_phoneRecorder);
-        mPhoneRecorder.setIndicatorVisible(true);
-		
         // TODO: Icons for menu items we don't have yet:
         //   R.drawable.ic_menu_answer_call
         //   R.drawable.ic_menu_silence_ringer
@@ -225,7 +252,28 @@ class InCallMenu {
         mIgnore.setOnClickListener(mInCallScreen);
         mIgnore.setText(R.string.menu_ignore);
 
-        //
+//MTK begin: Added by lei.wang@archermind.com
+        // TODO need change icon
+
+        mDisconnectHold = new InCallMenuItemView(wrappedContext);
+        mDisconnectHold.setId(R.id.menuDisconnectHold);
+        mDisconnectHold.setOnClickListener(mInCallScreen);
+        mDisconnectHold.setText(R.string.menu_disconnect_hold);
+        //mDisconnectHold.setIconResource(R.drawable.ic_menu_merge_calls);
+        
+        mDisconnectAll = new InCallMenuItemView(wrappedContext);
+        mDisconnectAll.setId(R.id.menuDisconnectAll);
+        mDisconnectAll.setOnClickListener(mInCallScreen);
+        mDisconnectAll.setText(R.string.menu_disconnect_all);
+        //mDisconnectAll.setIconResource(R.drawable.ic_menu_merge_calls);
+        
+        mECT = new InCallMenuItemView(wrappedContext);
+        mECT.setId(R.id.menuECT);
+        mECT.setOnClickListener(mInCallScreen);
+        mECT.setText(R.string.menu_ect);
+        //mECT.setIconResource(R.drawable.ic_menu_merge_calls);
+//MTK end
+		//
         // Load all the items into the correct "slots" in the InCallMenuView.
         //
         // Row 0 is the topmost row onscreen, item 0 is the leftmost item in a row.
@@ -250,14 +298,14 @@ class InCallMenu {
             mInCallMenuView.addItemView(mManageConference, 0);
         }
         mInCallMenuView.addItemView(mShowDialpad, 0);
-        mInCallMenuView.addItemView(mEndbgcall, 0);
-        mInCallMenuView.addItemView(mEndallcalls, 0);
+//MTK add below one line:
+        mInCallMenuView.addItemView(mRecord, 0);
+
         // Row 1:
         mInCallMenuView.addItemView(mSwapCalls, 1);
         mInCallMenuView.addItemView(mMergeCalls, 1);
         mInCallMenuView.addItemView(mAddCall, 1);
-
-
+        mInCallMenuView.addItemView(mEndCall, 1);
 
         // Row 2:
         // In this row we see *either*  bluetooth/speaker/mute/hold
@@ -277,11 +325,18 @@ class InCallMenu {
         mInCallMenuView.addItemView(mSpeaker, 2);
         mInCallMenuView.addItemView(mBluetooth, 2);
 
-	mInCallMenuView.addItemView(mPhoneRecorder, 2);
-
         mInCallMenuView.dumpState();
     }
-
+//MTK begin: by lei.wang@archermind.com
+    private void setRow3Menu(boolean bShown) {
+        mDisconnectHold.setVisible(bShown);
+        mDisconnectHold.setEnabled(bShown);
+        mDisconnectAll.setVisible(bShown);
+        mDisconnectAll.setEnabled(bShown);
+        mECT.setVisible(bShown);
+        mECT.setEnabled(bShown);
+    }
+//MTK end
     /**
      * Updates the enabledness and visibility of all items in the
      * InCallMenuView based on the current state of the Phone.
@@ -295,19 +350,60 @@ class InCallMenu {
      */
     /* package */ boolean updateItems(CallManager cm) {
         if (DBG) log("updateItems()...");
+//MTK begin:
+        /*
+    	if(mHold.getIndicatorState()) {
+    		mHold.setText(R.string.menu_unhold);
+    	} else {
+    		mHold.setText(R.string.menu_hold);
+    	}
+        */
+//MTK end
         // if (DBG) PhoneUtils.dumpCallState();
 
         // If the phone is totally idle (like in the "call ended" state)
         // there's no menu at all.
-        if (cm.getState() == Phone.State.IDLE) {
+//Google:if (cm.getState() == Phone.State.IDLE) {
+//MTK begin:
+        Phone.State state;
+        state = cm.getState();  // IDLE, RINGING, or OFFHOOK	
+		
+        if (state == Phone.State.IDLE) {
+//MTK end
             if (DBG) log("- Phone is idle!  Don't show the menu...");
             return false;
         }
 
-        final boolean hasRingingCall = cm.hasActiveRingingCall();
+/*Google:final boolean hasRingingCall = cm.hasActiveRingingCall();
         final boolean hasActiveCall = cm.hasActiveFgCall();
         final Call.State fgCallState = cm.getActiveFgCallState();
-        final boolean hasHoldingCall = cm.hasActiveBgCall();
+        final boolean hasHoldingCall = cm.hasActiveBgCall();     */
+//MTK begin:
+        boolean hasRingingCall;
+        boolean hasActiveCall;
+        Call.State fgCallState;
+        boolean hasHoldingCall;
+
+        hasRingingCall = cm.hasActiveRingingCall();
+        hasActiveCall = cm.hasActiveFgCall();
+        fgCallState = cm.getActiveFgCallState();
+        hasHoldingCall = cm.hasActiveBgCall();	
+
+//below add by lei.wang@archermind.com
+        if(hasActiveCall && hasHoldingCall) setRow3Menu(true);
+        else setRow3Menu(false);
+        
+        mRecord.setVisible(true);
+        mRecord.setEnabled(true);
+
+        PhoneRecorder phoneRecorder = PhoneRecorder.getInstance(this.getView().getContext());
+        boolean flagRecord = phoneRecorder.ismFlagRecord();
+        if (flagRecord) {
+            mRecord.setText(mInCallScreen. getResources().getText(R.string.stop_record));
+        } else {
+            mRecord.setText(mInCallScreen. getResources().getText(R.string.start_record));
+        }
+//MTK end
 
         // For OTA call, only show dialpad, endcall, speaker, and mute menu items
         if (hasActiveCall && TelephonyCapabilities.supportsOtasp(cm.getFgPhone()) &&
@@ -327,31 +423,27 @@ class InCallMenu {
             mAnswer.setVisible(false);
             mIgnore.setVisible(false);
 
-            boolean inConferenceCall =
-                    PhoneUtils.isConferenceCall(cm.getActiveFgCall());
-            boolean showShowDialpad = !inConferenceCall;
-            boolean enableShowDialpad = showShowDialpad && mInCallScreen.okToShowDialpad();
-            mShowDialpad.setVisible(showShowDialpad);
-            mShowDialpad.setEnabled(enableShowDialpad);
+/*Google:   boolean inConferenceCall =
+                    PhoneUtils.isConferenceCall(cm.getActiveFgCall()); */
+//MTK begin:
+            Call fgCall = cm.getActiveFgCall();	
+	        if (null != fgCall) {
+                boolean inConferenceCall = PhoneUtils.isConferenceCall(fgCall);
+                boolean showShowDialpad = !inConferenceCall;
+                boolean enableShowDialpad = showShowDialpad && mInCallScreen.okToShowDialpad();
+                mShowDialpad.setVisible(showShowDialpad);
+                mShowDialpad.setEnabled(enableShowDialpad);
+	        }
+//MTK end
             boolean isDtmfDialerOpened = mInCallScreen.isDialerOpened();
             mShowDialpad.setText(isDtmfDialerOpened
                                  ? R.string.menu_hideDialpad
                                  : R.string.menu_showDialpad);
 
-//            mEndCall.setVisible(true);
-//            mEndCall.setEnabled(true);
-            // add for end bg call and end all calls start
-            Call bg = cm.getFirstActiveBgCall();
-            if (bg != null && !bg.isIdle()) {
-	            mEndbgcall.setVisible(true);
-	            mEndbgcall.setEnabled(true);
-            }else{
-	            mEndbgcall.setVisible(false);
-	            mEndbgcall.setEnabled(false);
-            }
-            mEndallcalls.setVisible(true);
-            mEndallcalls.setEnabled(true);
-            // add for end bg call and end all calls end
+
+            mEndCall.setVisible(true);
+            mEndCall.setEnabled(true);
+
             mSpeaker.setVisible(true);
             mSpeaker.setEnabled(true);
             boolean speakerOn = PhoneUtils.isSpeakerOn(mInCallScreen.getApplicationContext());
@@ -367,7 +459,7 @@ class InCallMenu {
             // and "answer & hold" buttons, and nothing else.
             // TODO: be sure to test this for "only one line in use and it's
             // active" AND for "only one line in use and it's on hold".
-            if ((hasActiveCall && !hasHoldingCall) || (!hasActiveCall && hasHoldingCall)) { //for menu AnswerAndEnd when all holding
+            if (hasActiveCall && !hasHoldingCall) {
                 int phoneType = cm.getRingingPhone().getPhoneType();
                 // For CDMA only make "Answer" and "Ignore" visible
                 if (phoneType == Phone.PHONE_TYPE_CDMA) {
@@ -396,11 +488,7 @@ class InCallMenu {
                 }
 
                 mShowDialpad.setVisible(false);
-//                mEndCall.setVisible(false);
-                // add for end bg call and end all calls start
-                mEndbgcall.setVisible(false);
-                mEndallcalls.setVisible(false);
-                // add for end bg call and end all calls end
+                mEndCall.setVisible(false);
                 mAddCall.setVisible(false);
                 mSwapCalls.setVisible(false);
                 mMergeCalls.setVisible(false);
@@ -408,7 +496,8 @@ class InCallMenu {
                 mSpeaker.setVisible(false);
                 mMute.setVisible(false);
                 mHold.setVisible(false);
-				mPhoneRecorder.setVisible(false);
+///MTK add below line:
+                mRecord.setVisible(false);
 
                 // Done updating the individual items.
                 // The last step is to tell the InCallMenuView to update itself
@@ -458,20 +547,30 @@ class InCallMenu {
         // It's also always enabled.  (Actually it *would* need to be
         // disabled if the phone was totally idle, but the entire in-call
         // menu is already disabled in that case (see above.))
-//        mEndCall.setVisible(true);
-//        mEndCall.setEnabled(true);
-        // add for end bg call and end all calls start
-        Call bg = cm.getFirstActiveBgCall();
-        if (bg != null && !bg.isIdle()) {
-            mEndbgcall.setVisible(true);
-            mEndbgcall.setEnabled(true);
-        }else{
-            mEndbgcall.setVisible(false);
-            mEndbgcall.setEnabled(false);
+        mEndCall.setVisible(true);
+        mEndCall.setEnabled(true);
+
+//MTK begin:
+        /**
+         * If sdcard is not mounted. Do not show "start recoring" menu item.
+         */
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            mRecord.setEnabled(false);
+	        mRecord.setText(R.string.no_sdcard);
+        } else if (!PhoneRecorder.sdcardFullFlag()) {
+            mRecord.setEnabled(false);
+	        mRecord.setText(R.string.full_sdcard);
         }
-        mEndallcalls.setVisible(true);
-        mEndallcalls.setEnabled(true);
-        // add for end bg call and end all calls end
+        /**
+         * If foreground state is idle. Don't show "start recording" menu item.
+         */               
+        Call fg_call = cm.getActiveFgCall();
+	         
+        if(null != fg_call && fg_call.getState() != Call.State.ACTIVE) {			
+            mRecord.setEnabled(false);
+        }
+//MTK end
+
         // "Add call"
         mAddCall.setVisible(true);
         mAddCall.setEnabled(inCallControlState.canAddCall);
@@ -481,16 +580,6 @@ class InCallMenu {
         mSwapCalls.setEnabled(inCallControlState.canSwap);
         mMergeCalls.setVisible(true);
         mMergeCalls.setEnabled(inCallControlState.canMerge);
-
-		mPhoneRecorder.setVisible(true);
-        log("updateItems MEDIA_MOUNTED: " + (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)));
-		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-			mPhoneRecorder.setEnabled(!mInCallScreen.isRecording);
-			mPhoneRecorder.setIndicatorState(mInCallScreen.m_bRecording);
-		} else {
-			mPhoneRecorder.setEnabled(false);
-			mPhoneRecorder.setIndicatorState(false);
-		}
 
         // "Bluetooth": always visible, only enabled if BT is available.
         mBluetooth.setVisible(true);

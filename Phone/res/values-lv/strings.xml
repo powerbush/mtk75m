@@ -692,4 +692,15 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Lai veiktu interneta zvanu, vispirms pārbaudiet interneta savienojumu"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Lai veiktu interneta zvanus, ir jābūt izveidotam savienojumam ar Wi-Fi tīklu (izmantojiet sadaļu Bezvadu un tīkla iestatījumi)"</string>
     <string name="no_voip" msgid="8901474054537199865">"Interneta zvani netiek atbalstīti"</string>
+
+    <string name="activity_not_found">"Programa jūsų telefone neįdiegta."</string>
+
+
+<string name="sim_toolkit">"SIM rīkkopa"</string>
+
+<string name="simlock_returntocall">"Atpakaļ pie zvana"</string>
+<string name="simlock_emergency">"Ārkārtas zvans"</string>
+<string name="simlock_enterpincode">"Ievadiet PIN kodu"</string>
+
+
 </resources>

@@ -39,9 +39,12 @@
             android:targetPackage="com.android.phone"
             android:targetClass="com.android.phone.DataUsage" />
     </PreferenceScreen>
-
-     <Preference android:key="uplmn_value" android:title="@string/UPLMN_setting">
-     </Preference>
+    
+    <PreferenceScreen
+        android:key="button_network_mode_ex_key"
+        android:title="@string/preferred_network_mode_title"
+        android:persistent="false">
+    </PreferenceScreen>
 
     <ListPreference
         android:key="preferred_network_mode_key"
@@ -50,5 +53,25 @@
         android:entries="@array/preferred_network_mode_choices"
         android:entryValues="@array/preferred_network_mode_values"
         android:dialogTitle="@string/preferred_network_mode_dialogtitle" />
+        
+    <PreferenceScreen
+        android:key="button_3g_service_key"
+        android:title="@string/setting_for_3G_service"
+        android:persistent="false">
+        
+        <intent android:action="android.intent.action.MAIN"
+            android:targetPackage="com.android.phone"
+            android:targetClass="com.android.phone.Modem3GCapabilitySwitch" />
+    </PreferenceScreen>
+    
+    <PreferenceScreen
+        android:key="button_plmn_key"
+        android:title="@string/plmn_list_setting_title"
+        android:persistent="false">
+        
+        <intent android:action="android.intent.action.MAIN"
+            android:targetPackage="com.android.phone"
+            android:targetClass="com.android.phone.PLMNListPreference" />
+    </PreferenceScreen>
 
 </PreferenceScreen>

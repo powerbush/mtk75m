@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent" 
+             android:layout_height="@dimen/incall_status0_height" 
+             xmlns:android="http://schemas.android.com/apk/res/android">
+	             
+	<RelativeLayout android:id="@+id/vtCallStatus0"
+	                android:layout_width="match_parent"
+	                android:layout_height="@dimen/incall_status0_height">
+	                
+	    <TextView android:id="@+id/vtView0"
+	              android:layout_width="wrap_content"
+	              android:maxWidth="80dip"
+	              android:ellipsize="end"
+	              android:layout_height="wrap_content"
+	              android:layout_alignParentLeft="true"
+	              android:layout_centerVertical="true"
+	              android:layout_marginLeft="@dimen/incall_status_left_margin"
+	              android:textColor="#FFFFFF"
+	              android:singleLine="true"
+	              android:textSize="@dimen/incall_status_text_size0"/>
+	
+	    <TextView android:id="@+id/vtView1"
+	              android:layout_width="wrap_content"
+	              android:maxWidth="80dip"
+	              android:layout_height="wrap_content"
+	              android:layout_marginLeft="@dimen/incall_status_left_internal_margin"
+	              android:layout_centerVertical="true"
+	              android:layout_toRightOf="@id/vtView0"
+	              android:ellipsize="middle"
+	              android:singleLine="true"
+	              android:textColor="#FFFFFF"
+	              android:background="@drawable/sim_name_border"/>
+	    
+	    <TextView android:id="@+id/vtView3"
+	              android:layout_width="wrap_content"
+	              android:maxWidth="80dip"
+	              android:layout_height="wrap_content"
+	              android:layout_centerVertical="true"
+	              android:layout_alignParentRight="true"
+	              android:layout_marginRight="@dimen/incall_status_right_margin"
+	              android:singleLine="true"
+	              android:textColor="#FFFFFF"
+	              android:textSize="@dimen/incall_status_text_size0"/>
+	    
+	    <ImageView android:id="@+id/vtView2"
+	               android:layout_width="wrap_content"
+	               android:layout_height="wrap_content"
+	               android:layout_marginRight="@dimen/incall_status_right_internal_margin"
+	               android:layout_toLeftOf="@id/vtView3"
+	               android:layout_centerVertical="true"/>
+            
+        </RelativeLayout>
+</FrameLayout>

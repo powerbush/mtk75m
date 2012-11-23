@@ -15,10 +15,10 @@
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:phone="http://schemas.android.com/apk/res/com.android.phone">
-    <PreferenceCategory
+    <!--  <PreferenceCategory
             android:key="sip_settings_category_key"
-            android:title="@string/sip_settings"
-            android:persistent="false">
+            android:visible="false"
+            android:persistent="false">-->
 
         <PreferenceScreen
                 android:key="sip_account_settings_key"
@@ -32,17 +32,26 @@
 
         <ListPreference
                 android:key="sip_call_options_key"
-                android:title="@string/sip_call_options_title"
+                android:title="@string/sip_call_options_title_single_sim"
                 android:persistent="true"
                 android:entries="@array/sip_call_options_entries"
                 android:entryValues="@array/sip_call_options_values"/>
 
         <ListPreference
                 android:key="sip_call_options_wifi_only_key"
-                android:title="@string/sip_call_options_title"
+                android:title="@string/sip_call_options_title_single_sim"
                 android:dialogTitle="@string/sip_call_options_wifi_only_title"
                 android:persistent="true"
                 android:entries="@array/sip_call_options_wifi_only_entries"
                 android:entryValues="@array/sip_call_options_values"/>
-    </PreferenceCategory>
+                
+        <CheckBoxPreference
+                android:key="open_sip_call_option_key"
+                android:title="@string/sip_call_options_title"
+                android:dialogTitle="@string/sip_call_options_wifi_only_title"
+                android:persistent="true"
+                android:entries="@array/sip_call_options_wifi_only_entries"
+                android:entryValues="@array/sip_call_options_values"/>       
+        
+    <!-- </PreferenceCategory>  -->
 </PreferenceScreen>

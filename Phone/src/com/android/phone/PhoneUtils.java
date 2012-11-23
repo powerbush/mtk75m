@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -22,7 +57,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,26 +69,28 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncResult;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.SystemProperties;
-import android.provider.BaseColumns;
 import android.telephony.PhoneNumberUtils;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
+import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.Editable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import android.widget.TextView;
-import android.content.DialogInterface;
+import android.widget.Toast;
+import android.os.ServiceManager;
+import com.mediatek.dmagent.DMAgent;
 
 import com.android.internal.telephony.Call;
 import com.android.internal.telephony.CallStateException;
@@ -62,29 +98,30 @@ import com.android.internal.telephony.CallerInfo;
 import com.android.internal.telephony.CallerInfoAsyncQuery;
 import com.android.internal.telephony.Connection;
 import com.android.internal.telephony.IExtendedNetworkService;
-import com.android.internal.telephony.ITelephony;
 import com.android.internal.telephony.MmiCode;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.TelephonyProperties;
 import com.android.internal.telephony.cdma.CdmaConnection;
-import com.android.internal.telephony.gsm.TDPhone;
-import com.android.phone.PhoneAlertDialog;
-import com.android.internal.telephony.ITelephony;
 import com.android.internal.telephony.CallManager;
 import com.android.internal.telephony.sip.SipPhone;
 
-import java.lang.reflect.Method;
+
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+
+import com.android.internal.telephony.gemini.*;
+import com.mediatek.featureoption.FeatureOption;
+import android.os.ServiceManager;
 
 /**
  * Misc utilities for the Phone app.
  */
 public class PhoneUtils {
     private static final String LOG_TAG = "PhoneUtils";
-    private static final boolean DBG = true;// (PhoneApp.DBG_LEVEL >= 2);
+//Google: private static final boolean DBG = (PhoneApp.DBG_LEVEL >= 2);
+    private static final boolean DBG = true;
 
     /** Control stack trace for Audio Mode settings */
     private static final boolean DBG_SETAUDIOMODE_STACK = false;
@@ -96,14 +133,7 @@ public class PhoneUtils {
     static final int CALL_STATUS_DIALED = 0;  // The number was successfully dialed
     static final int CALL_STATUS_DIALED_MMI = 1;  // The specified number was an MMI code
     static final int CALL_STATUS_FAILED = 2;  // The call failed
-    static final int CALL_STATUS_FAILED_ONLY_FDN = 3; //
-    
-    // yeezone:jinwei flag block type 2011-8-22
-    static final int BLOCK_PHONE = 0;			//block phone only
-    static final int BLOCK_MESSAGE = 1;			//block message only
-    static final int BLOCK_PHONE_MESSAGE = 2; 	//block phone and message
-    static final int BLOCK_PHONE_VIDEO = 3;  //block phone and message
-    
+
     // State of the Phone's audio modes
     // Each state can move to the other states, but within the state only certain
     //  transitions for AudioManager.setMode() are allowed.
@@ -125,11 +155,15 @@ public class PhoneUtils {
     /** Phone state changed event*/
     private static final int PHONE_STATE_CHANGED = -1;
 
+//MTK begin
+    private static final int PHONE_SPEECH_INFO = -2;
+    private static final int PHONE_STATE_CHANGED2 = -3;
+    private static final int PHONE_SPEECH_INFO2 = -4;
+//MTK end
+
+
     /** Define for not a special CNAP string */
     private static final int CNAP_SPECIAL_CASE_NO = -1;
-
-    //limit of input text  
-    private static final int LIMITED_TEXT_MAX_COUNT = 40;
 
     // Extended network service interface instance
     private static IExtendedNetworkService mNwService = null;
@@ -138,6 +172,46 @@ public class PhoneUtils {
 
     /** Noise suppression status as selected by user */
     private static boolean sIsNoiseSuppressionEnabled = true;
+    private static final int MIN_LENGTH = 6;
+    private static final int MIN_WIDTH = 270;
+
+     /** For TTY usage */
+    private static String ttyMode = "tty_off";
+    private static boolean isOpen = false;
+    
+    public static void setTtyMode (String mode)
+    {
+        ttyMode = mode;
+    }
+    
+    public static void openTTY() {
+        if (!PhoneApp.getInstance().isEnableTTY()) {
+            return;
+        }
+        Context context = PhoneApp.getInstance();
+        AudioManager audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        if (!ttyMode.equals("tty_off") && !isOpen)
+        {
+            audioManager.setParameters("tty_mode="+ ttyMode);
+            isOpen = true;
+        }
+    }
+    
+    public static String DUALMIC_MODE = "Enable_Dual_Mic_Setting";
+
+    //Add for recording the USSD dialog, and use to dismiss the dialog when enter airplane mode
+    static Dialog mDialog = null;
+    static UssdAlertActivity mUssdActivity = null;
+    private static boolean mbMmiFinished = false;
+    private static MmiCode curCode = null;
+
+    // MTK_OP01_PROTECT_START
+    // MTK_OP02_PROTECT_START
+    public static String mOptr = null;
+    public static String mSpec = null;
+    public static String mSeg = null;
+    // MTK_OP02_PROTECT_END
+    // MTK_OP01_PROTECT_END	
 
     /**
      * Handler that tracks the connections and updates the value of the
@@ -149,6 +223,8 @@ public class PhoneUtils {
             AsyncResult ar = (AsyncResult) msg.obj;
             switch (msg.what) {
                 case PHONE_STATE_CHANGED:
+//MTK add below one line
+                case PHONE_STATE_CHANGED2:
                     if (DBG) log("ConnectionHandler: updating mute state for each connection");
 
                     CallManager cm = (CallManager) ar.userObj;
@@ -211,6 +287,28 @@ public class PhoneUtils {
                     }
 
                     break;
+//MTK begin:
+                case PHONE_SPEECH_INFO2:
+                     if (DBG) log("ConnectionHandler: PHONE_SPEECH_INFO2");
+                     MTKCallManager cm4 = (MTKCallManager) ar.userObj;
+                     setAudioMode();
+                     cm4.unregisterForSpeechInfoGemini(mConnectionHandler, Phone.GEMINI_SIM_2);
+                     break;
+                case PHONE_SPEECH_INFO:
+                    if (DBG) log("ConnectionHandler: PHONE_SPEECH_INFO");
+                     //This is ugly, but now no more elegant way to resolved this.
+                    boolean isMTKCm = ar.userObj instanceof MTKCallManager;
+                    if(FeatureOption.MTK_GEMINI_SUPPORT && isMTKCm){
+                    	MTKCallManager cm3 = (MTKCallManager) ar.userObj;
+                    	setAudioMode();
+                        cm3.unregisterForSpeechInfoGemini(mConnectionHandler, Phone.GEMINI_SIM_1);
+                    } else {
+                        CallManager cm2 = (CallManager) ar.userObj;
+                        setAudioMode();
+                        cm2.unregisterForSpeechInfo(mConnectionHandler);
+                    }
+                    break;
+//MTK end
             }
         }
     }
@@ -236,16 +334,17 @@ public class PhoneUtils {
             mConnectionHandler = new ConnectionHandler();
         }
 
-//TS for compile
-//        phone.registerForPreciseCallStateChanged(mConnectionHandler, PHONE_STATE_CHANGED, phone);
-//	//if (phone.getPhoneType() == Phone.PHONE_TYPE_TD)
-//	{			
-//	        phone.registerForPreciseVideoCallStateChanged(mConnectionHandler, PHONE_STATE_CHANGED, phone);
-//	}
-
         // pass over cm as user.obj
-        cm.registerForPreciseCallStateChanged(mConnectionHandler, PHONE_STATE_CHANGED, cm);
-
+//Google code: cm.registerForPreciseCallStateChanged(mConnectionHandler, PHONE_STATE_CHANGED, cm);
+//MTK begin:
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            MTKCallManager cmGemini = PhoneApp.getInstance().mCMGemini;
+            cmGemini.registerForPreciseCallStateChangedGemini(mConnectionHandler, PHONE_STATE_CHANGED, cm, Phone.GEMINI_SIM_1); 
+            cmGemini.registerForPreciseCallStateChangedGemini(mConnectionHandler, PHONE_STATE_CHANGED2, cm, Phone.GEMINI_SIM_2);
+        } else {			
+            cm.registerForPreciseCallStateChanged(mConnectionHandler, PHONE_STATE_CHANGED, cm);
+        }
+//MTK end
         // Extended NW service
         Intent intent = new Intent("com.android.ussd.IExtendedNetworkService");
         cm.getDefaultPhone().getContext().bindService(intent,
@@ -257,12 +356,16 @@ public class PhoneUtils {
     /** This class is never instantiated. */
     private PhoneUtils() {
     }
-
+//MTK begin:
     //static method to set the audio control state.
     static void setAudioControlState(int newState) {
-        log("setAudioBehaviourState:" + sAudioBehaviourState);
         sAudioBehaviourState = newState;
     }
+
+    static int getAudioControlState() {
+        return sAudioBehaviourState;
+    }
+//MTK end
     /**
      * Answer the currently-ringing call.
      *
@@ -272,14 +375,25 @@ public class PhoneUtils {
      * @see answerAndEndHolding()
      * @see answerAndEndActive()
      */
+//MTK: Call type(not phone type) parameter should consider Gemini situation when using API: static boolean answerCall(Call ringing)
     static boolean answerCall(Call ringing) {
         if (DBG) log("answerCall()...");
 
         // If the ringer is currently ringing and/or vibrating, stop it
         // right now (before actually answering the call.)
         PhoneApp.getInstance().getRinger().stopRing();
+//MTK add below one line:
         PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_OFFHOOK);
+
         boolean answered = false;
+/*MTK add but remove when merge;
+        Call call;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            call = ((GeminiPhone)phone).getRingingCall();
+        } else {
+            call = phone.getRingingCall();
+        }
+*/
         PhoneApp app = PhoneApp.getInstance();
         Phone phone = ringing.getPhone();
         boolean phoneIsCdma = (phone.getPhoneType() == Phone.PHONE_TYPE_CDMA);
@@ -328,9 +442,9 @@ public class PhoneUtils {
                 answered = true;
 
                 // Always reset to "unmuted" for a freshly-answered call
-                setMute(false);
+                //setMute(false);
 
-                setAudioMode(AudioManager.MODE_IN_CALL);
+                setAudioMode();
 
                 // Check is phone in any dock, and turn on speaker accordingly
                 activateSpeakerIfDocked(phone);
@@ -347,7 +461,6 @@ public class PhoneUtils {
                 }
             }
         }
-        if (DBG) log("endanswerCall answered=" + answered);
         return answered;
     }
 
@@ -372,10 +485,10 @@ public class PhoneUtils {
         if (!ringing.isIdle()) {
             if (DBG) log("HANGUP ringing call");
             hungup = hangupRingingCall(ringing);
-        } else if (!fg.isIdle()) {
+        } else if (!fg.isIdle() || fg.state == Call.State.DISCONNECTING) {
             if (DBG) log("HANGUP foreground call");
             hungup = hangup(fg);
-        } else if (!bg.isIdle()) {
+        } else if (!bg.isIdle() || bg.state == Call.State.DISCONNECTING) {
             if (DBG) log("HANGUP background call");
             hungup = hangup(bg);
         }
@@ -385,8 +498,17 @@ public class PhoneUtils {
         return hungup;
     }
 
+//MTK: Call type(not phone type) parameter should consider Gemini situation when using API: static boolean hangupRingingCall(Call ringing)
     static boolean hangupRingingCall(Call ringing) {
         if (DBG) log("hangup ringing call");
+/*MTK add but remove when merge:
+        Call ringing;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            ringing = ((GeminiPhone)phone).getRingingCall();
+        } else {		
+            ringing = phone.getRingingCall();
+        }
+*/
         int phoneType = ringing.getPhone().getPhoneType();
 
         if (phoneType == Phone.PHONE_TYPE_CDMA) {
@@ -419,14 +541,29 @@ public class PhoneUtils {
             throw new IllegalStateException("Unexpected phone type: " + phoneType);
         }
     }
-
+//MTK: Call type(not phone type) parameter should consider Gemini situation when using API: static boolean hangupActiveCall(Call foreground)
     static boolean hangupActiveCall(Call foreground) {
         if (DBG) log("hangup active call");
+/*MTK add but remove when merge
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            return hangup(((GeminiPhone)phone).getForegroundCall());        
+        } else {
+            return hangup(phone.getForegroundCall());
+        }
+*/
         return hangup(foreground);
     }
 
+//MTK: Call type(not phone type) parameter should consider Gemini situation when using API: static boolean hangupHoldingCall(Call background)
     static boolean hangupHoldingCall(Call background) {
         if (DBG) log("hangup holding call");
+/*MTK add but remove when merge
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            return hangup(((GeminiPhone)phone).getBackgroundCall());
+        } else {
+            return hangup(phone.getBackgroundCall());
+        }
+*/
         return hangup(background);
     }
 
@@ -438,8 +575,20 @@ public class PhoneUtils {
     static boolean hangupRingingAndActive(Phone phone) {
         boolean hungUpRingingCall = false;
         boolean hungUpFgCall = false;
+/*Google code
         Call ringingCall = phone.getRingingCall();
         Call fgCall = phone.getForegroundCall();
+*/
+//MTK begin:
+        Call ringingCall , fgCall ;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            ringingCall = ((GeminiPhone)phone).getRingingCall();
+            fgCall = ((GeminiPhone)phone).getForegroundCall();
+        } else {
+            ringingCall = phone.getRingingCall();
+            fgCall = phone.getForegroundCall();
+        }
+//MTK end
 
         // Hang up any Ringing Call
         if (!ringingCall.isIdle()) {
@@ -456,44 +605,6 @@ public class PhoneUtils {
         return hungUpRingingCall || hungUpFgCall;
     }
 
-
-    static boolean hangupAllCalls(Phone phone) {
-/*
-        Call call = phone.getForegroundCall();
-        try {
-            call.hangupAllCalls();
-            return true;
-        } catch (CallStateException ex) {
-            Log.e(LOG_TAG, "hangup all calls: caught " + ex, ex);
-        }
-*/
-//        Call fg = phone.getForegroundCall();
-//        Call bg = phone.getBackgroundCall();
-//        Call ringing = phone.getRingingCall();
-//        try {
-//          if ((!fg.isIdle()) || (!ringing.isIdle()) || (!bg.isIdle())) {
-//              if(!ringing.isIdle()){
-//                    ringing.sprdHangupAll();
-//                }
-//                if(!fg.isIdle()){
-//                    fg.sprdHangupAll();
-//                }
-//                if(!bg.isIdle()){
-//                    bg.sprdHangupAll();
-//                }
-//                return true;
-//           } else {
-//               if (DBG) log("hangupAllCalls: No calls to hangup!");
-//           }
-//        }
-//        catch (CallStateException ex) {
-//            Log.e(LOG_TAG, "hangupAllCalls: caught " + ex, ex);
-//            return false;
-//        }
-		phone.hangupAllCalls();
-        return false;
-    }
-
     /**
      * Trivial wrapper around Call.hangup(), except that we return a
      * boolean success code rather than throwing CallStateException on
@@ -505,10 +616,20 @@ public class PhoneUtils {
     static boolean hangup(Call call) {
         try {
             CallManager cm = PhoneApp.getInstance().mCM;
-
-            if (call.getState() == Call.State.ACTIVE && cm.hasActiveBgCall()) {
+            //1A1H1R : Resolved for ALPS00036146
+            if (call.getState() == Call.State.ACTIVE && cm.hasActiveBgCall() && !cm.hasActiveRingingCall()) {
                 // handle foreground call hangup while there is background call
                 cm.hangupForegroundResumeBackground(cm.getFirstActiveBgCall());
+            } else if (call.getState() == Call.State.ACTIVE && cm.hasActiveBgCall() && cm.hasActiveRingingCall()) {
+                Call fg = cm.getActiveFgCall();
+                Call bg = cm.getFirstActiveBgCall();
+                if (fg.getPhone() == bg.getPhone() 
+                        && fg.getPhone().getPhoneType() == Phone.PHONE_TYPE_GSM
+                        && cm.getRingingPhone().getPhoneType() == Phone.PHONE_TYPE_SIP) {
+                    cm.hangupActiveCall(call);
+                } else {
+                    call.hangup();
+                }
             } else {
                 call.hangup();
             }
@@ -550,6 +671,9 @@ public class PhoneUtils {
     static boolean answerAndEndActive(CallManager cm, Call ringing) {
         if (DBG) log("answerAndEndActive()...");
 
+        Phone fgPhone = cm.getActiveFgCall().getPhone();
+        Phone ringingPhone = ringing.getPhone();
+
         // Unlike the answerCall() method, we *don't* need to stop the
         // ringer or change audio modes here since the user is already
         // in-call, which means that the audio mode is already set
@@ -567,33 +691,15 @@ public class PhoneUtils {
         // since hangupActiveCall() also accepts the ringing call
         // check if the ringing call was already answered or not
         // only answer it when the call still is ringing
-        if (ringing.isRinging()) {
+        /*if (ringing.isRinging()) {
+            return answerCall(ringing);
+        }*/
+        if (fgPhone != ringingPhone
+            || (fgPhone == ringingPhone && (fgPhone instanceof SipPhone))) {
             return answerCall(ringing);
         }
 
         return true;
-    }
-
-    static void fallBack(Phone phone) {
-        if (DBG) log("fallBack ringing call");
-
-		Call ringing = phone.getRingingCall();
-		Call.State state = ringing.getState();
-		if (state != Call.State.INCOMING) {
-			if (DBG) log("No Ringing call to hangup");
-			return;
-		}
-
-        int phoneType = phone.getPhoneType();
-        /*if (phoneType == Phone.PHONE_TYPE_TD)*/ {
-            if (DBG) log("fallBack ringing call");
-	    try{
-            	phone.fallBack();
-	    }catch (CallStateException ex) {
-            	Log.w(LOG_TAG, "Connection hangup: caught " + ex, ex);
-            }
-	    return;
-        } 
     }
 
     /**
@@ -619,6 +725,20 @@ public class PhoneUtils {
                 CdmaPhoneCallState.PhoneCallState.THRWAY_ACTIVE);
         }
     }
+//MTK begin:
+    static void placeCallRegister(Phone phone) {
+    	boolean isSipCall = phone.getPhoneType() == Phone.PHONE_TYPE_SIP;
+        if (DBG) log("placeCallRegister: ");
+        if (FeatureOption.MTK_GEMINI_SUPPORT && !isSipCall) {
+            MTKCallManager cmGemini = PhoneApp.getInstance().mCMGemini;    	
+            cmGemini.registerForSpeechInfoGemini(mConnectionHandler, PHONE_SPEECH_INFO, cmGemini, Phone.GEMINI_SIM_1);
+            cmGemini.registerForSpeechInfoGemini(mConnectionHandler, PHONE_SPEECH_INFO2, cmGemini, Phone.GEMINI_SIM_2);
+        } else {
+            CallManager cm = PhoneApp.getInstance().mCM;		    
+            cm.registerForSpeechInfo(mConnectionHandler, PHONE_SPEECH_INFO, cm);
+        }		
+    }
+//MTK end
 
     /**
      * Dial the number using the phone passed in.
@@ -630,17 +750,30 @@ public class PhoneUtils {
      * initiated (dialpad vs contact).
      * @return either CALL_STATUS_DIALED, CALL_STATUS_DIALED_MMI, or CALL_STATUS_FAILED
      */
-    static int placeCall(Phone phone, String number, Uri contactRef, boolean isStkCall) {
+//MTK modified below one line:
+    static int placeCallExt(Phone phone, String number, Uri contactRef, int simId) {
         int status = CALL_STATUS_DIALED;
-        if(!isStkCall && FDNInfo.isFDNDisableDial(phone,number)){
-            Log.i(LOG_TAG, "FDN Disable Dial ");
-            return  CALL_STATUS_FAILED_ONLY_FDN;
-	  }
+        boolean isSipCall = phone.getPhoneType() == Phone.PHONE_TYPE_SIP;
         try {
             if (DBG) log("placeCall: '" + number + "'...");
 
-           log("placeCall: isStkCall = " + isStkCall);
-            Connection cn = PhoneApp.getInstance().mCM.dial(phone, number, isStkCall);
+//Google code: Connection cn = PhoneApp.getInstance().mCM.dial(phone, number);
+//MTK begin:
+			placeCallRegister(phone);
+            Connection cn;
+            if (FeatureOption.MTK_GEMINI_SUPPORT && !isSipCall) {
+                if (simId==Phone.GEMINI_SIM_1 || simId == Phone.GEMINI_SIM_2) {
+                log("placeCallExt , simId " + simId);
+                    cn = PhoneApp.getInstance().mCMGemini.dialGemini(phone, number, simId);
+                } else {
+                    int defaultSimId = SystemProperties.getInt(Phone.GEMINI_DEFAULT_SIM_PROP, -1);
+                    log("placeCallExt , default simId " + simId);
+                    cn = PhoneApp.getInstance().mCMGemini.dialGemini(phone, number, defaultSimId);
+                }
+            } else {
+                cn = PhoneApp.getInstance().mCM.dial(phone, number);
+            }
+//MTK end
             if (DBG) log("===> phone.dial() returned: " + cn);
 
             int phoneType = phone.getPhoneType();
@@ -668,7 +801,9 @@ public class PhoneUtils {
                 if (phoneType == Phone.PHONE_TYPE_CDMA) {
                     updateCdmaCallStateOnNewOutgoingCall(app);
                 }
+//MTk add below one line:
                 PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_OFFHOOK);
+
                 // phone.dial() succeeded: we're now in a normal phone call.
                 // attach the URI to the CallerInfo Object if it is there,
                 // otherwise just attach the Uri Reference.
@@ -691,7 +826,10 @@ public class PhoneUtils {
                         }
                     }
                 }
-                setAudioMode(AudioManager.MODE_IN_CALL);
+//Google code:  setAudioMode();
+//MTK code:     //setAudioMode(phone.getContext(), AudioManager.MODE_IN_CALL);
+//Merge code, may be not right
+                //setAudioMode();
 
                 // Check is phone in any dock, and turn on speaker accordingly
                 activateSpeakerIfDocked(phone);
@@ -703,8 +841,7 @@ public class PhoneUtils {
 
         return status;
     }
-
-
+//MTK begin:
     /**
      * Dial the number using the phone passed in.
      *
@@ -715,72 +852,14 @@ public class PhoneUtils {
      * initiated (dialpad vs contact).
      * @return either CALL_STATUS_DIALED, CALL_STATUS_DIALED_MMI, or CALL_STATUS_FAILED
      */
-    static int placeVideoCall(Phone phone, String number, Uri contactRef) {
-        int status = CALL_STATUS_DIALED;
-        if(FDNInfo.isFDNDisableDial(phone,number)){
-            Log.i(LOG_TAG, "FDN Disable Dial ");
-            return  CALL_STATUS_FAILED_ONLY_FDN;
-	  }
-        try {
-            if (DBG) log("placeVideoCall: '" + number + "'...");
-
-            int phoneType = phone.getPhoneType();
-
-			/*if (phoneType != Phone.PHONE_TYPE_TD)
-			{
-				Log.w(LOG_TAG, "dialVP by wrong phone instance");
-				return CALL_STATUS_FAILED;
-			}*/
-			
-            Connection cn = phone.dialVP(number);
-            if (DBG) log("===> phone.dialVP() returned: " + cn);
-
-
-            // On GSM phones, null is returned for MMI codes
-            if (cn == null) {
-				Log.w(LOG_TAG, "dialVP failed with null connection");
-				return CALL_STATUS_FAILED;
-            } else {
-                PhoneApp app = PhoneApp.getInstance();
-
-                PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_OFFHOOK);
-
-                // phone.dial() succeeded: we're now in a normal phone call.
-                // attach the URI to the CallerInfo Object if it is there,
-                // otherwise just attach the Uri Reference.
-                // if the uri does not have a "content" scheme, then we treat
-                // it as if it does NOT have a unique reference.
-                String content = phone.getContext().getContentResolver().SCHEME_CONTENT;
-                if ((contactRef != null) && (contactRef.getScheme().equals(content))) {
-                    Object userDataObject = cn.getUserData();
-                    if (userDataObject == null) {
-                        cn.setUserData(contactRef);
-                    } else {
-                        // TODO: This branch is dead code, we have
-                        // just created the connection 'cn' which has
-                        // no user data (null) by default.
-                        if (userDataObject instanceof CallerInfo) {
-                            ((CallerInfo) userDataObject).contactRefUri = contactRef;
-                        } else {
-                            ((CallerInfoToken) userDataObject).currentInfo.contactRefUri =
-                                contactRef;
-                        }
-                    }
-                }
-                //TS for compile
-                setAudioMode(AudioManager.MODE_IN_CALL);
-
-                // Check is phone in any dock, and turn on speaker accordingly
-                activateSpeakerIfDocked(phone);
-            }
-        } catch (CallStateException ex) {
-            Log.w(LOG_TAG, "Exception from phone.dialVP()", ex);
-            status = CALL_STATUS_FAILED;
-        }
-
-        return status;
+    static int placeCall(Phone phone, String number, Uri contactRef) {
+        return placeCallExt(phone, number, contactRef, -1);
     }
 
+    static int placeCallGemini(Phone phone, String number, Uri contactRef, int simId) {
+        return placeCallExt(phone, number, contactRef, simId);
+    }
+//MTK end
 
     /**
      * Dial the number using a 3rd party provider gateway.  Should
@@ -805,8 +884,9 @@ public class PhoneUtils {
      * @param gatewayUri Is the address used to setup the connection.
      * @return either CALL_STATUS_DIALED or CALL_STATUS_FAILED
      */
-    static int placeCallVia(Context context, Phone phone,
-                            String number, Uri contactRef, Uri gatewayUri) {
+//MTK modified below one line:
+    static int placeCallViaExt(Context context, Phone phone,
+                            String number, Uri contactRef, Uri gatewayUri, int simId) {
         if (DBG) log("placeCallVia: '" + number + "' GW:'" + gatewayUri + "'");
 
         // TODO: 'tel' should be a contant defined in framework base
@@ -815,11 +895,6 @@ public class PhoneUtils {
             Log.e(LOG_TAG, "Unsupported URL:" + gatewayUri);
             return CALL_STATUS_FAILED;
         }
-	
-	  if(FDNInfo.isFDNDisableDial(phone,number)){
-            Log.i(LOG_TAG, "FDN Disable Dial ");
-            return CALL_STATUS_FAILED_ONLY_FDN;
-	  }
 
         // We can use getSchemeSpecificPart because we don't allow #
         // in the gateway numbers (treated a fragment delim.) However
@@ -829,7 +904,32 @@ public class PhoneUtils {
         String gatewayNumber = gatewayUri.getSchemeSpecificPart();
         Connection connection;
         try {
-            connection = PhoneApp.getInstance().mCM.dial(phone, gatewayNumber, false);
+//Google code: connection = PhoneApp.getInstance().mCM.dial(phone, gatewayNumber);
+            if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                if (simId==Phone.GEMINI_SIM_1 || simId == Phone.GEMINI_SIM_2) {
+                    log("placeCallExt , simId " + simId);
+                    connection = PhoneApp.getInstance().mCMGemini.dialGemini(phone, gatewayNumber, simId);
+                } else {
+                    int defaultSimId = SystemProperties.getInt(Phone.GEMINI_DEFAULT_SIM_PROP, -1);
+                    log("placeCallExt , default simId " + simId);
+                    connection = PhoneApp.getInstance().mCMGemini.dialGemini(phone, gatewayNumber, defaultSimId);
+                }
+            } else {
+                connection = PhoneApp.getInstance().mCM.dial(phone, gatewayNumber);
+            }
+/*MTK begin:
+            if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                if (simId==Phone.GEMINI_SIM_1 || simId == Phone.GEMINI_SIM_2) {
+                    log("placeCallViaExt , simId " + simId);            
+                    connection =  ((GeminiPhone)phone).dialGemini(gatewayNumber, simId);                    
+                } else {
+                    log("placeCallViaExt , default simId " + simId);            
+                    connection =  ((GeminiPhone)phone).dial(gatewayNumber);                    
+                }
+            } else {
+                connection = phone.dial(gatewayNumber);
+            }
+MTK end*/
         } catch (CallStateException ex) {
             Log.e(LOG_TAG, "Exception dialing gateway", ex);
             connection = null;
@@ -846,7 +946,9 @@ public class PhoneUtils {
         if (phoneIsCdma) {
             updateCdmaCallStateOnNewOutgoingCall(app);
         }
+//MTK add below one line:
         PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_OFFHOOK);
+
         // Clean up the number to be displayed.
         if (phoneIsCdma) {
             number = CdmaConnection.formatDialString(number);
@@ -868,14 +970,51 @@ public class PhoneUtils {
         // contact's URI scheme was not content:// or if is was but
         // the lookup failed.
         if (null == info) {
-            info = CallerInfo.getCallerInfo(context, number);
+//Google code: info = CallerInfo.getCallerInfo(context, number);
+//MTK begin:
+            if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                info = CallerInfo.getCallerInfoGemini(context, number, simId);
+            } else {
+                info = CallerInfo.getCallerInfo(context, number);
+            }
+//MTK end
         }
-        info.phoneNumber = number;
-        connection.setUserData(info);
+        if(null != info) {
+            info.phoneNumber = number;
+            connection.setUserData(info);
+        }
 
-        setAudioMode(AudioManager.MODE_IN_CALL);
+        setAudioMode();
         return CALL_STATUS_DIALED;
     }
+//MTK begin:
+    static int placeCallVia(Context context, Phone phone,
+                            String number, Uri contactRef, Uri gatewayUri) {
+        if (DBG) log("placeCallVia: '" + number + "' GW:'" + gatewayUri + "'");
+
+        // TODO: 'tel' should be a contant defined in framework base
+        // somewhere (it is in webkit.)
+        if (null == gatewayUri || !"tel".equals(gatewayUri.getScheme())) {
+            Log.e(LOG_TAG, "Unsupported URL:" + gatewayUri);
+            return CALL_STATUS_FAILED;
+        }
+        return placeCallViaExt(context, phone, number, contactRef, gatewayUri, -1);
+    }
+   
+
+    static int placeCallViaGemini(Context context, Phone phone,
+                            String number, Uri contactRef, Uri gatewayUri, int simId) {
+        if (DBG) log("placeCallViaGemini: '" + number + "' GW:'" + gatewayUri + "'"+simId);
+
+        // TODO: 'tel' should be a contant defined in framework base
+        // somewhere (it is in webkit.)
+        if (null == gatewayUri || !"tel".equals(gatewayUri.getScheme())) {
+            Log.e(LOG_TAG, "Unsupported URL:" + gatewayUri);
+            return CALL_STATUS_FAILED;
+        }
+        return placeCallViaExt(context, phone, number, contactRef, gatewayUri, simId);
+    }   
+//MTK end
 
     /**
      * Wrapper function to control when to send an empty Flash command to the network.
@@ -896,6 +1035,27 @@ public class PhoneUtils {
     /**
      * @param heldCall is the background call want to be swapped
      */
+/* MTK add but remove when merge:
+    static void switchHoldingAndActive(Phone phone) {
+        try {
+            if (DBG) log("switchHoldingAndActive");
+            if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                if (((GeminiPhone)phone).getStateGemini(Phone.GEMINI_SIM_2) != Phone.State.IDLE) {                    
+                    Log.w(LOG_TAG, "switchHoldingAndActive -- Phone.switchHoldingAndActive sim2");
+                    ((GeminiPhone)phone).switchHoldingAndActiveGemini(Phone.GEMINI_SIM_2);
+                } else {
+                    Log.w(LOG_TAG, "switchHoldingAndActive -- Phone.switchHoldingAndActive sim1");
+                    ((GeminiPhone)phone).switchHoldingAndActiveGemini(Phone.GEMINI_SIM_1);
+                }            			
+            } else {
+                phone.switchHoldingAndActive();
+            }			
+        } catch (CallStateException ex) {
+            Log.w(LOG_TAG, "switchHoldingAndActive: caught " + ex, ex);
+        }
+    }
+*/
+//MTK: should consider Gemini situation when using this API
     static void switchHoldingAndActive(Call heldCall) {
         try {
             if (DBG) log("switchHoldingAndActive");
@@ -907,7 +1067,7 @@ public class PhoneUtils {
                 // has particular heldCall, so to switch
                 cm.switchHoldingAndActive(heldCall);
             }
-            //setAudioMode(cm);
+            setAudioMode(cm);
         } catch (CallStateException ex) {
             Log.w(LOG_TAG, "switchHoldingAndActive: caught " + ex, ex);
         }
@@ -921,8 +1081,23 @@ public class PhoneUtils {
         Phone phone = PhoneApp.getInstance().mCM.getFgPhone();
 
         //get the earliest connection
-        Connection c = phone.getForegroundCall().getEarliestConnection();
+//Google: Connection c = phone.getForegroundCall().getEarliestConnection();
 
+//below is an work around for framework, Wenqi supply method, need Wenqi supply right API
+/*MTK 2.2:
+        Connection c;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            c = ((GeminiPhone)phone).getForegroundCall().getEarliestConnection();
+        } else {
+            c = phone.getForegroundCall().getEarliestConnection();
+        }
+*/
+        Connection c;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            c = PhoneApp.getInstance().mCM.getActiveFgCall().getEarliestConnection();
+        } else {
+            c = phone.getForegroundCall().getEarliestConnection();
+        }
         // only do this if connection is not null.
         if (c != null) {
 
@@ -941,6 +1116,16 @@ public class PhoneUtils {
             } else if ((phoneType == Phone.PHONE_TYPE_GSM)
                     || (phoneType == Phone.PHONE_TYPE_SIP)) {
                 shouldMute = sConnectionMuteTable.get(c);
+
+/*MTK add but remove when merge. I think it's right to remove, but just in case.
+                if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                    shouldMute = sConnectionMuteTable.get(
+                            ((GeminiPhone)phone).getForegroundCall().getEarliestConnection());
+                } else {
+                    shouldMute = sConnectionMuteTable.get(
+                            phone.getForegroundCall().getEarliestConnection());
+                }
+*/
             }
             if (shouldMute == null) {
                 if (DBG) log("problem retrieving mute value for this connection.");
@@ -981,6 +1166,12 @@ public class PhoneUtils {
                 cm.conference(cm.getFirstActiveBgCall());
             } catch (CallStateException ex) {
                 Log.w(LOG_TAG, "mergeCalls: caught " + ex, ex);
+                if (phoneType == Phone.PHONE_TYPE_SIP)
+                {
+                	InCallScreen incall = PhoneApp.getInstance().getInCallScreenInstance();
+                	AsyncResult ar = new AsyncResult(null,  Phone.SuppService.CONFERENCE, null);
+                	if (incall != null) incall.onSuppServiceFailed(ar);
+                }
             }
         }
     }
@@ -1104,12 +1295,19 @@ public class PhoneUtils {
      * @param mmiCode MMI result.
      * @param previousAlert a previous alert used in this activity.
      */
+//MTK begin:
     static void displayMMIComplete(final Phone phone, Context context, final MmiCode mmiCode,
             Message dismissCallbackMessage,
             AlertDialog previousAlert) {
+            displayMMICompleteExt(phone, context, mmiCode, dismissCallbackMessage, previousAlert, Phone.GEMINI_SIM_1);
+    }
+	
+    static void displayMMICompleteExt(final Phone phone, Context context, final MmiCode mmiCode,
+            Message dismissCallbackMessage, AlertDialog previousAlert, final int simId) {
+//MTK end
         CharSequence text;
+        curCode = mmiCode;
         int title = 0;  // title for the progress dialog, if needed.
-        Context mContext = phone.getContext();
         MmiCode.State state = mmiCode.getState();
 
         if (DBG) log("displayMMIComplete: state=" + state);
@@ -1134,7 +1332,7 @@ public class PhoneUtils {
                 text = context.getText(R.string.mmiCancelled);
                 break;
             case COMPLETE:
-            case NETCOMPLETE:
+            	mbMmiFinished = true;
                 if (PhoneApp.getInstance().getPUKEntryActivity() != null) {
                     // if an attempt to unPUK the device was made, we specify
                     // the title and the message here.
@@ -1149,6 +1347,16 @@ public class PhoneUtils {
             case FAILED:
                 text = mmiCode.getMessage();
                 if (DBG) log("- using text from MMI message: '" + text + "'");
+//MTK begin:
+                if (mDialog != null) {
+                    //DismissMMIDialog();
+                    mDialog = null;
+                    if (mUssdActivity != null) {
+                        mUssdActivity.dismiss();
+                    }
+                    return ;
+                }
+//MTK end
                 break;
             default:
                 throw new IllegalStateException("Unexpected MmiCode state: " + state);
@@ -1205,21 +1413,14 @@ public class PhoneUtils {
                         return;
                 }
 
-                // specify the dialog's click listener.
-                final DialogInterface.OnClickListener mUSSDDialogListener =
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            ((PhoneAlertDialog)dialog).setNeedShowAgain(false);
-                        }
-                };
-                // displaying system alert dialog on the screen instead of
+/*Google code:  // displaying system alert dialog on the screen instead of
                 // using another activity to display the message.  This
                 // places the message at the forefront of the UI.
-                PhoneAlertDialog newDialog = new PhoneAlertDialog(context);
-                newDialog.setMessage(text);
-                newDialog.setCancelable(true);
-                newDialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                mContext.getText(R.string.ok), mUSSDDialogListener);
+                AlertDialog newDialog = new AlertDialog.Builder(context)
+                        .setMessage(text)
+                        .setPositiveButton(R.string.ok, null)
+                        .setCancelable(true)
+                        .create();
 
                 newDialog.getWindow().setType(
                         WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
@@ -1227,6 +1428,43 @@ public class PhoneUtils {
                         WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
                 newDialog.show();
+*/
+//MTK begin:
+                // inflate the layout with the scrolling text area for the dialog.
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+                        Context.LAYOUT_INFLATER_SERVICE);
+                View dialogView = inflater.inflate(R.layout.dialog_ussd_response, null);
+                TextView msg = (TextView) dialogView.findViewById(R.id.msg);
+                msg.setText(text);    
+                TextView ussdUpdateView = (TextView) dialogView.findViewById(R.id.ussd_update);
+                ussdUpdateView.setVisibility(View.GONE);
+                EditText inputText = (EditText) dialogView.findViewById(R.id.input_field);
+                inputText.setVisibility(View.GONE);
+                /*
+                 * auto update the UI,because some App change the Phone mode that will cause 
+                 * some USSD response information lost.
+                 * For example ,when Camera first init.
+                 */
+                autoUpdateUssdReponseUi(dialogView);
+                // displaying system alert dialog on the screen instead of
+                // using another activity to display the message.  This
+                // places the message at the forefront of the UI.
+//                AlertDialog newDialog = new AlertDialog.Builder(context)
+//                        .setView(dialogView)
+//                        .setPositiveButton(R.string.ok, null)
+//                        .setCancelable(true)
+//                        .create();
+//
+//                newDialog.getWindow().setType(
+//                        WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
+//                newDialog.getWindow().addFlags(
+//                        WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+                //newDialog.show();
+                
+                displayMmiDialog(context, text, UssdAlertActivity.USSD_DIALOG_NOTIFICATION, simId);
+                
+//MTk end
             } else {
                 if (DBG) log("USSD code has requested user input. Constructing input dialog.");
 
@@ -1256,92 +1494,97 @@ public class PhoneUtils {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                         Context.LAYOUT_INFLATER_SERVICE);
                 View dialogView = inflater.inflate(R.layout.dialog_ussd_response, null);
-                final TextView mTextCounter;
-                mTextCounter = (TextView)dialogView.findViewById(R.id.text_counter);
-                mTextCounter.setText(String.valueOf(LIMITED_TEXT_MAX_COUNT));
-                final TextView mTextMessage;
-                mTextMessage = (TextView)dialogView.findViewById(R.id.message);
-                // get the input field. 
+//MTK begin:
+                TextView msg = (TextView) dialogView.findViewById(R.id.msg);
+                msg.setText(text);
+                msg.setWidth(MIN_WIDTH);
+//MTK end
+                // get the input field.
                 final EditText inputText = (EditText) dialogView.findViewById(R.id.input_field);
-
-                final TextWatcher mTextEditorWatcher = new TextWatcher() {
-
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    }
-
-                    public void afterTextChanged(Editable s) {
-                        int text_count = LIMITED_TEXT_MAX_COUNT;
-                        if (LIMITED_TEXT_MAX_COUNT >= s.length()) {
-                            text_count = LIMITED_TEXT_MAX_COUNT - s.length();
-                        } else {
-                            text_count = 0;
-                        }
-
-                        String counterText = String.valueOf(text_count);
-                        mTextCounter.setText(counterText);
-                        int selectionStart = inputText.getSelectionStart();
-                        int selectionEnd = inputText.getSelectionEnd();
-                        if (s.length() > LIMITED_TEXT_MAX_COUNT) {
-                            s.delete(LIMITED_TEXT_MAX_COUNT, s.length());
-                            inputText.setTextKeepState(s);
-                        }
-                    }
-                };
-
-                inputText.addTextChangedListener(mTextEditorWatcher);
-
+//MTK add below line:
+                inputText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(182)});
                 // specify the dialog's click listener, with SEND and CANCEL logic.
                 final DialogInterface.OnClickListener mUSSDDialogListener =
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             switch (whichButton) {
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    phone.sendUssdResponse(inputText.getText().toString());
-                                    inputText.removeTextChangedListener(mTextEditorWatcher);
-                                    ((PhoneAlertDialog)dialog).setNeedShowAgain(false);
-                                    break;
+//Google code:                       phone.sendUssdResponse(inputText.getText().toString());
+//MTK begin:
+                                     if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                                         Log.w(LOG_TAG, "displayMMIcomplete sendUssdResponseGemini button, simId:"+simId); 
+                                         Log.w(LOG_TAG, "displayMMIcomplete USSR string :"+inputText.getText().toString()); 										
+                                         ((GeminiPhone)phone).sendUssdResponseGemini(inputText.getText().toString(), simId);
+                                     } else {
+                                         phone.sendUssdResponse(inputText.getText().toString());
+                                     }									
+                                     mDialog = null;
+                                     mUssdActivity = null;
+//MTK end
+                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:
                                     if (mmiCode.isCancelable()) {
                                         mmiCode.cancel();
                                     }
-                                    inputText.removeTextChangedListener(mTextEditorWatcher);
-                                    ((PhoneAlertDialog)dialog).setNeedShowAgain(false);
+//MTK add below line:
+                                    mDialog = null;
+                                    mUssdActivity = null;
                                     break;
                             }
                         }
                     };
-
+///MTK begin:
+             final DialogInterface.OnCancelListener mUSSDDialogCancelListener =
+                        new DialogInterface.OnCancelListener() {
+                            
+                            public void onCancel(DialogInterface dialog) {
+                                // TODO Auto-generated method stub
+                                if (mmiCode.isCancelable()) {
+                                    mmiCode.cancel();
+                                }
+                            }
+                        };
+///MTK end
                 // build the dialog
-                final PhoneAlertDialog newDialog = new PhoneAlertDialog(context);
-                        mTextMessage.setText(text);
-                        newDialog.setView(dialogView);
-                        newDialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                        mContext.getText(R.string.send_button), mUSSDDialogListener);
-                        newDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                        mContext.getText(R.string.cancel), mUSSDDialogListener);
-                        newDialog.setCancelable(false);
-
+                final AlertDialog newDialog = new AlertDialog.Builder(context)
+                        .setView(dialogView)
+                        .setPositiveButton(R.string.send_button, mUSSDDialogListener)
+                        .setNegativeButton(R.string.cancel, mUSSDDialogListener)
+                        .setCancelable(false)
+                        .create();
+//MTK begin:
+                newDialog.setOnCancelListener(mUSSDDialogCancelListener);
+                mDialog = newDialog;
+//MTK end
                 // attach the key listener to the dialog's input field and make
                 // sure focus is set.
                 final View.OnKeyListener mUSSDDialogInputListener =
                     new View.OnKeyListener() {
                         public boolean onKey(View v, int keyCode, KeyEvent event) {
-                            if (event.getAction() != KeyEvent.ACTION_DOWN) {
-                                return false;
-                            }
                             switch (keyCode) {
                                 case KeyEvent.KEYCODE_CALL:
-                                case KeyEvent.KEYCODE_ENTER:
-                                    if(event.getAction() == KeyEvent.ACTION_DOWN) {
-                                        phone.sendUssdResponse(inputText.getText().toString());
-                                        inputText.removeTextChangedListener(mTextEditorWatcher);
-                                        newDialog.dismiss();
-                                        newDialog.setNeedShowAgain(false);
-                                    }
+//MTK add below one line:
                                     return true;
+                                case KeyEvent.KEYCODE_ENTER:
+//Google code:                      phone.sendUssdResponse(inputText.getText().toString());
+//MTK begin:
+                                    if(event.getAction() == event.ACTION_UP) {
+                                        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                                            Log.w(LOG_TAG, "sdisplayMMIcomplete sendUssdResponseGemini key");
+                                            if (inputText.getText().toString().length() == 0) {
+                                                return false;
+                                            }
+                                            ((GeminiPhone)phone).sendUssdResponseGemini(inputText.getText().toString(), simId);
+                                        } else {
+                                            phone.sendUssdResponse(inputText.getText().toString());
+                                        }						 
+                                        newDialog.dismiss();
+                                        return true;
+                                    } else {
+                                        // do not process "enter" key when keydown, avoid "enter" key in inputText
+                                        return true;
+                                    }
+//MTK end
                             }
                             return false;
                         }
@@ -1356,7 +1599,32 @@ public class PhoneUtils {
                         WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
                 // now show the dialog!
-                newDialog.show();
+                //newDialog.show();
+                displayMmiDialog(context, text, UssdAlertActivity.USSD_DIALOG_REQUEST, simId);
+                
+//MTK begin:
+//                if (newDialog != null) {
+//                    Button bt = newDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+//                    bt.setEnabled(false);
+//                }
+//                inputText.addTextChangedListener(new TextWatcher(){
+//                    public void beforeTextChanged(CharSequence s, int start,
+//                            int count, int after) {
+//                    }
+//                    
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                    }
+//                    
+//                    public void afterTextChanged(Editable s) {
+//                        int count = s == null ? 0 : s.length();
+//                        if (count > 0) {
+//                            newDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+//                        } else {
+//                            newDialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+//                        }
+//                    }
+//                });
+//MTK end
             }
         }
     }
@@ -1369,8 +1637,18 @@ public class PhoneUtils {
      *
      * @see displayMMIInitiate
      */
-    static boolean cancelMmiCode(Phone phone) {
-        List<? extends MmiCode> pendingMmis = phone.getPendingMmiCodes();
+/* Google static boolean cancelMmiCode(Phone phone) {
+        List<? extends MmiCode> pendingMmis = phone.getPendingMmiCodes(); */
+//MTK begin:
+    static boolean cancelMmiCodeExt(Phone phone, int simId) {
+        log("cancelMmiCode....");
+        List<? extends MmiCode> pendingMmis=null;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            pendingMmis = ((GeminiPhone)phone).getPendingMmiCodesGemini(simId);
+        } else {
+            pendingMmis = phone.getPendingMmiCodes();
+        }
+//MTk end
         int count = pendingMmis.size();
         if (DBG) log("cancelMmiCode: num pending MMIs = " + count);
 
@@ -1504,7 +1782,19 @@ public class PhoneUtils {
                     if (DBG) log("getCallerInfo: number = " + number);
 
                     if (!TextUtils.isEmpty(number)) {
-                        info = CallerInfo.getCallerInfo(context, number);
+//Google code:          info = CallerInfo.getCallerInfo(context, number);
+//MTK begin:
+                        if (FeatureOption.MTK_GEMINI_SUPPORT) {            
+                            PhoneApp app = PhoneApp.getInstance();
+                            int simId = Phone.GEMINI_SIM_1;
+                            if (((GeminiPhone)app.phone).getStateGemini(Phone.GEMINI_SIM_2) != Phone.State.IDLE) {
+                                simId = Phone.GEMINI_SIM_2;
+                            }
+                            info = CallerInfo.getCallerInfoGemini(context, number, simId);
+                        } else {
+                            info = CallerInfo.getCallerInfo(context, number);
+                        }
+//MTk end
                         if (info != null) {
                             c.setUserData(info);
                         }
@@ -1556,12 +1846,15 @@ public class PhoneUtils {
             CallerInfoAsyncQuery.OnQueryCompleteListener listener, Object cookie) {
         CallerInfoToken cit;
 
+        boolean isSipConn = false;
         if (c == null) {
             //TODO: perhaps throw an exception here.
             cit = new CallerInfoToken();
             cit.asyncQuery = null;
             return cit;
         }
+        
+        isSipConn = c.getCall().getPhone().getPhoneType() == Phone.PHONE_TYPE_SIP;
 
         // There are now 3 states for the userdata.
         //   1. Uri - query has not been executed yet
@@ -1592,6 +1885,15 @@ public class PhoneUtils {
         //      outcome.  From now on, we will append an empty CallerInfo
         //      object, to mirror previous behaviour, and to avoid Null Pointer
         //      Exceptions.
+//MTK begin:
+        int simId = Phone.GEMINI_SIM_1;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            PhoneApp app = PhoneApp.getInstance();
+            if (((GeminiPhone)app.phone).getStateGemini(Phone.GEMINI_SIM_2) != Phone.State.IDLE) {
+                simId = Phone.GEMINI_SIM_2;
+            }
+        }
+//MTK end			
         Object userDataObject = c.getUserData();
         if (userDataObject instanceof Uri) {
             //create a dummy callerinfo, populate with what we know from URI.
@@ -1660,8 +1962,17 @@ public class PhoneUtils {
                     cit.isFinal = true;
                 } else {
                     if (DBG) log("==> Actually starting CallerInfoAsyncQuery.startQuery()...");
+/*Google code:      cit.asyncQuery = CallerInfoAsyncQuery.startQuery(QUERY_TOKEN, context,
+                            number, sCallerInfoQueryListener, c); */
+//MTK begin:
+                if (FeatureOption.MTK_GEMINI_SUPPORT && !isSipConn) {
+                    cit.asyncQuery = CallerInfoAsyncQuery.startQueryGemini(QUERY_TOKEN, context,
+                            number, sCallerInfoQueryListener, c, simId);
+                } else {
                     cit.asyncQuery = CallerInfoAsyncQuery.startQuery(QUERY_TOKEN, context,
                             number, sCallerInfoQueryListener, c);
+                }
+//MTK end
                     cit.asyncQuery.addQueryListener(QUERY_TOKEN, listener, cookie);
                     cit.isFinal = false;
                 }
@@ -1715,8 +2026,18 @@ public class PhoneUtils {
                     if (cit.currentInfo.numberPresentation != Connection.PRESENTATION_ALLOWED) {
                         cit.isFinal = true;
                     } else {
-                        cit.asyncQuery = CallerInfoAsyncQuery.startQuery(QUERY_TOKEN, context,
-                                updatedNumber, sCallerInfoQueryListener, c);
+/*Google code:          cit.asyncQuery = CallerInfoAsyncQuery.startQuery(QUERY_TOKEN, context,
+                                updatedNumber, sCallerInfoQueryListener, c); */
+//MTK begin:
+                        if (FeatureOption.MTK_GEMINI_SUPPORT && !isSipConn) {
+                            cit.asyncQuery = CallerInfoAsyncQuery.startQueryGemini(QUERY_TOKEN, context,
+                                    updatedNumber, sCallerInfoQueryListener, c, simId);
+
+                        } else {
+                            cit.asyncQuery = CallerInfoAsyncQuery.startQuery(QUERY_TOKEN, context,
+                                    updatedNumber, sCallerInfoQueryListener, c);
+                        }
+//MTK end
                         cit.asyncQuery.addQueryListener(QUERY_TOKEN, listener, cookie);
                         cit.isFinal = false;
                     }
@@ -1759,17 +2080,11 @@ public class PhoneUtils {
             public void onQueryComplete(int token, Object cookie, CallerInfo ci) {
                 if (DBG) log("query complete, updating connection.userdata");
                 Connection conn = (Connection) cookie;
-
+                boolean isSipConn = conn.getCall().getPhone().getPhoneType() == Phone.PHONE_TYPE_SIP;
                 // Added a check if CallerInfo is coming from ContactInfo or from Connection.
                 // If no ContactInfo, then we want to use CNAP information coming from network
                 if (DBG) log("- onQueryComplete: CallerInfo:" + ci);
-
-                int phoneId = -1;
-                CallManager cm = PhoneApp.getInstance().mCM;
-                if (cm.getPhoneInCall() != null) {
-                    phoneId = cm.getPhoneInCall().getPhoneId();
-                }
-                if (ci.contactExists || PhoneNumberUtils.isSimEmergencyNumber(conn.getAddress(), phoneId) || ci.isVoiceMailNumber()) {
+                if (ci.contactExists || ci.isEmergencyNumber() || ci.isVoiceMailNumber()) {
                     // If the number presentation has not been set by
                     // the ContactInfo, use the one from the
                     // connection.
@@ -1796,7 +2111,11 @@ public class PhoneUtils {
                         ci = newCi;
                     }
                 }
-                log("- onQueryComplete: setUserData:" + ci);
+                
+                //We don't show the voice mail when the voice mail is set by cell network
+                if (isSipConn && !ci.contactExists && !ci.isEmergencyNumber() && ci.isVoiceMailNumber()) {
+                    ci.phoneNumber = conn.getAddress();
+                }
                 conn.setUserData(ci);
             }
         };
@@ -1870,12 +2189,21 @@ public class PhoneUtils {
                     && !app.cdmaPhoneCallState.IsThreeWayCallOrigStateDialing())) {
                 return true;
             }
-        } else {
-            List<Connection> connections = call.getConnections();
-            if (connections != null && connections.size() > 1) {
-                return true;
-            }
+/*MTK add but remove when merge*/
+        } else if (phoneType == Phone.PHONE_TYPE_GSM) {
+            return call.isMptyCall;
+        }else if (phoneType == Phone.PHONE_TYPE_SIP) {
+        	List<Connection> connections = call.getConnections();
+          if (connections != null && connections.size() > 1) {
+              return true;
+          }
         }
+//        } else {
+//            List<Connection> connections = call.getConnections();
+//            if (connections != null && connections.size() > 1) {
+//                return true;
+//            }
+//        }
         return false;
 
         // TODO: We may still want to change the semantics of this method
@@ -1928,7 +2256,7 @@ public class PhoneUtils {
 
         PhoneApp.getInstance().startActivity(intent);
     }
-
+//MTK add begin:
     /**
      * Brings up the UI used to handle an incoming call.
      *
@@ -1978,9 +2306,9 @@ public class PhoneUtils {
         app.requestWakeState(PhoneApp.WakeState.FULL);
 
         // Fire off the InCallScreen intent.
-        app.displayInComingCallScreen();
+        app.displayCallScreen();
     }
-
+//MTK add end
     static void turnOnSpeaker(Context context, boolean flag, boolean store) {
         if (DBG) log("turnOnSpeaker(flag=" + flag + ", store=" + store + ")...");
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
@@ -1991,9 +2319,9 @@ public class PhoneUtils {
             sIsSpeakerEnabled = flag;
         }
         if (flag) {
-            PhoneApp.getInstance().notificationMgr.notifySpeakerphone();
+            NotificationMgr.getDefault().notifySpeakerphone();
         } else {
-            PhoneApp.getInstance().notificationMgr.cancelSpeakerphone();
+            NotificationMgr.getDefault().cancelSpeakerphone();
         }
 
         // We also need to make a fresh call to PhoneApp.updateWakeState()
@@ -2124,7 +2452,7 @@ public class PhoneUtils {
         } else {
             phone.setMute(muted);
         }
-        PhoneApp.getInstance().notificationMgr.updateMuteNotification();
+        NotificationMgr.getDefault().updateMuteNotification();
     }
 
     /**
@@ -2144,46 +2472,11 @@ public class PhoneUtils {
             return app.mCM.getMute();
         }
     }
-    
-    /**
-     * A really simple wrapper around AudioManager.setMode(),
-     * with a bit of extra logging to help debug the exact
-     * timing (and call stacks) for all our setMode() calls.
-     *
-     * Also, add additional state monitoring to determine
-     * whether or not certain calls to change the audio mode
-     * are ignored.
-     */
-    /* package */ static void setAudioMode(int mode) {
-        if (DBG) Log.d(LOG_TAG, "setAudioMode(" + audioModeToString(mode) + ")...");
 
-        //decide whether or not to ignore the audio setting
-        boolean ignore = false;
-        Context context = PhoneApp.getInstance();
-        switch (sAudioBehaviourState) {
-            case AUDIO_RINGING:
-                ignore = ((mode == AudioManager.MODE_NORMAL) || (mode == AudioManager.MODE_IN_CALL));
-                break;
-            case AUDIO_OFFHOOK:
-                ignore = ((mode == AudioManager.MODE_NORMAL) || (mode == AudioManager.MODE_RINGTONE));
-                break;
-            case AUDIO_IDLE:
-            default:
-                ignore = (mode == AudioManager.MODE_IN_CALL);
-                break;
-        }
-
-        if (!ignore) {
-            AudioManager audioManager =
-                    (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            // Enable stack dump only when actively debugging ("new Throwable()" is expensive!)
-            if (DBG_SETAUDIOMODE_STACK) Log.d(LOG_TAG, "Stack:", new Throwable("stack dump"));
-            audioManager.setMode(mode);
-        } else {
-            if (DBG) Log.d(LOG_TAG, "setAudioMode(), state is " + sAudioBehaviourState +
-                    " ignoring " + audioModeToString(mode) + " request");
-        }
+    /* package */ static void setAudioMode() {
+        setAudioMode(PhoneApp.getInstance().mCM);
     }
+
     /**
      * Sets the audio mode per current phone state.
      */
@@ -2194,7 +2487,25 @@ public class PhoneUtils {
         AudioManager audioManager = (AudioManager)
                 context.getSystemService(Context.AUDIO_SERVICE);
         int modeBefore = audioManager.getMode();
+        boolean isSipPhone = cm.getFgPhone().getPhoneType() == Phone.PHONE_TYPE_SIP;
+        int mode = getExpectedAudioMode();
+        if (PhoneUtils.isSupportFeature("TTY") && !isSipPhone)
+        {
+            if ((mode == AudioManager.MODE_NORMAL) && (!ttyMode.equals("tty_off") && isOpen))
+            {
+                audioManager.setParameters("tty_mode="+ "tty_off");
+                isOpen = false;
+            }
+        }
         cm.setAudioMode();
+        if (PhoneUtils.isSupportFeature("TTY") == true && !isSipPhone)
+        {
+            if ((mode == AudioManager.MODE_IN_CALL) && (!ttyMode.equals("tty_off") && !isOpen))
+            {
+                audioManager.setParameters("tty_mode="+ ttyMode);
+                isOpen = true;
+            }
+        }
         int modeAfter = audioManager.getMode();
 
         if (modeBefore != modeAfter) {
@@ -2205,31 +2516,30 @@ public class PhoneUtils {
                     + audioModeToString(modeBefore));
         }
     }
-    /* package  static void setAudioMode() {
-        setAudioMode(PhoneApp.getInstance().mCM);
-    }
-
-    /**
-     * Sets the audio mode per current phone state.
-     */
-    /* package  static void setAudioMode(CallManager cm) {
-        if (DBG) Log.d(LOG_TAG, "setAudioMode()..." + cm.getState());
-
-        Context context = PhoneApp.getInstance();
-        AudioManager audioManager = (AudioManager)
-                context.getSystemService(Context.AUDIO_SERVICE);
-        int modeBefore = audioManager.getMode();
-        cm.setAudioMode();
-        int modeAfter = audioManager.getMode();
-
-        if (modeBefore != modeAfter) {
-            // Enable stack dump only when actively debugging ("new Throwable()" is expensive!)
-            if (DBG_SETAUDIOMODE_STACK) Log.d(LOG_TAG, "Stack:", new Throwable("stack dump"));
-        } else {
-            if (DBG) Log.d(LOG_TAG, "setAudioMode() no change: "
-                    + audioModeToString(modeBefore));
+    
+    static int getExpectedAudioMode()
+    {
+    	int mode = AudioManager.MODE_NORMAL;
+    	CallManager cm = PhoneApp.getInstance().mCM;
+    	switch (cm.getState()) {
+	        case RINGING:
+	            mode = AudioManager.MODE_RINGTONE;
+	            break;
+	        case OFFHOOK:
+	            Phone fgPhone = cm.getFgPhone();
+	            // Enable IN_CALL mode while foreground call is in DIALING,
+	            // ALERTING, ACTIVE and DISCONNECTING state and not from sipPhone
+	            if (cm.getActiveFgCallState() != Call.State.IDLE
+	                    && cm.getActiveFgCallState() != Call.State.DISCONNECTED
+	                    && !(fgPhone instanceof SipPhone)) {
+	                mode = AudioManager.MODE_IN_CALL;
+	            }
+	            break;
         }
-    }*/
+    	
+    	return mode;
+    }
+    
     private static String audioModeToString(int mode) {
         switch (mode) {
             case AudioManager.MODE_INVALID: return "MODE_INVALID";
@@ -2256,9 +2566,20 @@ public class PhoneUtils {
 
         // If the phone is totally idle, we ignore HEADSETHOOK events
         // (and instead let them fall through to the media player.)
-        if (phone.getState() == Phone.State.IDLE) {
+/*Google: if (phone.getState() == Phone.State.IDLE) {
             return false;
+        } */
+//MTK begin:
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            if (((GeminiPhone)phone).getState() == Phone.State.IDLE) {
+                return false;
+            }
+        } else {
+            if (phone.getState() == Phone.State.IDLE) {
+                return false;
+            }
         }
+//MTK end
 
         // Ok, the phone is in use.
         // The headset button button means "Answer" if an incoming call is
@@ -2268,9 +2589,22 @@ public class PhoneUtils {
         // that the usual mediaplayer-related behavior of the headset
         // button will NEVER happen while the user is on a call.
 
-        final boolean hasRingingCall = !phone.getRingingCall().isIdle();
+/*Google: final boolean hasRingingCall = !phone.getRingingCall().isIdle();
         final boolean hasActiveCall = !phone.getForegroundCall().isIdle();
-        final boolean hasHoldingCall = !phone.getBackgroundCall().isIdle();
+        final boolean hasHoldingCall = !phone.getBackgroundCall().isIdle(); */
+//MTK begin:
+        final boolean hasRingingCall , hasActiveCall , hasHoldingCall;
+
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            hasRingingCall = !((GeminiPhone)phone).getRingingCall().isIdle();
+            hasActiveCall = !((GeminiPhone)phone).getForegroundCall().isIdle();
+            hasHoldingCall = !((GeminiPhone)phone).getBackgroundCall().isIdle();
+        } else {
+            hasRingingCall = !phone.getRingingCall().isIdle();
+            hasActiveCall = !phone.getForegroundCall().isIdle();
+            hasHoldingCall = !phone.getBackgroundCall().isIdle();
+        }
+//MTK end
 
         if (hasRingingCall &&
             event.getRepeatCount() == 0 &&
@@ -2284,8 +2618,6 @@ public class PhoneUtils {
                     || (phoneType == Phone.PHONE_TYPE_SIP)) {
                 if (hasActiveCall && hasHoldingCall) {
                     if (DBG) log("handleHeadsetHook: ringing (both lines in use) ==> answer!");
-                    //TS for compile
-                    //restore ls for bug 11040
                     answerAndEndActive(PhoneApp.getInstance().mCM, phone.getRingingCall());
                 } else {
                     if (DBG) log("handleHeadsetHook: ringing ==> answer!");
@@ -2303,7 +2635,15 @@ public class PhoneUtils {
             }
             else if (event.getAction() == KeyEvent.ACTION_UP &&
                      event.getRepeatCount() == 0) {
-                Connection c = phone.getForegroundCall().getLatestConnection();
+//Google:       Connection c = phone.getForegroundCall().getLatestConnection();
+//MTK begin:
+                Connection c;
+                if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                    c = ((GeminiPhone)phone).getForegroundCall().getLatestConnection();
+                } else {
+                    c = phone.getForegroundCall().getLatestConnection();
+                }
+//MTK end
                 // If it is NOT an emg #, toggle the mute state. Otherwise, ignore the hook.
                 if (c != null && !PhoneNumberUtils.isEmergencyNumber(c.getAddress())) {
                     if (getMute()) {
@@ -2313,7 +2653,6 @@ public class PhoneUtils {
                         if (DBG) log("handleHeadsetHook: muting...");
                         setMute(true);
                     }
-		    PhoneApp.getInstance().updateMuteIndication();
                 }
             }
         }
@@ -2342,9 +2681,20 @@ public class PhoneUtils {
      * all the phone's call objects.
      */
     /* package */ static boolean hasDisconnectedConnections(Phone phone) {
-        return hasDisconnectedConnections(phone.getForegroundCall()) ||
+/*Google:  return hasDisconnectedConnections(phone.getForegroundCall()) ||
                 hasDisconnectedConnections(phone.getBackgroundCall()) ||
-                hasDisconnectedConnections(phone.getRingingCall());
+                hasDisconnectedConnections(phone.getRingingCall()); */
+//MTK begin:
+           if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                return hasDisconnectedConnections(((GeminiPhone)phone).getForegroundCall()) ||
+                        hasDisconnectedConnections(((GeminiPhone)phone).getBackgroundCall()) ||
+                        hasDisconnectedConnections(((GeminiPhone)phone).getRingingCall());
+           } else {
+                return hasDisconnectedConnections(phone.getForegroundCall()) ||
+                    hasDisconnectedConnections(phone.getBackgroundCall()) ||
+                    hasDisconnectedConnections(phone.getRingingCall());
+           }
+//MTK end
     }
 
     /**
@@ -2365,9 +2715,45 @@ public class PhoneUtils {
         return false;
     }
 
+    public static boolean holdAndActiveFromDifPhone(CallManager cm)
+    {
+        boolean isDiffrentPhone = false;
+        List<Phone> array = cm.getAllPhones();
+        boolean found = false;
+        for (Phone p : array)
+        {
+            if (p.getState() == Phone.State.OFFHOOK)
+            {
+                if (!found)
+                {
+                    found = true;
+                }else {
+                    isDiffrentPhone = true;
+                    break;
+                }
+            }
+        }
+        
+        return isDiffrentPhone;
+    }
     //
     // Misc UI policy helper functions
     //
+    
+    //For Google default, the swap button and hold button no dependency,
+    //but about our solution, the swap and hold is exclusive:If the hold button display, the swap must hide
+    //so we need this method to make sure the swap can be displayed
+    static boolean okToShowSwapButton(CallManager cm) {
+        Call fgCall = cm.getActiveFgCall();
+        Call bgCall = cm.getFirstActiveBgCall();
+        
+        if ((fgCall.getState().isAlive() && bgCall.getState() == Call.State.HOLDING)
+            || holdAndActiveFromDifPhone(cm)) {
+            return true;
+        }
+        
+        return false;
+    }
 
     /**
      * @return true if we're allowed to swap calls, given the current
@@ -2389,12 +2775,40 @@ public class PhoneUtils {
             // is in the HOLDING state, since you *can't* actually swap calls
             // when the foreground call is DIALING or ALERTING.)
             return !cm.hasActiveRingingCall()
-                    && (cm.getActiveFgCall().getState() == Call.State.ACTIVE)
-                    && (cm.getFirstActiveBgCall().getState() == Call.State.HOLDING);
+                    && ((cm.getActiveFgCall().getState() == Call.State.ACTIVE || PhoneUtils.hasActivefgEccCall(cm))
+                    && (cm.getFirstActiveBgCall().getState() == Call.State.HOLDING)
+                    /*|| holdAndActiveFromDifPhone(cm)*/);
         } else {
             throw new IllegalStateException("Unexpected phone type: " + phoneType);
         }
     }
+    
+    /* added by xingping.zheng start */
+    /* package */ static boolean hasActivefgEccCall(CallManager cm) {
+        return PhoneUtils.hasActivefgEccCall(cm.getActiveFgCall());
+    }
+
+    static boolean isVoicemailNumber(Uri uri) {
+        return uri != null && "voicemail".equals(uri.getScheme().toString());
+    }
+
+    static boolean hasActivefgEccCall(Call call) {
+        if(call == null)
+            return false;
+        Connection connection = call.getEarliestConnection();
+        return (call.getState() == Call.State.DIALING || call.getState() == Call.State.ALERTING) && 
+                connection != null &&
+                !TextUtils.isEmpty(connection.getAddress()) &&
+                PhoneNumberUtils.isEmergencyNumber(connection.getAddress());
+    }
+    
+    static boolean isEccCall(Call call) {
+        Connection connection = call.getEarliestConnection();
+        return (connection != null &&
+                !TextUtils.isEmpty(connection.getAddress()) &&
+                PhoneNumberUtils.isEmergencyNumber(connection.getAddress()));
+    }
+    /* added by xingping.zheng end   */
 
     /**
      * @return true if we're allowed to merge calls, given the current
@@ -2414,8 +2828,9 @@ public class PhoneUtils {
             // "full".
             // TODO: shall move all okToMerge logic to CallManager
             return !cm.hasActiveRingingCall() && cm.hasActiveFgCall()
-                    && cm.hasActiveBgCall()
-                    && cm.canConference(cm.getFirstActiveBgCall());
+                    && cm.getActiveFgCall().getState() != Call.State.DIALING 
+                    && cm.getActiveFgCall().getState() != Call.State.ALERTING 
+                    && cm.hasActiveBgCall() && cm.canConference(cm.getFirstActiveBgCall());
         }
     }
 
@@ -2715,16 +3130,19 @@ public class PhoneUtils {
      * @param number the phone number, or SIP address.
      */
     public static Phone pickPhoneBasedOnNumber(CallManager cm,
-            String scheme, String number, String primarySipUri, int phoneId) {
+            String scheme, String number, String primarySipUri) {
         if (DBG) log("pickPhoneBasedOnNumber: scheme " + scheme
-                + ", number " + number + ", sipUri " + primarySipUri
-                + ", phoneId" + phoneId);
+                + ", number " + number + ", sipUri " + primarySipUri);
 
         if (primarySipUri != null) {
             Phone phone = getSipPhoneFromUri(cm, primarySipUri);
             if (phone != null) return phone;
         }
-        return PhoneApp.getInstance().getPhone(phoneId);
+        
+        if(FeatureOption.MTK_GEMINI_SUPPORT){
+            return PhoneApp.getInstance().mCMGemini.getDefaultPhoneGemini();
+        } 
+        else return cm.getDefaultPhone();
     }
 
     public static Phone getSipPhoneFromUri(CallManager cm, String target) {
@@ -2743,8 +3161,7 @@ public class PhoneUtils {
     }
 
     public static boolean isRealIncomingCall(Call.State state) {
-        return (state == Call.State.INCOMING && !PhoneApp.getInstance().mCM.hasActiveFgCall());
-
+        return (state == Call.State.INCOMING && !PhoneApp.getInstance().mCM.hasActiveFgCall() && !PhoneApp.getInstance().mCM.hasActiveBgCall());
     }
 
     //
@@ -2805,12 +3222,33 @@ public class PhoneUtils {
     /* package */ static void dumpCallState(Phone phone) {
         PhoneApp app = PhoneApp.getInstance();
         Log.d(LOG_TAG, "dumpCallState():");
-        Log.d(LOG_TAG, "- Phone: " + phone + ", name = " + phone.getPhoneName()
-              + ", state = " + phone.getState());
+//MTK begin:
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            Log.d(LOG_TAG, "- GeminiPhone: " + ((GeminiPhone)phone) + ", name = " + ((GeminiPhone)phone).getPhoneName()
+                  + ", state = " + ((GeminiPhone)phone).getState());
+
+            Log.d(LOG_TAG, "- GeminiPhone Sim1: " + ((GeminiPhone)phone) + ", name = " + ((GeminiPhone)phone).getPhoneName()
+                  + ", state = " + ((GeminiPhone)phone).getStateGemini(Phone.GEMINI_SIM_1));			
+
+            Log.d(LOG_TAG, "- GeminiPhone Sim2: " + ((GeminiPhone)phone) + ", name = " + ((GeminiPhone)phone).getPhoneName()
+                  + ", state = " + ((GeminiPhone)phone).getStateGemini(Phone.GEMINI_SIM_2));						
+        } else {
+            Log.d(LOG_TAG, "- Phone: " + phone + ", name = " + phone.getPhoneName()
+                  + ", state = " + phone.getState());
+        }
+//MTK end
 
         StringBuilder b = new StringBuilder(128);
 
-        Call call = phone.getForegroundCall();
+//MTK begin:
+        Call call;
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            call = ((GeminiPhone)phone).getForegroundCall();
+        } else {
+            call = phone.getForegroundCall();
+	 }
+//MTK end
+
         b.setLength(0);
         b.append("  - FG call: ").append(call.getState());
         b.append(" isAlive ").append(call.getState().isAlive());
@@ -2820,7 +3258,13 @@ public class PhoneUtils {
         b.append(" hasConnections ").append(call.hasConnections());
         Log.d(LOG_TAG, b.toString());
 
-        call = phone.getBackgroundCall();
+//MTK begin:
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            call = ((GeminiPhone)phone).getBackgroundCall();
+        } else {
+            call = phone.getBackgroundCall();
+	    }
+//MTK end
         b.setLength(0);
         b.append("  - BG call: ").append(call.getState());
         b.append(" isAlive ").append(call.getState().isAlive());
@@ -2830,7 +3274,13 @@ public class PhoneUtils {
         b.append(" hasConnections ").append(call.hasConnections());
         Log.d(LOG_TAG, b.toString());
 
-        call = phone.getRingingCall();
+//MTK begin:
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            call = ((GeminiPhone)phone).getRingingCall();
+        } else {
+            call = phone.getRingingCall();
+	    }
+//MTK end
         b.setLength(0);
         b.append("  - RINGING call: ").append(call.getState());
         b.append(" isAlive ").append(call.getState().isAlive());
@@ -2868,123 +3318,15 @@ public class PhoneUtils {
         boolean ringing = app.getRinger().isRinging();
         Log.d(LOG_TAG, "  - Ringer state: " + ringing);
     }
-    
-    //yeezone:jinwei 2011-8-22
-    public static boolean CheckIsBlockNumber(Context context, String str, boolean isVideoCall){
-    	ContentResolver cr = context.getContentResolver();
-		
-		String mumber_value = new String();
-		int block_type;
-        String[] columns = new String[]{BlackColumns.BlackMumber.MUMBER_VALUE,
-        								BlackColumns.BlackMumber.BLOCK_TYPE};
 
-        Cursor cursor = cr.query(BlackColumns.BlackMumber.CONTENT_URI, columns, null, null, null);
-        try{
-        	if(cursor.moveToFirst()) {
-            	do{
-            		mumber_value = cursor.getString(cursor.getColumnIndex(
-            									BlackColumns.BlackMumber.MUMBER_VALUE));
-            		block_type = cursor.getInt(cursor.getColumnIndex(
-            									BlackColumns.BlackMumber.BLOCK_TYPE));
-            		//yeezone:jinwei 2011-11-18 refer to recent call log
-            		if(PhoneNumberUtils.compare(str.trim(), mumber_value.trim())){
-		        		switch (block_type) {
-							case BLOCK_PHONE:
-								if(!isVideoCall){
-									return true;
-								}
-								break;
-							case BLOCK_PHONE_MESSAGE:
-								return true;
-								
-							case BLOCK_PHONE_VIDEO:
-							   if(isVideoCall){
-						            return true;
-						        }
-		                        break;
-		                        
-							default:
-								break;
-							}
-	        			}
-            	}while(cursor.moveToNext());
-            }
-        } catch (Exception e) {
-        	// process exception
-        } finally {
-        	if(cursor != null)
-        		cursor.close();
-        	else Log.v("PhoneUtils", "cursor == null");
-        }
-    	return false;
-    }
-    
-    public static void putToBlockList(Context context,String phoneNumber, long date){
-    	Log.v("PhoneUtils", "put to block list");
-    	ContentResolver cr = context.getContentResolver();
-    	
-		ContentValues values = new ContentValues();
-		values.put(BlackColumns.BlockRecorder.MUMBER_VALUE, phoneNumber);
-		values.put(BlackColumns.BlockRecorder.BLOCK_DATE, date);
-		
-		cr.insert(BlackColumns.BlockRecorder.CONTENT_URI, values);
-    }
-    
-    public static class BlackColumns {
-    	public static final String AUTHORITY  = "com.yeezonetech.providers.block";
-
-        public static final class BlackMumber implements BaseColumns {
-            public static final Uri CONTENT_URI  = Uri.parse("content://com.yeezonetech.providers.block/black_mumbers");
-
-            public static final String MUMBER_VALUE = "mumber_value";
-            public static final String BLOCK_TYPE	= "block_type";	//0 block call, 1 block message, 2 block call and message
-            public static final String NOTES		= "notes";
-        }
-
-        public static final class BlockRecorder implements BaseColumns {
-            public static final Uri CONTENT_URI  = Uri.parse("content://com.yeezonetech.providers.block/block_recorded");
-
-            public static final String MUMBER_VALUE = "mumber_value";
-            public static final String BLOCK_DATE = "block_date";
-        }
-    }
-
-    /**
-	 * get ITelephony instance by TelephonyManager
-	 */
-	static public ITelephony getITelephony(TelephonyManager telMgr) throws Exception {
-		Method getITelephonyMethod = telMgr.getClass().getDeclaredMethod("getITelephony");
-		getITelephonyMethod.setAccessible(true);
-		return (ITelephony)getITelephonyMethod.invoke(telMgr);
-	}
-	
     private static void log(String msg) {
         Log.d(LOG_TAG, msg);
     }
 
-	static final boolean isVideoCall()
-	{
-        for (Phone phone : CallManager.getInstance().getAllPhones()) {
-            if (phone != null) {
-                if (isVideoCall(phone))
-                    return true;
-            }
-        }
-        return false;
-	}
-
-	static final boolean isVideoCall(Phone phone)
-	{
-		/*if (!(app.phone.getPhoneType() == Phone.PHONE_TYPE_TD))
-			return false;*/
-		return (phone.getCallType() == Phone.CallType.VIDEO);
-	}
     static void dumpCallManager() {
         Call call;
         CallManager cm = PhoneApp.getInstance().mCM;
         StringBuilder b = new StringBuilder(128);
-
-
 
         Log.d(LOG_TAG, "############### dumpCallManager() ##############");
         // TODO: Don't log "cm" itself, since CallManager.toString()
@@ -3042,5 +3384,291 @@ public class PhoneUtils {
         }
 
         Log.d(LOG_TAG, "############## END dumpCallManager() ###############");
+    }
+
+    //Used for MMI
+    
+    private static void autoUpdateUssdReponseUi(View dialogView){
+        TextView justForUpdate = (TextView) dialogView.findViewById(R.id.ussd_update);
+        justForUpdate.setWidth(1);
+        justForUpdate.setText(R.string.fdn_contact_name_number_invalid);
+        justForUpdate.setFocusableInTouchMode(true);
+    }
+    
+    //Add for recording the USSD dialog, and use to cancel the dialog when enter airplane mode
+    public static void DismissMMIDialog()
+    {
+        if (null != mDialog)
+        {
+            mDialog.cancel();
+            mDialog = null;
+        }
+    }
+    
+    public static boolean isShowUssdDialog()
+    {
+        return mUssdActivity != null;
+    }
+
+    static public boolean getMmiFinished()
+    {
+    	return mbMmiFinished;
+    }
+    
+    static public void setMmiFinished(boolean state)
+    {
+    	mbMmiFinished = state;
+    }
+    //End Used for MMI
+    
+    static int placeVTCall(Phone phone, String number, Uri contactRef, int simId) {
+        int status = CALL_STATUS_DIALED;
+        try {
+            if (DBG) log("placeVTCall: '" + number + "'..." + "simId : "+simId);
+
+			placeCallRegister(phone);
+            Connection cn;
+			if (FeatureOption.MTK_GEMINI_SUPPORT) {
+				if (FeatureOption.MTK_GEMINI_3G_SWITCH)
+					cn = PhoneApp.getInstance().mCMGemini.vtDialGemini(phone,
+							number, simId);
+				else
+					cn = PhoneApp.getInstance().mCMGemini.vtDialGemini(phone,
+							number, Phone.GEMINI_SIM_1);
+			} else {
+				cn = PhoneApp.getInstance().mCM.vtDial(phone, number);
+			}
+
+            if (DBG) log("===> vtDial() returned: " + cn);
+
+            int phoneType = phone.getPhoneType();
+
+            // On GSM phones, null is returned for MMI codes
+            if (cn == null) {
+                if (phoneType == Phone.PHONE_TYPE_GSM) {
+                    if (DBG) log("dialed MMI code: " + number);
+                    status = CALL_STATUS_DIALED_MMI;
+                    // Set dialed MMI command to service
+                    if (mNwService != null) {
+                        try {
+                            mNwService.setMmiString(number);
+                            if (DBG) log("Extended NW bindService setUssdString (" + number + ")");
+                        } catch (RemoteException e) {
+                            mNwService = null;
+                        }
+                    }
+                } else {
+                    status = PhoneUtils.CALL_STATUS_FAILED;
+                }
+            } else {
+                PhoneApp app = PhoneApp.getInstance();
+
+                if (phoneType == Phone.PHONE_TYPE_CDMA) {
+                    updateCdmaCallStateOnNewOutgoingCall(app);
+                }
+
+                PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_OFFHOOK);
+
+                // phone.dial() succeeded: we're now in a normal phone call.
+                // attach the URI to the CallerInfo Object if it is there,
+                // otherwise just attach the Uri Reference.
+                // if the uri does not have a "content" scheme, then we treat
+                // it as if it does NOT have a unique reference.
+                String content = phone.getContext().getContentResolver().SCHEME_CONTENT;
+                if ((contactRef != null) && (contactRef.getScheme().equals(content))) {
+                    Object userDataObject = cn.getUserData();
+                    if (userDataObject == null) {
+                        cn.setUserData(contactRef);
+                    } else {
+                        // TODO: This branch is dead code, we have
+                        // just created the connection 'cn' which has
+                        // no user data (null) by default.
+                        if (userDataObject instanceof CallerInfo) {
+                            ((CallerInfo) userDataObject).contactRefUri = contactRef;
+                        } else {
+                            ((CallerInfoToken) userDataObject).currentInfo.contactRefUri =
+                                contactRef;
+                        }
+                    }
+                }
+
+                // Check is phone in any dock, and turn on speaker accordingly
+                activateSpeakerIfDocked(phone);
+            }
+        } catch (CallStateException ex) {
+            Log.w(LOG_TAG, "Exception from phone.dial()", ex);
+            status = CALL_STATUS_FAILED;
+        }
+
+        return status;
+    }
+
+    // MTK_OP01_PROTECT_START
+    // MTK_OP02_PROTECT_START
+    public static String getOptrProperties() {
+        if (null == mOptr) {
+            mOptr = SystemProperties.get("ro.operator.optr");
+            if (DBG) log("getOptrProperties, the mOptr is " + mOptr);
+            if (null == mOptr) {
+                mOptr = "";
+            }
+        }
+        return mOptr;   
+    } 
+
+    public static String getSpecProperties() {
+        if (null == mSpec) {
+            mSpec = SystemProperties.get("ro.operator.spec");			 
+            if (DBG) log("getSpecProperties, the mSpec is " + mSpec);
+            if (null == mSpec) {
+                mSpec = "";
+            }
+        }
+        return mSpec;			
+    }
+
+    public static String getSegProperties() {
+        if (null == mSeg) {
+            mSeg = SystemProperties.get("ro.operator.seg");			
+            if (DBG) log("getSegProperties, the mSeg is " + mSeg);
+            if (null == mSeg) {
+                mSeg = "";
+            }
+        }
+        return mSeg;
+    }
+    // MTK_OP02_PROTECT_END
+    // MTK_OP01_PROTECT_END
+
+    public static boolean isDMLocked(){
+        boolean locked = false;
+        try{
+            IBinder binder=ServiceManager.getService("DMAgent");
+            DMAgent agent = null;
+            if(binder != null)agent=DMAgent.Stub.asInterface (binder); 
+            if(agent != null)locked=agent.isLockFlagSet ();
+        }catch (Exception e) {
+            e.printStackTrace ();
+        } 
+        if (DBG) log("isDMLocked(): locked = " + locked);
+        return locked;
+    }
+
+    public static void setDualMicMode(String dualMic)
+    {
+        Context context = PhoneApp.getInstance().getApplicationContext();
+        if (context == null) return;
+        AudioManager audioManager = (AudioManager)
+                context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setParameters(PhoneUtils.DUALMIC_MODE + "=" + dualMic);
+    }
+    
+    public static boolean isSupportFeature(String feature) {
+        if (feature == null) {
+            return false;
+        }
+        
+        if (feature.equals("TTY")) {
+            return FeatureOption.MTK_TTY_SUPPORT;
+        } else if (feature.equals("DUAL_MIC")) {
+            return FeatureOption.MTK_DUAL_MIC_SUPPORT;
+        } else if (feature.equals("IP_DIAL")) {
+            return true;
+        } else if (feature.equals("3G_SWITCH")) {
+            return FeatureOption.MTK_GEMINI_3G_SWITCH;
+        }
+        
+        return false;
+    }
+    
+    public static boolean isVideoCall(Call call) {
+        if (call == null /*|| !call.getState().isAlive()*/) {
+            return false;
+        }
+        
+        Connection c = call.getLatestConnection();
+        if (c == null) {
+            return false;
+        } else {
+            return c.isVideo();
+        }
+    }
+
+     static void cancelUssdDialog() {
+        if (curCode != null && curCode.isCancelable()) {
+            curCode.cancel();
+        }
+    }
+
+    static void displayMmiDialog(Context context, CharSequence text, int type, int slot) {
+        Intent intent = new Intent();
+        intent.setClass(context, com.android.phone.UssdAlertActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(UssdAlertActivity.USSD_MESSAGE_EXTRA, text);
+        intent.putExtra(UssdAlertActivity.USSD_TYPE_EXTRA, type);
+        intent.putExtra(UssdAlertActivity.USSD_SLOT_ID, slot);
+        context.startActivity(intent);
+    }
+    
+    static class WorkerThread extends HandlerThread {
+        public final static String TAG = "WorkerThread";
+        public final static int CLOSE_CURSOR = 1;
+        private static final WorkerThread INSTANCE = new WorkerThread();
+        
+        Looper mLooper = null;
+        Handler mHandler = null;
+        
+        private WorkerThread() {
+            super("PhoneUtilsWorker");
+            if (DBG) {
+                Log.d(TAG, "construct the worker thread with looper = " + mLooper);
+            }
+        }
+        
+        public void startWorkerThread() {
+            if (mLooper != null) {
+                return ;
+            }
+            
+            INSTANCE.start();
+            mLooper = getLooper();
+            mHandler = new MyHandler(mLooper);
+        }
+        
+        public static  WorkerThread getWorkerThread() {
+            return INSTANCE;
+        }
+        
+        public Handler getHandler() {
+            return mHandler;
+        }
+        
+        class MyHandler extends Handler {
+            
+            public MyHandler(Looper loop) {
+                super(loop);
+            }
+            
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case CLOSE_CURSOR:
+                        if (DBG) Log.d(TAG, "handle message try to CLOSE_CURSOR");
+                        if (msg.obj != null) {
+                            if (msg.obj instanceof Cursor) {
+                                try {
+                                    Cursor c = (Cursor)msg.obj;
+                                    c.close();
+                                } catch (Exception e) {
+                                    Log.d(TAG, "Close cursor exception : " + e.toString());
+                                }
+                            }
+                        } else {
+                            if (DBG) Log.d(TAG, "handle message CLOSE_CURSOR with null object!");
+                        }
+                        if (DBG) Log.d(TAG, "handle message finished CLOSE_CURSOR");
+                        break;
+                }
+            }
+        }
     }
 }

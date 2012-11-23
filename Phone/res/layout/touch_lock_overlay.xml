@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/touchLockOverlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:background="#8000">
+
+    <!-- Layout note: we could use android:layout_centerInParent="true"
+         here to center the lock icon exactly in the middle of the screen.
+         But it actually looks better to have the lock roughly in the
+         middle of the dialpad key area, so instead we position it a
+         fixed distance from the bottom of the screen. -->
+    <TextView 
+        android:id="@+id/touchLockIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dip"
+        android:text="@string/touchLockText"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@drawable/dialpad_lock"/>
+</RelativeLayout>

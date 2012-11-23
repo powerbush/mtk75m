@@ -751,4 +751,15 @@
     <skip />
     <!-- no translation found for no_voip (8901474054537199865) -->
     <skip />
+
+    <string name="activity_not_found">"L\'applicaziun n\'è betg installada sin quest telefonin."</string>
+
+
+<string name="sim_toolkit">"Set dad utensils SIM"</string>
+
+<string name="simlock_returntocall">"Enavos al clom"</string>
+<string name="simlock_emergency">"Numer d\'urgenza"</string>
+<string name="simlock_enterpincode">"Endatar il code PIN"</string>
+
+
 </resources>

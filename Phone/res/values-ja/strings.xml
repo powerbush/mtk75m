@@ -692,4 +692,15 @@
     <string name="no_internet_available" msgid="1100564991026313234">"インターネット通話を行うにはインターネットへの接続を確認してください。"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"インターネット通話を行うにはWi-Fiネットワークへの接続が必要です（[ワイヤレスとネットワークの設定]を使用）。"</string>
     <string name="no_voip" msgid="8901474054537199865">"インターネット通話には対応していません"</string>
+
+    <string name="activity_not_found">"アプリケーションがインストールされていません。"</string>
+
+
+<string name="sim_toolkit">"SIM Toolkit"</string>
+
+<string name="simlock_returntocall">"通話に戻る"</string>
+<string name="simlock_emergency">"緊急通報"</string>
+<string name="simlock_enterpincode">"PINコードを入力"</string>
+
+<string name="error_sdcard_access">"SDカードにアクセスできません"</string>
 </resources>

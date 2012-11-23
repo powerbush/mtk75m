@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -42,6 +77,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.android.internal.telephony.gemini.*;
+import com.mediatek.featureoption.FeatureOption;
+
+import com.mediatek.vt.VTManager;
 
 /**
  * Dialer class that encapsulates the DTMF twelve key behaviour.
@@ -53,13 +92,15 @@ public class DTMFTwelveKeyDialer implements
         View.OnTouchListener,
         View.OnKeyListener {
     private static final String LOG_TAG = "DTMFTwelveKeyDialer";
-    private static final boolean DBG = (PhoneApp.DBG_LEVEL >= 2);
+    private static final boolean DBG = true;//(PhoneApp.DBG_LEVEL >= 2);
 
     // events
     private static final int PHONE_DISCONNECT = 100;
     private static final int DTMF_SEND_CNF = 101;
 
+    private Phone mPhone;
     private CallManager mCM;
+	private MTKCallManager mCMGemini;
     private ToneGenerator mToneGenerator;
     private Object mToneGeneratorLock = new Object();
 
@@ -133,6 +174,8 @@ public class DTMFTwelveKeyDialer implements
 
     // KeyListener used with the "dialpad digits" EditText widget.
     private DTMFKeyListener mDialerKeyListener;
+    //To record the view which do not recieve the up message when colse dialog.
+    private View mView = null;
 
     /**
      * Create an input method just so that the textview can display the cursor.
@@ -237,8 +280,8 @@ public class DTMFTwelveKeyDialer implements
             char c = (char) lookup(event, content);
 
             // if not a long press, and parent onKeyDown accepts the input
-            if (event.getRepeatCount() == 0 && super.onKeyDown(view, content, keyCode, event)) {
-
+            //if (event.getRepeatCount() == 0 && super.onKeyDown(view, content, keyCode, event)) {
+            if (event.getRepeatCount() == 0 && c != 0) {
                 boolean keyOK = ok(getAcceptedChars(), c);
 
                 // if the character is a valid dtmf code, start playing the tone and send the
@@ -378,7 +421,19 @@ public class DTMFTwelveKeyDialer implements
                 case PHONE_DISCONNECT:
                     if (DBG) log("disconnect message recieved, shutting down.");
                     // unregister since we are closing.
-                    mCM.unregisterForDisconnect(this);
+                    if (FeatureOption.MTK_GEMINI_SUPPORT)
+                    {
+                        mCMGemini.unregisterForDisconnectGemini(this, Phone.GEMINI_SIM_1); 
+                        mCMGemini.unregisterForDisconnectGemini(this, Phone.GEMINI_SIM_2); 						
+                    }
+                    else
+                    {
+                        mCM.unregisterForDisconnect(this);
+                    }
+                    if (mView != null){
+                        mView.setPressed(false);
+                        stopTone();
+                    }
                     closeDialer(false);
                     break;
                 case DTMF_SEND_CNF:
@@ -406,7 +461,9 @@ public class DTMFTwelveKeyDialer implements
         if (DBG) log("DTMFTwelveKeyDialer constructor... this = " + this);
 
         mInCallScreen = parent;
+		mPhone = PhoneApp.getInstance().phone;
         mCM = PhoneApp.getInstance().mCM;
+		mCMGemini = PhoneApp.getInstance().mCMGemini;
 
         // The passed-in DTMFTwelveKeyDialerView *should* always be
         // non-null, now that the in-call UI uses only portrait mode.
@@ -423,6 +480,7 @@ public class DTMFTwelveKeyDialer implements
 
         if (mDialerView != null) {
             mDialerView.setDialer(this);
+            mDialerView.setDrawingCacheEnabled(true);
 
             // In the normal in-call DTMF dialpad, mDialpadDigits is an
             // EditText used to display the digits the user has typed so
@@ -462,20 +520,10 @@ public class DTMFTwelveKeyDialer implements
      */
     /* package */ void clearInCallScreenReference() {
         if (DBG) log("clearInCallScreenReference()...");
-        closeDialer(false);
-        mInCallScreen = null;
         mDialerKeyListener = null;
         if (mDialerDrawer != null) {
             mDialerDrawer.setOnDrawerOpenListener(null);
             mDialerDrawer.setOnDrawerCloseListener(null);
-        }
-        if (mDialerView != null) {
-            if (mDialpadDigits != null) {
-                mDialpadDigits.setKeyListener(null);
-                mDialpadDigits = null;
-            }
-            mDialerView.setDialer(null);
-            mDialerView = null;
         }
         if (mCM.getFgPhone().getPhoneType() == Phone.PHONE_TYPE_CDMA) {
             mHandler.removeMessages(DTMF_SEND_CNF);
@@ -484,6 +532,8 @@ public class DTMFTwelveKeyDialer implements
                 mDTMFQueue.clear();
             }
         }
+        closeDialer(false);
+        mInCallScreen = null;
     }
 
     /**
@@ -495,7 +545,15 @@ public class DTMFTwelveKeyDialer implements
 
         // Any time the dialer is open, listen for "disconnect" events (so
         // we can close ourself.)
-        mCM.registerForDisconnect(mHandler, PHONE_DISCONNECT, null);
+        if (FeatureOption.MTK_GEMINI_SUPPORT)
+        {
+            mCMGemini.registerForDisconnectGemini(mHandler, PHONE_DISCONNECT, null, Phone.GEMINI_SIM_1);
+            mCMGemini.registerForDisconnectGemini(mHandler, PHONE_DISCONNECT, null, Phone.GEMINI_SIM_2);
+        }
+        else
+        {
+            mCM.registerForDisconnect(mHandler, PHONE_DISCONNECT, null);
+        }
 
         // On some devices the screen timeout is set to a special value
         // while the dialpad is up.
@@ -523,7 +581,7 @@ public class DTMFTwelveKeyDialer implements
         // see if we need to play local tones.
         if (PhoneApp.getInstance().getResources().getBoolean(R.bool.allow_local_dtmf_tones)) {
             mDTMFToneEnabled = Settings.System.getInt(mInCallScreen.getContentResolver(),
-                    Settings.System.DTMF_TONE_WHEN_DIALING, 0) == 1;
+                    Settings.System.DTMF_TONE_WHEN_DIALING, 1) == 1;
         } else {
             mDTMFToneEnabled = false;
         }
@@ -557,7 +615,15 @@ public class DTMFTwelveKeyDialer implements
         PhoneApp app = PhoneApp.getInstance();
         app.updateWakeState();
 
-        mCM.unregisterForDisconnect(mHandler);
+        if (FeatureOption.MTK_GEMINI_SUPPORT)
+        {
+            mCMGemini.unregisterForDisconnectGemini(mHandler, Phone.GEMINI_SIM_1);
+            mCMGemini.unregisterForDisconnectGemini(mHandler, Phone.GEMINI_SIM_2);			
+        }
+        else
+        {
+            mCM.unregisterForDisconnect(mHandler);
+        }
 
         // Give the InCallScreen a chance to do any necessary UI updates.
         if (mInCallScreen != null) {
@@ -622,7 +688,7 @@ public class DTMFTwelveKeyDialer implements
         switch (keyCode) {
             // finish for these events
             case KeyEvent.KEYCODE_BACK:
-            case KeyEvent.KEYCODE_CALL:
+//            case KeyEvent.KEYCODE_CALL:
                 if (DBG) log("exit requested");
                 closeDialer(true);  // do the "closing" animation
                 return true;
@@ -643,6 +709,7 @@ public class DTMFTwelveKeyDialer implements
      */
     public boolean onTouch(View v, MotionEvent event) {
         int viewId = v.getId();
+        if (DBG) log("onTouch:  MotionEvent " + event.getAction());
 
         // if the button is recognized
         if (mDisplayMap.containsKey(viewId)) {
@@ -651,10 +718,14 @@ public class DTMFTwelveKeyDialer implements
                     // Append the character mapped to this button, to the display.
                     // start the tone
                     processDtmf(mDisplayMap.get(viewId));
+                    mView = v;
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     // stop the tone on ANY other event, except for MOVE.
+                    if (mView != null && mView.getId()== viewId){
+                        mView = null;
+                    }
                     stopTone();
                     break;
             }
@@ -811,6 +882,15 @@ public class DTMFTwelveKeyDialer implements
         // if it is a valid key, then update the display and send the dtmf tone.
         if (PhoneNumberUtils.is12Key(c)) {
             if (DBG) log("updating display and sending dtmf tone for '" + c + "'");
+            
+            if( FeatureOption.MTK_VT3G324M_SUPPORT == true )
+            {
+            	if( !PhoneApp.getInstance().isVTIdle() )
+            	{
+            		if (DBG) log(" - VTManager.getInstance().onUserInput : " +String.valueOf(c));
+            		VTManager.getInstance().onUserInput(String.valueOf(c));
+            	}
+            }
 
             // Append this key to the "digits" widget.
             if (mDialpadDigits != null) {
@@ -824,6 +904,10 @@ public class DTMFTwelveKeyDialer implements
                 // complicated than just setting focusable="false" on it,
                 // though.)
                 mDialpadDigits.getText().append(c);
+                mDialpadDigits.setSelection(mDialpadDigits.length());
+                mDialpadDigits.setCursorVisible(false);
+                // Add below log for auto test case codes. (Response time since tapping "End call" button until the in call screen dismisses)
+                Log.i(LOG_TAG, "[mtk performance result]:" + System.currentTimeMillis());
             }
 
             // Play the tone if it exists.
@@ -882,7 +966,21 @@ public class DTMFTwelveKeyDialer implements
      */
     /* package */ void startDtmfTone(char tone) {
         if (DBG) log("startDtmfTone()...");
-        mCM.startDtmf(tone);
+        boolean isSipCall = mCM.getActiveFgCall().getPhone().getPhoneType() == Phone.PHONE_TYPE_SIP;
+        if (FeatureOption.MTK_GEMINI_SUPPORT && !isSipCall)
+        {
+
+           if (((GeminiPhone)mPhone).getStateGemini(Phone.GEMINI_SIM_1) != Phone.State.IDLE) {                    
+               mCM.startDtmf(tone);
+           }
+           else if (((GeminiPhone)mPhone).getStateGemini(Phone.GEMINI_SIM_2) != Phone.State.IDLE) {                    
+               mCM.startDtmf(tone);
+           }
+        }
+        else
+        {
+            mCM.startDtmf(tone);
+        }
 
         // if local tone playback is enabled, start it.
         if (mDTMFToneEnabled) {
@@ -910,7 +1008,21 @@ public class DTMFTwelveKeyDialer implements
      */
     /* package */ void stopDtmfTone() {
         if (DBG) log("stopDtmfTone()...");
-        mCM.stopDtmf();
+        boolean isSipCall = mCM.getActiveFgCall().getPhone().getPhoneType() == Phone.PHONE_TYPE_SIP;
+        if (FeatureOption.MTK_GEMINI_SUPPORT && !isSipCall)
+        {
+
+           if (((GeminiPhone)mPhone).getStateGemini(Phone.GEMINI_SIM_1) != Phone.State.IDLE) {                    
+               mCM.stopDtmf();
+           }
+           else if (((GeminiPhone)mPhone).getStateGemini(Phone.GEMINI_SIM_2) != Phone.State.IDLE) {                    
+               mCM.stopDtmf();
+           }
+        }
+        else
+        {
+            mCM.stopDtmf();
+        }
 
         // if local tone playback is enabled, stop it.
         if (DBG) log("trying to stop local tone...");
@@ -944,6 +1056,7 @@ public class DTMFTwelveKeyDialer implements
      * Plays the local tone based the phone type.
      */
     private void startTone(char c) {
+        if (DBG) log("startTone()...");
         // TODO: move the logic to CallManager
         int phoneType = mCM.getFgPhone().getPhoneType();
         if (phoneType == Phone.PHONE_TYPE_CDMA) {
@@ -957,6 +1070,7 @@ public class DTMFTwelveKeyDialer implements
      * Stops the local tone based on the phone type.
      */
     private void stopTone() {
+        if (DBG) log("stopTone()...");
         // TODO: move the logic to CallManager
         int phoneType = mCM.getFgPhone().getPhoneType();
         if (phoneType == Phone.PHONE_TYPE_CDMA) {
@@ -1029,8 +1143,19 @@ public class DTMFTwelveKeyDialer implements
                 mDTMFQueue.add(new Character(dtmfDigit));
             } else {
                 String dtmfStr = Character.toString(dtmfDigit);
-                Log.i(LOG_TAG, "dtmfsent = " + dtmfStr);
-                mCM.sendBurstDtmf(dtmfStr, 0, 0, mHandler.obtainMessage(DTMF_SEND_CNF));
+                if (FeatureOption.MTK_GEMINI_SUPPORT)
+                {
+                   if (((GeminiPhone)mPhone).getStateGemini(Phone.GEMINI_SIM_1) != Phone.State.IDLE) {                    
+                       mCM.sendBurstDtmf(dtmfStr, 0, 0, mHandler.obtainMessage(DTMF_SEND_CNF));
+                   }
+                   else if (((GeminiPhone)mPhone).getStateGemini(Phone.GEMINI_SIM_2) != Phone.State.IDLE) {                    
+                       mCM.sendBurstDtmf(dtmfStr, 0, 0, mHandler.obtainMessage(DTMF_SEND_CNF));
+                   }
+                }
+                else
+                {
+                    mCM.sendBurstDtmf(dtmfStr, 0, 0, mHandler.obtainMessage(DTMF_SEND_CNF));
+                }
                 // Set flag to indicate wait for Telephony confirmation.
                 mDTMFBurstCnfPending = true;
             }

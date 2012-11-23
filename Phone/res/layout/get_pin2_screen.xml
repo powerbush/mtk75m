@@ -27,12 +27,15 @@
         android:layout_marginTop="15dip"
         android:layout_marginLeft="15dip">
 
-        <TextView android:id= "@+id/prompt"
+        <TextView android:id="@+id/get_pin2_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="5dip"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/enter_pin2_text" />
+        
+        <TextView android:id="@+id/pin2_retry_info_label"
+            style="@style/info_label"/>
 
         <EditText android:id="@+id/pin"
             android:layout_width="200dip"
@@ -42,13 +45,25 @@
             android:autoText="false"
             android:capitalize="none"
             android:password="true" />
-
-        <Button android:id="@+id/button"
-            android:layout_marginTop="8dip"
-            android:layout_marginLeft="8dip"
-            android:layout_width="wrap_content"
+        
+        <TextView android:id="@+id/pin2_invalid_info_label"
+            android:textSize="12sp"
+            android:textColor="#FFFF0000"
+            android:visibility="gone"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ok" />
+            android:paddingLeft="10dip"
+            android:paddingTop="1dip"
+            android:paddingRight="5dip"
+            android:paddingBottom="1dip"
+            android:text="@string/invalidPin2"/>
+
+        <Button
+        		android:id="@+id/button_get_pin2_ok"
+        		android:layout_width="wrap_content"
+           	android:layout_height="wrap_content"
+           	android:text="@string/ok"
+            />
 
     </LinearLayout>
 

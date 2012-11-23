@@ -375,6 +375,18 @@
     <item msgid="5741268642513143762">"1"</item>
     <item msgid="419525200910932450">"2"</item>
   </string-array>
+    <string name="subscription_title" msgid="5813493350326486">"TEST odběru CDMA"</string>
+    <string name="subscription_summary" msgid="8435941016743418124">"Přepnout mezi RUIM/SIM a NV"</string>
+    <string name="subscription_dialogtitle" msgid="531571450448009255">"odběr"</string>
+<string-array name="subscription_choices">
+    <item msgid="6540107472553796600">"RUIM/SIM"</item>
+    <item msgid="1433427108940308332">"NV"</item>
+  </string-array>
+  <string-array name="subscription_values">
+    <item msgid="4377788417250295786">"0"</item>
+    <item msgid="1193066664940329729">"1"</item>
+  </string-array>
+ 
     <string name="cdma_subscription_title" msgid="445607520753045412">"Odběr CDMA"</string>
     <string name="cdma_subscription_summary" msgid="2530890766115781140">"Přepnout mezi RUIM/SIM a NV"</string>
     <string name="cdma_subscription_dialogtitle" msgid="2699527950523333110">"odběr"</string>
@@ -533,6 +545,8 @@
     <string name="importSimEntry" msgid="6614358325359736031">"Importovat"</string>
     <string name="importAllSimEntries" msgid="1503181169636198673">"Importovat vše"</string>
     <string name="importingSimContacts" msgid="7374056215462575769">"Importování kontaktů z karty SIM"</string>
+    <string name="importingSim1Contacts">"Importování kontaktů z karty SIM1"</string>
+    <string name="importingSim2Contacts">"Importování kontaktů z karty SIM2"</string>
     <string name="importToFDNfromContacts" msgid="2130620207013368580">"Import z kontaktů"</string>
     <string name="hac_mode_title" msgid="8740268574688743289">"Naslouchátka"</string>
     <string name="hac_mode_summary" msgid="6833851160514929341">"Zapnout režim kompatibility s naslouchátkem"</string>
@@ -692,4 +706,16 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Chcete-li uskutečnit internetový hovor, zkontrolujte, zda jste připojeni k internetu"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Abyste mohli uskutečnit internetový hovor musíte být připojeni k síti WiFi (viz část Nastavení bezdrátového připojení a sítě)."</string>
     <string name="no_voip" msgid="8901474054537199865">"Internetové hovory nejsou podporovány"</string>
+
+    <string name="activity_not_found">"Aplikace není v telefonu nainstalována."</string>
+
+<string name="sim_toolkit">"Nástroje SIM"</string>
+
+<string name="simlock_returntocall">"Zavolat zpět"</string>
+<string name="simlock_emergency">"Tísňové volání"</string>
+<string name="simlock_enterpincode">"Zadejte kód PIN"</string>
+
+<string name="error_sdcard_access">"Nelze získat přístup ke kartě SD"</string>
+<string name="cannot_answered_Video_Call">Videovolání nelze přijmout, protože již probíhá hlasové volání</string>
+<string name="cannot_answered_Voice_Call">Hlasové volání nelze přijmout, protože již probíhá videovolání</string>
 </resources>

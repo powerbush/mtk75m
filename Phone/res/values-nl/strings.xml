@@ -137,17 +137,17 @@
     <string name="sum_cfu_enabled" msgid="2450052502198827927">"Alle oproepen doorschakelen naar <xliff:g id="PHONENUMBER">{0}</xliff:g>"</string>
     <string name="sum_cfu_enabled_no_number" msgid="6591985777096823616">"Het telefoonnummer is niet beschikbaar"</string>
     <string name="sum_cfu_disabled" msgid="3698472522160364904">"Uitgeschakeld"</string>
-    <string name="labelCFB" msgid="218938523102207587">"Doorsch. bij in gesprek"</string>
+    <string name="labelCFB" msgid="218938523102207587">"Doorschakelen indien in gesprek"</string>
     <string name="messageCFB" msgid="3711089705936187129">"Nummer indien in gesprek"</string>
     <string name="sum_cfb_enabled" msgid="5984198104833116690">"Doorschakelen naar <xliff:g id="PHONENUMBER">{0}</xliff:g>"</string>
     <string name="sum_cfb_disabled" msgid="227440009979537651">"Uitgeschakeld"</string>
     <string name="disable_cfb_forbidden" msgid="4524424437001441832">"Uw provider biedt geen ondersteuning voor het uitschakelen van oproepdoorschakelingen wanneer uw telefoon bezet is."</string>
-    <string name="labelCFNRy" msgid="3646316323834351390">"Doorsch. bij onbeantwoord"</string>
+    <string name="labelCFNRy" msgid="3646316323834351390">"Doorschakelen indien onbeantwoord"</string>
     <string name="messageCFNRy" msgid="672317899884380374">"Nummer indien onbeantwoord"</string>
     <string name="sum_cfnry_enabled" msgid="6955775691317662910">"Doorschakelen naar <xliff:g id="PHONENUMBER">{0}</xliff:g>"</string>
     <string name="sum_cfnry_disabled" msgid="8422350929957344729">"Uitgeschakeld"</string>
     <string name="disable_cfnry_forbidden" msgid="7041605706777677935">"Uw provider biedt geen ondersteuning voor het uitschakelen van oproepdoorschakelingen wanneer uw telefoon niet wordt opgenomen."</string>
-    <string name="labelCFNRc" msgid="47183615370850000">"Doorsch. bij onbereikbaar"</string>
+    <string name="labelCFNRc" msgid="47183615370850000">"Doorschakelen indien onbereikbaar"</string>
     <string name="messageCFNRc" msgid="6380695421020295119">"Nummer indien onbereikbaar"</string>
     <string name="sum_cfnrc_enabled" msgid="7010898346095497421">"Doorschakelen naar <xliff:g id="PHONENUMBER">{0}</xliff:g>"</string>
     <string name="sum_cfnrc_disabled" msgid="7222141261321276464">"Uitgeschakeld"</string>
@@ -188,7 +188,7 @@
     <string name="not_allowed" msgid="3540496123717833833">"Uw SIM-kaart staat geen verbinding met dit netwerk toe."</string>
     <string name="connect_later" msgid="500090982903469816">"Kan momenteel geen verbinding maken met dit netwerk. Probeer het later opnieuw."</string>
     <string name="registration_done" msgid="495135664535876612">"Geregistreerd op netwerk."</string>
-    <string name="sum_carrier_select" msgid="6526225502314751575">"Een mobiele provider selecteren"</string>
+    <string name="sum_carrier_select" msgid="6526225502314751575">"Een netwerkoperator selecteren"</string>
     <string name="sum_search_networks" msgid="2921092249873272715">"Alle beschikbare netwerken zoeken"</string>
     <string name="select_automatically" msgid="8615980695510888796">"Automatisch selecteren"</string>
     <string name="sum_select_automatically" msgid="8460954604521755275">"Voorkeursnetwerk automatisch selecteren"</string>
@@ -332,15 +332,24 @@
     <item msgid="935612021902787683">"GSM/WCDMA (automatische modus)"</item>
     <item msgid="8912042051809329533">"Alleen WCDMA"</item>
     <item msgid="8776934131146642662">"Alleen GSM"</item>
-    <item msgid="4684679567848300935">"GSM/WCDA (voorkeur voor WCDMA)"</item>
   </string-array>
   <string-array name="gsm_umts_network_preferences_values">
     <item msgid="117293148930527265">"0"</item>
-    <item msgid="2264578612775462302">"1"</item>
-    <item msgid="1268081943590316978">"2"</item>
-    <item msgid="4469871047641902607">"3"</item>
+    <item msgid="2264578612775462302">"2"</item>
+    <item msgid="1268081943590316978">"1"</item>
   </string-array>
-    <string name="prefer_2g" msgid="8442550937280449639">"Alleen 2G-netwerken"</string>
+  
+  <string name="umts_preferred_network_mode_dialogtitle">"GSM-/UMTS-netwerkvoorkeuren"</string>
+    <string-array name="umts_network_preferences_choices">
+        <item>"GSM/WCDMA (automatische modus)"</item>
+        <item>"Alleen WCDMA"</item>
+    </string-array>
+    <string-array name="umts_network_preferences_values">
+        <item>"0"</item>
+        <item>"2"</item>
+    </string-array>
+  
+    <string name="prefer_2g" msgid="8442550937280449639">"Alleen 2G-netwerken gebruiken"</string>
     <string name="prefer_2g_summary" msgid="1976491403210690759">"Energiespaarstand"</string>
     <string name="cdma_system_select_title" msgid="5757657769327732833">"Systeem selecteren"</string>
     <string name="cdma_system_select_summary" msgid="2528661990595284707">"De CDMA-roamingmodus wijzigen"</string>
@@ -414,17 +423,17 @@
     <string name="name" msgid="7329028332786872378">"Naam"</string>
     <string name="number" msgid="7905950798349903858">"Nummer"</string>
     <string name="save" msgid="4094274636321939086">"Opslaan"</string>
-    <string name="add_fdn_contact" msgid="2481915899633353976">"Vast nummer toevoegen"</string>
-    <string name="adding_fdn_contact" msgid="7627379633721940991">"Vast nummer toevoegen..."</string>
-    <string name="fdn_contact_added" msgid="7458335758501736665">"Vast nummer toegevoegd."</string>
-    <string name="edit_fdn_contact" msgid="7976936035587081480">"Vast nummer bewerken"</string>
-    <string name="updating_fdn_contact" msgid="8370929876849803600">"Vast nummer bijwerken..."</string>
-    <string name="fdn_contact_updated" msgid="5497828782609005017">"Vast nummer bijgewerkt."</string>
-    <string name="delete_fdn_contact" msgid="6668958073074151717">"Vast nummer verwijderen"</string>
-    <string name="deleting_fdn_contact" msgid="5669163206349319969">"Vast nummer verwijderen..."</string>
-    <string name="fdn_contact_deleted" msgid="7154162327112259569">"Vast nummer verwijderd."</string>
-    <string name="pin2_invalid" msgid="7176360264228076810">"FDN niet bijgewerkt: u heeft een onjuiste PIN-code ingevoerd."</string>
-    <string name="fdn_invalid_number" msgid="9193130794297997290">"FDN niet bijgewerkt: nummer mag niet langer zijn dan 20 cijfers."</string>
+    <string name="add_fdn_contact" msgid="2481915899633353976">"Vast contact toevoegen"</string>
+    <string name="adding_fdn_contact" msgid="7627379633721940991">"Vast contact toevoegen..."</string>
+    <string name="fdn_contact_added" msgid="7458335758501736665">"Vast contact toegevoegd."</string>
+    <string name="edit_fdn_contact" msgid="7976936035587081480">"Vast contact bewerken"</string>
+    <string name="updating_fdn_contact" msgid="8370929876849803600">"Vast contact bijwerken..."</string>
+    <string name="fdn_contact_updated" msgid="5497828782609005017">"Vast contact bijgewerkt."</string>
+    <string name="delete_fdn_contact" msgid="6668958073074151717">"Vast contact verwijderen"</string>
+    <string name="deleting_fdn_contact" msgid="5669163206349319969">"Vast contact verwijderen..."</string>
+    <string name="fdn_contact_deleted" msgid="7154162327112259569">"Vast contact verwijderd."</string>
+    <string name="pin2_invalid" msgid="7176360264228076810">"PIN2-code ongeldig!"</string>
+    <string name="fdn_invalid_number" msgid="9193130794297997290">"Nummer mag niet langer zijn dan 20 cijfers."</string>
     <string name="simContacts_emptyLoading" msgid="2203331234764498011">"Lezen vanaf SIM-kaart..."</string>
     <string name="simContacts_empty" msgid="5270660846489561932">"Geen contacten op uw SIM-kaart."</string>
     <string name="simContacts_title" msgid="1861472842524839921">"Contacten selecteren om te importeren"</string>
@@ -449,8 +458,8 @@
     <string name="oldPin2Label" msgid="8559146795026261502">"Oude PIN2-code"</string>
     <string name="newPin2Label" msgid="4573956902204349054">"Nieuwe PIN2-code"</string>
     <string name="confirmPin2Label" msgid="8100319484454787708">"Nieuwe PIN2-code bevestigen"</string>
-    <string name="badPuk2" msgid="4072035207011308856">"De PUK2-code die u heeft ingevoerd, is onjuist. Probeer het opnieuw."</string>
-    <string name="badPin2" msgid="515218795152422178">"De oude PIN2-code die u heeft ingevoerd, is onjuist. Probeer het opnieuw."</string>
+    <string name="badPuk2" msgid="4072035207011308856">"De PUK2 die u hebt ingevoerd, is onjuist."</string>
+    <string name="badPin2" msgid="515218795152422178">"De oude PIN2 die u hebt ingevoerd, is onjuist."</string>
     <string name="mismatchPin2" msgid="4177060915600342718">"De PIN2-codes die u heeft ingevoerd, komen niet overeen. Probeer het opnieuw."</string>
     <string name="invalidPin2" msgid="8237110107480395938">"Voer een PIN2-code van 4 tot 8 cijfers in."</string>
     <string name="invalidPuk2" msgid="1290977391033057871">"Voer een PUK2-code van 8 cijfers in."</string>
@@ -533,6 +542,8 @@
     <string name="importSimEntry" msgid="6614358325359736031">"Importeren"</string>
     <string name="importAllSimEntries" msgid="1503181169636198673">"Alles importeren"</string>
     <string name="importingSimContacts" msgid="7374056215462575769">"SIM-contacten importeren"</string>
+    <string name="importingSim1Contacts">"SIM1-contacten importeren"</string>
+    <string name="importingSim2Contacts">"SIM2-contacten importeren"</string>
     <string name="importToFDNfromContacts" msgid="2130620207013368580">"Importeren uit contacten"</string>
     <string name="hac_mode_title" msgid="8740268574688743289">"Gehoorapparaten"</string>
     <string name="hac_mode_summary" msgid="6833851160514929341">"Compatibiliteit voor gehoorapparaat inschakelen"</string>
@@ -560,7 +571,7 @@
     <string name="ota_activate" msgid="1368528132525626264">"Activeren"</string>
     <string name="ota_title_activate_success" msgid="3344632328991980578">"De telefoon is geactiveerd."</string>
     <string name="ota_title_problem_with_activation" msgid="7095824491970084367">"Probleem met activeren"</string>
-    <string name="ota_listen" msgid="162923839877584937">"Volg de gesproken instructies tot u hoort dat de activering is voltooid."</string>
+    <string name="ota_listen" msgid="162923839877584937">"Luister naar de instructies om uw telefoon te activeren. Blijf aan de lijn totdat u een bevestiging van de activering hoort."</string>
     <string name="ota_dialpad" msgid="3530900997110658409">"Toetsenblok"</string>
     <string name="ota_speaker" msgid="6904589278542719647">"Luidspreker"</string>
     <string name="ota_progress" msgid="4644512049143969504">"Wacht even totdat uw telefoon is geprogrammeerd."</string>
@@ -692,4 +703,375 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Controleer uw internetverbinding voordat u belt via internet"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Voor internetoproepen moet u verbinding hebben met een Wi-Fi-netwerk (gebruik \'Draadloze en netwerkinstellingen\')"</string>
     <string name="no_voip" msgid="8901474054537199865">"Bellen via internet niet ondersteund"</string>
-</resources>
+
+    <string name="activity_not_found">"Deze toepassing is niet geïnstalleerd op uw telefoon."</string>
+
+
+<string name="sim_toolkit">"SIM-toolkit"</string>
+
+<string name="simlock_returntocall">"Terug naar gesprek"</string>
+<string name="simlock_emergency">"Noodoproep"</string>
+<string name="simlock_enterpincode">"PIN-code invoeren"</string>
+
+
+    <string name="fdn_contact_invalid">Ongeldige naam of nummer contactpersoon.</string>
+    <string name="fdn_contact_name_number_invalid">De naam en het nummer kunnen niet tegelijk leeg zijn.</string>
+    <string name="fdn_contact_number_invalid">Ongeldig contactnummer.</string>
+    <string name="fdn_phone_book_busy">Het telefoonboek is bezet. Probeer het later.</string>
+    <string name="gemini_mobile_network_sim1_tab_tag">SIM1</string>
+    <string name="gemini_mobile_network_sim1_tab_label">SIM1</string>
+    <string name="gemini_mobile_network_sim2_tab_tag">SIM2</string>
+    <string name="gemini_mobile_network_sim2_tab_label">SIM2</string>
+    <string name="gemini_simid">simId</string>
+    <string name="sim_1">0</string>
+    <string name="sim_2">1</string>
+    <string name="menu_more">Meer</string>
+    <string name="menu_bluetooth_on">Bluetooth aan</string>
+    <string name="menu_bluetooth_off">Bluetooth uit</string>
+    <string name="menu_unhold">Uit wacht halen</string>
+    <string name="menu_disconnect_hold">In wacht eindigen</string>
+    <string name="menu_disconnect_all">Alles eindigen</string>
+    <string name="menu_ect">Overdracht</string>
+    <string name="menu_answer_end_active">Antwoord, actief eindigen</string>
+    <string name="call_additional_sum">Telefoonnummer en instellingen oproep in wacht</string>
+    <string name="mo_code_unconditional_cf_active">Oproep doorschakelen\nonvoorwaardelijk geactiveerd</string>
+    <string name="mo_code_some_cf_active">Oproep doorschakelen\nVoorwaardelijk</string>
+    <string name="mo_code_call_forwarded">Oproep doorgestuurd</string>
+    <string name="mo_code_call_is_waiting">Gesprek in wacht</string>
+    <string name="mo_code_cug_call">Gesloten gebruikersgroep</string>
+    <string name="mo_code_outgoing_calls_barred">Uitgaande oproep geblokkeerd</string>
+    <string name="mo_code_incoming_calls_barred">Binnenkomende oproep geblokkeerd</string>
+    <string name="mo_code_clir_suppression_rejected">Beller-ID verzendservice controleren</string>
+    <string name="mo_code_call_deflected">Oproep doorgeschakeld</string>
+    <string name="mt_code_forwarded_call">Dit is een doorgeschakelde oproep</string>
+    <string name="mt_code_cug_call">Gesloten gebruikersgroep</string>
+    <string name="mt_code_call_on_hold">Oproep in de wacht</string>
+    <string name="mt_code_call_retrieved">Oproep opgehaald</string>
+    <string name="mt_code_multi_party_call">Vergadergesprek</string>
+    <string name="mt_code_on_hold_call_released">Gesprek in wacht vrijgegeven</string>
+    <string name="mt_code_forward_check_received">Doorschakelen controle ontvangen SS-bericht</string>
+    <string name="mt_code_call_connecting_ect">Oproep overdragen</string>
+    <string name="mt_code_call_connected_ect">Oproepoverdracht actief</string>
+    <string name="mt_code_deflected_call">Dit is een omgeleide oproep</string>
+    <string name="mt_code_additional_call_forwarded">Extra binnenkomende oproep doorgeschakeld</string>
+    <string name="mt_code_forwarded_cf">Oproep doorgeschakeld</string>
+    <string name="mt_code_forwarded_cf_uncond">Oproep doorgeschakeld op onvoorwaardelijk</string>
+    <string name="mt_code_forwarded_cf_cond">Oproep doorgeschakeld op voorwaardelijk</string>
+    <string name="mt_code_forwarded_cf_busy">Oproep bezet doorgeschakeld</string>
+    <string name="mt_code_forwarded_cf_no_reply">Oproep doorgeschakeld bij geen antwoord</string>
+    <string name="mt_code_forwarded_cf_not_reachable">Oproep doorgeschakeld bij niet bereikbaar</string>
+    <string-array name="clir_values">
+        <item><xliff:g>STANDAARD</xliff:g></item>
+        <item><xliff:g>VERBERGEN</xliff:g></item>
+        <item><xliff:g>WEERGEVEN</xliff:g></item>
+    </string-array>
+    <string name="reset">Opnieuw instellen</string>
+    <string name="reset_alert">Weet u zeker dat u de gebruikshoeveelheid van de gegevens wilt wissen?</string>
+    <string name="reset_data_usage">Hoeveelheid gegevens opnieuw instellen</string>
+    <string name="sum_cell_broadcast">Cell broadcast-instellingen</string>
+    <string name="sum_cell_broadcast_control_on">Cell broadcast inschakelen</string>
+    <string name="sum_cell_broadcast_control_off">Cell broadcast uitschakelen</string>
+    <string name="sum_cell_broadcast_setting">Taal- en kanaalinstelling voor cell broadcast</string>
+    <string name="subscription_title">CDMA-abonnement TEST</string>
+    <string name="subscription_summary">Wijzigen tussen RUIM/SIM en NV</string>
+    <string name="subscription_dialogtitle">abonnement</string>
+    <string-array name="subscription_choices">
+        <item>RUIM/SIM</item>
+        <item>NV</item>
+    </string-array>
+    <string name="fdn_contact_max">Contact is vol</string>
+    <string name="simContacts_emptyLoading_ex">Contactpersonen lezen van %s\u2026</string>
+    <string name="sim1Contacts_emptyLoading">Contactpersonen lezen van SIM1\u2026</string>
+    <string name="sim2Contacts_emptyLoading">Contactpersonen lezen van SIM2\u2026</string>
+    <string name="one_retry_left">1 poging resterend</string>
+    <string name="retries_left"><xliff:g id="number">%d</xliff:g> pogingen resterend</string>
+    <string name="pin2_unblocked">Opheffen PIN2-blokkering gelukt</string>
+    <string name="unblock_pin2">Blokkering PIN2 opheffen</string>
+    <string name="sim_permanently_locked">Wanneer meer dan 10 keer een onjuiste PUK2-code is ingevoerd, wordt een SIM-kaart permanent vergrendeld.</string>
+    <string name="pin_length_indicate">(4-8 cijfers)</string>
+    <string name="puk_length_indicate">(8 cijfers)</string>
+    <string name="fake_phone_activity_phoneNumber_text">(650) 555-1234</string>
+    <string name="fake_phone_activity_infoText_text">Binnenkomend telefoonnummer</string>
+    <string name="fake_phone_activity_placeCall_text">Valse inkomende oproep</string>
+    <string name="notification_voicemail">Voicemail</string>
+    <string name="voice_mail_dialog_text">U hebt nieuwe voicemail van <xliff:g id="voicemail_sim_display_name">%s</xliff:g>. Wilt u deze nu ophalen?</string>
+    <string name="absent_num">AFWEZIG NUMMER</string>
+    <string name="sip_call_options_title_single_sim">Opties internetoproep</string>
+    <string name="no_voip_vt">Internetoproep ondersteunt momenteel geen videotelefonie.</string>
+    <string name="no_voip_vt_title">Waarschuwing</string>
+    <string name="lable_call_barring">Oproep blokkeren </string>
+    <string name="lable_all_outgoing">Alle uitgaande oproepen</string>
+    <string name="lable_all_outgoing_international">Internationale uitgaande oproepen</string>
+    <string name="lable_all_out_except">Internationale uitgaande oproepen, behalve naar thuis PLMN</string>
+    <string name="lable_all_incoming">Alle binnenkomende oproepen</string>
+    <string name="lable_incoming_calls_except">Binnenkomende oproepen tijdens roamen</string>
+    <string name="deactivate_all">Alles annuleren</string>
+    <string name="change_password">Blokkeerwachtwoord wijzigen</string>
+    <string name="call_barring_sum">Instellingen blokkering spraakoproep</string>
+    <string name="start_record">Opname starten</string>
+    <string name="stop_record">Opname stoppen</string>
+    <string name="str_db_playlist_name">Mijn opnamen</string>
+    <string name="alert_device_error">Er is een fout opgetreden op het audio-apparaat</string>
+    <string name="btn_confirminfo_title">Informatie bevestigen</string>
+    <string name="btn_Alertinfo_title">Waarschuwingsinformatie</string>
+    <string name="str_alertinfo_return">OK</string>
+    <string name="str_confirminfo_save">Opslaan</string>
+    <string name="str_confirminfo_return">Verwijderen</string>
+    <string name="ext_media_badremoval_notification_title">SD-kaart onverwacht verwijderd</string>
+    <string name="lable_voice">SPRAAK</string>
+    <string name="lable_data">GEGEVENS</string>
+    <string name="lable_fax">FAX</string>
+    <string name="lable_sms">SMS</string>
+    <string name="lable_data_sync">GEGEVENSSYNCHRONISATIE</string>
+    <string name="lable_data_async">GEGEVENS-ASYNC</string>
+    <string name="lable_packet">PAKKET</string>
+    <string name="lable_pad">PAD</string>
+    <string name="lable_disable">Uitgeschakeld</string>
+    <string name="lable_enable">Ingeschakeld</string>
+    <string name="old_password_label">Oud wachtwoord (4 cijfers)</string>
+    <string name="new_password_label">Nieuw wachtwoord (4 cijfers)</string>
+    <string name="invalid_password">Voer een wachtwoord in van 4 cijfers.</string>
+    <string name="confirm_password_label">Nieuw wachtwoord bevestigen</string>
+    <string name="mismatch_password">De ingevoerde wachtwoorden komen niet overeen. Probeer het opnieuw.</string>
+    <string name="password_changed">Wachtwoord gewijzigd</string>
+    <string name="call_correct">Wachtwoord juist</string>
+    <string name="enter_callbarring_password">Wachtwoord voor blokkeren wachtwoord invoeren (4 cijfers)</string>
+    <string name="wrong_password">Wachtwoordfout</string>
+    <string name="call_cost_settings">Oproepkosten </string>
+    <string name="sum_call_cost">Informatie oproepkosten</string>
+    <string name="last_call_cost">Kosten laatste oproep</string>
+    <string name="total_call_cost">Totale kosten</string>
+    <string name="max_call_cost">Max kosten</string>
+    <string name="reset_call_cost">Oproepkosten opnieuw instellen </string>
+    <string name="set_ppu_currency">Valuta en prijs per eenheid instellen</string>
+    <string name="enter_your_pin">PIN2 (4 tot 8 cijfers) invoeren</string>
+    <string name="reset_call_cost_success">Opnieuw instellen totale oproepkosten gelukt. </string>
+    <string name="max_call_cost_set">Max kosten instellen</string>
+    <string name="input_max_cost">Max. kosten invoeren (0~16777215)</string>
+    <string name="show_ppu_menu">Betaling per eenheid invoeren (0~100000.0)</string>
+    <string name="show_currency_menu">Valuta invoeren (3 tekens)</string>
+    <string name="error_title">Fout</string>
+    <string name="call_cost_input_pin_error_msg">PIN2 (4 tot 8 cijfers): ongeldige invoer.</string>
+    <string name="call_cost_input_ppu_error_msg">Kosten per eenheid (0-100000.0): ongeldige invoer.</string>
+    <string name="call_cost_input_currency_error_msg">Valuta (3 tekens): ongeldige invoer.</string>
+    <string name="call_cost_input_max_error_msg">Max kosten (0-16777215) : ongeldige invoer.</string>
+    <string name="loading_data_error">Fout bij laden gegevens.</string>
+    <string name="pin_retry_count">pogingen resterend</string>
+    <string name="pin_one_retry_left">poging resterend</string>
+    <string name="pin_retry_error_info">SIM is vergrendeld. PUK2 vereist</string>
+    <string name="your_recordings">Uw opnamen</string>
+    <string name="audio_recordings">Audio-opnamen</string>
+    <string name="cell_broadcast">Cell broadcast</string>
+    <string name="cell_broadcast_settings">Cell broadcast-instellingen</string>
+    <string name="cb_menu_language">Taal</string>
+    <string name="cb_menu_add_channel">Kanaal toevoegen</string>
+    <string name="cb_menu_channel_list">Kanalenlijst</string>
+    <string name="cb_dialog_title_language_choice">Taal selecteren</string>
+    <string name="cb_channel_dialog_channel_name">Kanaalnaam(1-10 tekens)</string>
+    <string name="cb_channel_dialog_channel_number">Kanaalnummer (0 - 999)</string>
+    <string name="cb_channel_dialog_channel_state">Het kanaal inschakelen</string>
+    <string name="cb_channel_dialog_edit_channel">Kanaal bewerken</string>
+    <string name="cb_menu_edit">Bewerken</string>
+    <string name="cb_menu_delete">Verwijderen</string>
+    <string name="cb_error_channel_num">Kanaalnummer invoeren (0 - 999).</string>
+    <string name="cb_error_channel_name">Onjuiste lengte kanaalnaam (1-10 tekens).</string>
+    <string name="cb_error_language_select">Selecteer minstens één taal.</string>
+    <string name="cb_error_channel_id_exist">De kanaal-ID bestaat.</string>
+    <string name="cb_all_languages">Alle talen</string>
+    <string name="cb_default_new_channel_name">Nieuw kanaal</string>
+    <string name="no_sdcard">Geen geheugenkaart</string>
+    <string name="full_sdcard">De geheugenkaart is vol</string>
+    <string name="fdn_errorcode_unknown_info">Mislukt. Onbekend fout opgetreden. Probeer het later opnieuw.</string>
+    <string name="fdn_errorcode_number_info">Mislukt. Het contactnummer is te lang.</string>
+    <string name="fdn_errorcode_name_info">Mislukt. De contactnaam is te lang.</string>
+    <string name="fdn_errorcode_storage_info">Mislukt. Opslag is vol.</string>
+    <string name="fdn_errorcode_phb_info">Mislukt. Het telefoonboek is niet gereed. Probeer het later.</string>
+    <string name="fdn_errorcode_pin2_info">Mislukt. Ongeldige PIN2</string>
+    <string name="net_or_simcard_busy">Netwerk of SIM-kaart bezet. Probeer het later.</string>
+    <string name="sim1">SIM1</string>
+    <string name="sim2">SIM2</string>
+    <string name="inCallTitleText1">SIM1 wordt gebruikt</string>
+    <string name="inCallTitleText2">SIM2 wordt gebruikt</string>
+    <string name="import_sim_contact_success">Importeren SIM-contact is gelukt.</string>
+    <string name="vt_incoming_call">Binnenkomend videogesprek</string>
+    <string name="vt_settings">Video-instellingen</string>
+    <string name="vt_local_video_zoom">Zoom lokale video</string>
+    <string name="vt_local_video_brightness">Helderheid lokale video</string>
+    <string name="vt_local_video_effect">Effect lokale video</string>
+    <string name="vt_local_video_nightmode">Nachtmodus lokale video</string>
+    <string name="vt_peer_video_quality">Videokwaliteit peer</string>
+    <string name="vt_video_call">Videogesprek</string>
+    <string name="vt_pic_replace_local">Beeld voor het vervangen van lokale video</string>
+    <string name="vt_pic_replace_local_description">Een weer te geven beeld instellen wanneer de camera uit is</string>
+    <string name="vt_enable_back_camera">Camera terug inschakelen</string>
+    <string name="vt_enable_back_camera_description">Beschikbaar om te schakelen tussen camera\'s indien ingeschakeld</string>
+    <string name="vt_peer_video_bigger">Video peer groter dan lokale video</string>
+    <string name="vt_peer_video_bigger_description">Inschakelen om video peer groter te maken dan lokale video</string>
+    <string name="vt_outgoing_call">Uitgaand videogesprek</string>
+    <string name="vt_outgoing_call_description">Lokale video weergeven bij videogesprek</string>
+    <string name="vt_incoming_call_description">Lokale video weergeven bij accepteren binnenkomend videogesprek</string>
+    <string name="vt_incoming_showme_always">Altijd</string>
+    <string name="vt_incoming_showme_ask">Vragen</string>
+    <string name="vt_incoming_showme_disable">Uitschakelen</string>
+    <string name="vt_call_settings">Instellingen videogesprek</string>
+    <string name="vt_pic_replace_local_default">Standaardafbeelding</string>
+    <string name="vt_pic_replace_local_freezeme">Mij bevriezen</string>
+    <string name="vt_pic_replace_local_mypic">Mijn afbeelding</string>
+    <string name="vt_local_video_display">Weergave lokale video</string>
+    <string name="vt_sd_null">SD-kaart is\nniet beschikbaar</string>
+    <string name="vt_sd_not_enough">SD-kaart is bijna\nvol</string>
+    <string name="vt_peer_video_quality_normal">Normaal</string>
+    <string name="vt_peer_video_quality_sharp">Scherp</string>
+    <string name="pref_camera_coloreffect_entry_none">Geen</string>
+    <string name="pref_camera_coloreffect_entry_mono">Mono</string>
+    <string name="pref_camera_coloreffect_entry_sepia">Sepia</string>
+    <string name="pref_camera_coloreffect_entry_negative">Negatief</string>
+    <string name="pref_camera_coloreffect_entry_solarize">Solariseren</string>
+    <string name="pref_camera_coloreffect_entry_posterize">Schakeringen reduceren</string>
+    <string name="pref_camera_coloreffect_entry_whiteboard">Whiteboard</string>
+    <string name="pref_camera_coloreffect_entry_blackboard">Blackboard</string>
+    <string name="pref_camera_coloreffect_entry_aqua">Aqua</string>
+    <string name="pref_camera_coloreffect_entry_pastel">Pastel</string>
+    <string name="pref_camera_coloreffect_entry_mosaic">Mozaïek</string>
+    <string name="pref_camera_coloreffect_entry_redtint">Rode tint</string>
+    <string name="pref_camera_coloreffect_entry_bluetint">Blauwe tint</string>
+    <string name="pref_camera_coloreffect_entry_greentint">Groene tint</string>
+    <string name="pref_camera_coloreffect_entry_sepiablue">Sepia blauw</string>
+    <string name="pref_camera_coloreffect_entry_sepiagreen">Sepia groen</string>
+    <string name="vt_ask_show_local">Lokale video aan peer tonen?</string>
+    <string name="vt_ask_show_local_yes">Ja</string>
+    <string name="vt_ask_show_local_no">Nee</string>
+    <string name="vt_change_my_pic">Wijzigen</string>
+    <string name="vt_pic_saved_to_sd">Snapshot opgeslagen op SD-kaart</string>
+    <string name="vt_pic_saved_to_sd_fail">Kan snapshot niet opslaan</string>
+    <string name="vt_error_network">Netwerk niet bereikbaar. Het videogesprek wordt verbroken.</string>
+    <string name="vt_error_media">Video wordt niet goed weergegeven. Het videogesprek wordt verbroken.</string>
+    <string name="vt_swap_video">Video\'s wisselen</string>   
+    <string name="vt_local_video_contrast">Contrast lokale video</string>
+    <string name="vt_button_switch">Camera schakelen</string>
+    <string name="vt_menu_hide_me">Lokale video verbergen</string>
+    <string name="vt_menu_show_me">Lokale video weergeven</string>
+    <string name="vt_menu_snapshot">Peer-opname</string>
+    <string name="vt_out_dis">Oproep is verbroken. 3G-netwerk niet beschikbaar aan beide zijden. U kunt terugbellen via spraakoproep.</string>
+    <string name="vt_dis_exit">Afsluiten</string>
+    <string name="vt_dis_callback">Terugbellen</string>
+    <string name="vt_local_video_rep">Vervanging lokale video</string>
+    <string name="vt_dis_peer_rep">Vervanging display peer</string>
+    <string name="vt_dis_peer_rep_des">Beeld voor vervangen peer-video weergeven wanneer deze niet beschikbaar is.</string>
+    <string name="vt_peer_video_rep">Vervanging peer-video</string>
+    <string name="vt_peer_video_rep_des">Beeld instellen dat moet worden weergegeven wanneer peer-video niet beschikbaar is.</string>
+    <string name="vt_vocie_answer">Spraakantwoord</string>
+    <string name="vt_wait_voice">Wachten op verbinding spraakoproep</string>
+    <string name="vt_ask_voice_dial">Andere zijde heeft spraakantwoord geselecteerd. Wilt u terugbellen via spraakoproep?</string>
+    <string name="vt_voice_connecting">Spraakoproep wordt verbonden</string>
+    <string name="vt_auto_dropback">Auto dropback</string>
+    <string name="vt_auto_dropback_des">Dropback naar spraakoproep met automatische verbinding</string>
+    <string name="vt_cannot_support_setting">De huidige camera kan deze instelling niet ondersteunen</string>
+    <string name="vt_network_unreachable">Netwerk niet bereikbaar</string>   
+    <string name="vt_iot_error_01">Videogesprek kan niet worden ingesteld</string>
+    <string name="vt_iot_error_02">De telefoon is bezet</string>
+    <string name="vt_iot_error_03">Er is geen antwoord</string>
+    <string name="vt_iot_error_04">Het netwerk is bezet</string>
+    <string name="voice_call">Spraakoproep</string>
+    <string name="video_call">Videogesprek</string>
+    <string name="internet_call">Internetgesprek</string>
+    <string name="others">Overige instellingen</string>
+    <string name="sum_voice_call">Met spraakoproep verwante instellingen</string>
+    <string name="sum_video_call">Met videogesprek verwante instellingen</string>
+    <string name="sum_internet_call">Met internetgesprek verwante instellingen</string>
+    <string name="sum_others">De instellingen worden zowel voor spraakoproepen als videogesprekken toegepast</string>
+    <string name="voice_mail">Voicemail</string>
+    <string name="sum_voice_mail">Voicemailservice en -nummer</string>
+    <string name="dtmf_hideDialpad">Toetsenblok verbergen</string>
+    <string name="incoming_call_widget_answer_text">Antwoorden</string>
+    <string name="incoming_call_widget_reject_text">Weigeren</string>
+    <string name="call_status_operator_name">Naam operator</string>
+    <string name="call_status_ringing">Binnenkomend...</string>
+    <string name="incall_conference_members">"%d leden"</string>
+    <string name="incall_conference_private">Privé</string>
+    <string name="incall_end_conference">Vergadering beëindigen</string>
+    <string name="incall_sim_collision_dialog_title">Herinnering</string>
+    <string name="incall_sim_collision_dialog_message">Deze SIM is niet de standaard SIM-kaart voor spraakoproepen. Wilt u doorgaan met het toevoegen van een nieuwe oproep via deze SIM?</string>
+    <string name="callFailed_dsac_vt_incompatible_destination">Het videogesprek kan niet worden ingesteld. Videotelefoon wordt niet ondersteund op de telefoon die u belt. Bellen met spraakoproep?</string>
+    <string name="callFailed_dsac_vt_resource_unavailable">Het videogesprek kan niet worden ingesteld. De telefoon die u hebt gebeld ligt buiten het 3G-servicegebied. Bellen met spraakoproep?</string>
+    <string name="callFailed_dsac_vt_bear_not_authorized">Het videogesprek kan niet worden ingesteld. De videotelefoon is niet geactiveerd op uw telefoon. Bellen met spraakoproep?</string>
+    <string name="callFailed_dsac_vt_bearer_not_avail">Het videogesprek kan niet worden ingesteld. Bellen met spraakoproep?</string>
+    <string name="callFailed_dsac_vt_out_of_3G_yourphone">Uw telefoon ligt buiten het 3G-servicegebied. Bellen met spraakoproep?</string>
+    <string name="voice_call_settings">Instellingen spraakoproep</string>
+    <string name="other_call_settings">Overige instellingen</string>
+    <string name="vt_ss_settings">Overige instellingen</string>
+    <string name="vt_cf_call_description">Instellingen videogesprek doorschakelen</string>
+    <string name="vt_cb_call_description">Instellingen videogesprek blokkeren</string>
+    <string name="vt_addtional_call_description">Instellingen telefoonnummer en oproep in wacht</string>
+    <string name="test_number">18601258794</string>
+    <string name="test_operator">CMCC</string>
+    <string name="gemini_3g_indic">3G</string>
+    <string name="minutereminder_title">Minuutherinnering</string>
+    <string name="minutereminder_turnon">Minuutherinnering inschakelen op 50ste seconde van elke minuut.</string>
+    <string name="minutereminder_turnoff">Minuutherinnering uitschakelen</string>
+    <string name="dm_lock">DM vergrendeld</string>
+    <string name="dm_unlock">DM ontgrendelen</string>
+    <string name="importingUSimContacts">USIM-contactpersonen importeren</string>
+    <string name="importingUSim1Contacts">USIM1-contactpersonen importeren</string>
+    <string name="importingUSim2Contacts">USIM2-contactpersonen importeren</string>
+    <string name="phone_setting">Telefooninstellingen</string>
+    <string name="phone_setting_summary">Telefooninstellingen voor apparaat</string>
+    <string name="eidt_default_message">Standaard bericht bewerken</string>
+    <string name="edit_message_before_sending">Bericht bewerken voor het verzenden</string>
+    <string name="send_message_after_reject">Bericht verzenden</string>
+    <string name="add_message">Bericht toevoegen</string>
+    <string name="delete_message">Bericht verwijderen</string>
+    <string name="edit_message">Bericht bewerken</string>
+    <string name="messages_to_sent">Te verzenden berichten</string>
+    <string name="message">Bericht</string>
+    <string name="max_item">Kan geen bericht meer toevoegen. Verwijder eerst een ander bericht.</string>
+    <string name="simlock_name">"SIM ME-vergrendeling"</string>
+    <string name="simlock_ok">"OK"</string>
+    <string name="simlock_dismiss">"Negeren"</string>
+    <string name="simlock_retriesleft">"Resterend: "</string>
+    <string name="pin_name">"PIN"</string>
+    <string name="pin2_name">"PIN2"</string>
+    <string name="simlock_newsim">"Nieuwe SIM"</string>
+    <string name="simlock_nocard">"Geen"</string>
+    <string name="simlock_wrongcode">"Onjuiste code."</string>
+    <string name="simlock_input4_8digits">"4-8 cijfers invoeren."</string>
+    <string name="simlock_input8digits">"8 cijfers invoeren."</string>
+    <string name="simlock_entersimmelock">"SIM ME-vergrendeling invoeren"</string>
+    <string name="simlock_for">"voor"</string>
+    <string name="simlock_enterpin2code">"PIN2-code invoeren"</string>
+    <string name="simlock_enterpuk2code">"PUK2-code invoeren"</string>
+    <string name="simlock_enternewpin2code">"Nieuwe PIN2 invoeren"</string>
+    <string name="simlock_enterconfirmpin2code">"Nieuwe PIN2 bevestigen"</string>
+    <string name="simlock_enterpukcode">"PUK-code invoeren"</string>
+    <string name="simlock_enternewpincode">"Nieuwe PIN invoeren"</string>
+    <string name="simlock_enterconfirmpincode">"Nieuwe PIN bevestigen"</string>
+    <string name="simlock_pinnotmatched">"Komen niet overeen."</string>
+    <string name="simlock_unlocking">"Ontgrendelen..."</string>
+    <string name="tty_setting">"TTY-instelling"</string>
+    <string name="dual_mic_title">Ruisonderdrukking dual microfoon</string>
+    <string name="dual_mic_turnoff">Dual microfoon uit</string>
+    <string name="dual_mic_turnon">Dual microfoon aan</string>
+    <string name="confirm_device_info_full">SD-kaart is vol. De opname is opgeslagen.</string>
+    <string name="confirm_save_info_saved">De opname is opgeslagen</string>
+
+    <!-- IP Prefix setting -->
+    <string name="ip_dial_error_toast_for_no_ip_prefix_number">Geef eerst het IP- voorvoegsel op in de instellingen voor Spraakoproep.</string>
+    <string name="ip_prefix_setting">IP-voorvoegsel</string>
+    <string name="ip_prefix_setting_sum">Instellingen IP-voorvoegsel</string>
+    <string name="enter_ip_prefix_number">Voorvoegsel invoeren</string>
+    <string name="ip_prefix_edit_default_sum">Voer het voorvoegsel in voor IP kiezen</string>
+   
+    <!-- 3G switch -->
+    <string name="confirm_3g_switch">Weet u zeker dat u de 3G-instelling wilt instellen op deze SIM? Dit stelt ook de standaard SIM voor videogesprekken automatisch in op deze SIM.</string>
+    <string name="modem_switching">Het schakelen naar een SIM duurt ongeveer 10 seconden. Een ogenblik geduld…</string>
+    <string name="confirm_3g_switch_to_off">Weet u zeker dat u deze 3G-service wilt uitschakelen? Hierdoor wordt de service voor videogesprekken automatisch uitgeschakeld.</string>
+    <string name="service_3g_off">Uit</string>
+    <string name="enable_3G_service">3G inschakelen</string>
+    <string name="setting_for_3G_service">3G-service</string>
+    
+    <string name="error_sdcard_access">"Geen toegang tot SD-kaart"</string>
+    
+    <string name="enable_sip_dialog_message">Internetgesprek is uitgeschakeld. Wilt u het inschakelen?</string>
+    <string name="cannot_answered_Video_Call">Video-oproep kan niet worden beantwoord omdat er reeds een gesprek actief is</string>
+    <string name="cannot_answered_Voice_Call">Oproep kan niet worden beantwoord omdat er reeds een videogesprek actief is</string>
+    </resources>

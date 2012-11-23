@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2009 The Android Open Source Project
  *
@@ -30,7 +65,7 @@ import com.android.internal.telephony.RILConstants;
 import android.os.AsyncResult;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import com.mediatek.xlog.Xlog;
 
 
 /**
@@ -39,7 +74,7 @@ import android.util.Log;
 public class CellBroadcastSms extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener{
     // debug data
-    private static final String LOG_TAG = "CellBroadcastSms";
+    private static final String LOG_TAG = "Settings/CellBroadcastSms";
     private static final boolean DBG = true;
 
     //String keys for preference lookup
@@ -180,7 +215,7 @@ public class CellBroadcastSms extends PreferenceActivity
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
         if (preference == mButtonBcSms) {
-            if (DBG) Log.d(LOG_TAG, "onPreferenceTreeClick: preference == mButtonBcSms.");
+            if (DBG) Xlog.d(LOG_TAG, "onPreferenceTreeClick: preference == mButtonBcSms.");
             if(mButtonBcSms.isChecked()) {
                 mPhone.activateCellBroadcastSms(RILConstants.CDMA_CELL_BROADCAST_SMS_ENABLED,
                         Message.obtain(mHandler, MESSAGE_ACTIVATE_CB_SMS));
@@ -536,7 +571,7 @@ public class CellBroadcastSms extends PreferenceActivity
             switch (msg.what) {
             case MESSAGE_ACTIVATE_CB_SMS:
                 //Only a log message here, because the received response is always null
-                if (DBG) Log.d(LOG_TAG, "Cell Broadcast SMS enabled/disabled.");
+                if (DBG) Xlog.d(LOG_TAG, "Cell Broadcast SMS enabled/disabled.");
                 break;
             case MESSAGE_GET_CB_SMS_CONFIG:
                 int result[] = (int[])((AsyncResult)msg.obj).result;
@@ -560,10 +595,10 @@ public class CellBroadcastSms extends PreferenceActivity
                 break;
             case MESSAGE_SET_CB_SMS_CONFIG:
                 //Only a log message here, because the received response is always null
-                if (DBG) Log.d(LOG_TAG, "Set Cell Broadcast SMS values.");
+                if (DBG) Xlog.d(LOG_TAG, "Set Cell Broadcast SMS values.");
                 break;
             default:
-                Log.e(LOG_TAG, "Error! Unhandled message in CellBroadcastSms.java. Message: "
+                Xlog.e(LOG_TAG, "Error! Unhandled message in CellBroadcastSms.java. Message: "
                         + msg.what);
             break;
             }
@@ -581,12 +616,12 @@ public class CellBroadcastSms extends PreferenceActivity
 
         private static void setCbSmsConfig(int[] configData) {
             if(configData == null) {
-                Log.e(LOG_TAG, "Error! No cell broadcast service categories returned.");
+                Xlog.e(LOG_TAG, "Error! No cell broadcast service categories returned.");
                 return;
             }
 
             if(configData[0] > MAX_LENGTH_RESULT) {
-                Log.e(LOG_TAG, "Error! Wrong number of service categories returned from RIL");
+                Xlog.e(LOG_TAG, "Error! Wrong number of service categories returned from RIL");
                 return;
             }
             
@@ -618,7 +653,7 @@ public class CellBroadcastSms extends PreferenceActivity
             if(pos < mBSelected.length) {
                 mBSelected[pos] = (value == true ? 1 : 0);
             } else {
-                Log.e(LOG_TAG,"Error! Invalid value position.");
+                Xlog.e(LOG_TAG,"Error! Invalid value position.");
             }
         }
         
@@ -659,7 +694,7 @@ public class CellBroadcastSms extends PreferenceActivity
             //2 is the language value of the first entry
             //It is only possible to set the same language for all entries 
             if (language < 1 || language > 7) {
-                Log.e(LOG_TAG, "Error! Wrong language returned from RIL...defaulting to 1, english");
+                Xlog.e(LOG_TAG, "Error! Wrong language returned from RIL...defaulting to 1, english");
                 return 1;
             }
             else {

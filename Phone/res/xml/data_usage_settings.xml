@@ -19,17 +19,22 @@
 
     <Preference
             android:key="throttle_current_usage"
-            style="?android:preferenceInformationStyle"
+            
             android:title="@string/throttle_current_usage"
             android:persistent="false" />
+            
+      <Preference
+            android:key="rest_total_usage"
+            android:title="@string/reset_data_usage"
+            android:persistent="false" />      
 
-    <Preference
+   <!-- <Preference
             android:key="throttle_time_frame"
             style="?android:preferenceInformationStyle"
             android:title="@string/throttle_time_frame"
             android:persistent="false" />
 
-    <Preference
+     <Preference
             android:key="throttle_rate"
             style="?android:preferenceInformationStyle"
             android:title="@string/throttle_rate"
@@ -38,6 +43,6 @@
     <Preference
             android:key="throttle_help"
             android:title="@string/throttle_help"
-            android:persistent="false" />
+            android:persistent="false" />-->
 
 </PreferenceScreen>

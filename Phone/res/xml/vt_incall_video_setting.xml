@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:phone="http://schemas.android.com/apk/res/com.android.phone"
+  android:title="@string/vt_settings">
+  
+  <PreferenceScreen
+      android:key="vt_local_video_zoom"
+      android:title="@string/vt_local_video_zoom"
+      android:persistent="false">
+  </PreferenceScreen>
+    
+  <PreferenceScreen
+      android:key="vt_local_video_brightness"
+      android:title="@string/vt_local_video_brightness"
+      android:persistent="false">
+  </PreferenceScreen>
+  
+  <ListPreference
+      android:key="vt_local_video_effect"
+      android:title="@string/vt_local_video_effect"
+      android:persistent="false"      
+      android:dialogTitle="@string/vt_local_video_effect"> 
+        
+  </ListPreference>
+  
+  <CheckBoxPreference
+  	  android:key="vt_local_video_night_mode"
+  	  android:title="@string/vt_local_video_nightmode"
+  	  android:persistent="false"
+  	  android:defaultValue="false">
+  </CheckBoxPreference>
+  
+  <ListPreference
+      android:key="vt_peer_video_quality"
+      android:title="@string/vt_peer_video_quality"
+      android:persistent="false"      
+      android:dialogTitle="@string/vt_peer_video_quality"
+      android:entries="@array/vt_incall_setting_peer_video_quality_entries"
+      android:entryValues="@array/vt_incall_setting_peer_video_quality_values"
+      android:defaultValue="0">
+  </ListPreference>
+  
+</PreferenceScreen>

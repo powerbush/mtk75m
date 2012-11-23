@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -31,6 +66,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.WindowManager;
+import android.view.Display;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -42,9 +79,14 @@ import com.android.internal.telephony.CallerInfoAsyncQuery;
 import com.android.internal.telephony.Connection;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.CallManager;
-import com.android.internal.telephony.PhoneFactory;
 
 import java.util.List;
+
+/* Fion add start */
+import com.android.internal.telephony.gemini.GeminiPhone;
+import com.mediatek.featureoption.FeatureOption;
+import com.mediatek.telephony.PhoneNumberFormatUtilEx;
+/* Fion add end */
 
 
 /**
@@ -69,41 +111,55 @@ public class CallCard extends FrameLayout
     private PhoneApp mApplication;
 
     // Top-level subviews of the CallCard
-    private ViewGroup mPrimaryCallInfo;
-    private ViewGroup mSecondaryCallInfo;
+    //private ViewGroup mPrimaryCallInfo;
+//    launch performance start
+//    private ViewGroup mSecondaryCallInfo;
+//    launch performance end
 
     // Title and elapsed-time widgets
-    private TextView mUpperTopSimTitle;
-    private TextView mUpperTitle;
-    private TextView mElapsedTime;
+//    launch performance start
+//    private TextView mUpperTitle;
+//    private TextView mElapsedTime;
+//    launch performance end
 
     // Text colors, used for various labels / titles
-    private int mTextColorDefaultPrimary;
+//    launch performance start
+//    private int mTextColorDefaultPrimary;
     private int mTextColorDefaultSecondary;
-    private int mTextColorConnected;
-    private int mTextColorConnectedBluetooth;
-    private int mTextColorEnded;
-    private int mTextColorOnHold;
+//    private int mTextColorConnected;
+//    private int mTextColorConnectedBluetooth;
+//    private int mTextColorEnded;
+//    private int mTextColorOnHold;
+//    launch performance end
     private int mTextColorCallTypeSip;
 
     // The main block of info about the "primary" or "active" call,
     // including photo / name / phone number / etc.
-    private ImageView mPhoto;
-    private Button mManageConferencePhotoButton;  // Possibly shown in place of mPhoto
+    ImageView mPhoto;
+//    launch performance start
+//    private Button mManageConferencePhotoButton;
+//    launch performance end
+    /* Added by xingping.zheng start */
+    private Button mManageConferenceUiButton;
+    /* Added by xingping.zheng end */
     private TextView mName;
-    private TextView mPhoneNumber;
-    private TextView mLabel;
-    private TextView mRecordFlag;
-    private TextView mRecordingTime;
+//    launch performance start
+//    private TextView mPhoneNumber;
+//    private TextView mLabel;
+//    launch performance end
+    private TextView mLabelAndNumber;
     private TextView mCallTypeLabel;
     private TextView mSocialStatus;
-    private TextView currentPhone = null;
-    
+
     // Info about the "secondary" call, which is the "call on hold" when
     // two lines are in use.
+    /*
+    launch performance start
     private TextView mSecondaryCallName;
     private TextView mSecondaryCallStatus;
     private ImageView mSecondaryCallPhoto;
+    launch performance end
+    */
 
     // Menu button hint
     private TextView mMenuButtonHint;
@@ -112,31 +168,32 @@ public class CallCard extends FrameLayout
     private int mRotarySelectorHintTextResId;
     private int mRotarySelectorHintColorResId;
 
-    protected CallTime mCallTime;
-
+    private CallTime mCallTime;
+    // When Locale changed the boolean will be true;
+    static private boolean mLocaleChanged = false; 
+    static private boolean mLCforUserData = false;
     // Track the state for the photo.
     private ContactsAsyncHelper.ImageTracker mPhotoTracker;
 
     // Cached DisplayMetrics density.
     private float mDensity;
-
-    private boolean mIsShowRecordFlag = false;
-
-    private long createTime = 0;
-
+    private StringBuilder mStringBuilder = new StringBuilder();
+    // QVGA Width & Height
+    private static final int QVGA_WIDTH   = 320;
+    private static final int QVGA_HEIGHT  = 240;
     public CallCard(Context context, AttributeSet attrs) {
         super(context, attrs);
-        currentPhone = new TextView(context);
+
         if (DBG) log("CallCard constructor...");
         if (DBG) log("- this = " + this);
         if (DBG) log("- context " + context + ", attrs " + attrs);
 
         // Inflate the contents of this CallCard, and add it (to ourself) as a child.
-        LayoutInflater inflater = LayoutInflater.from(context);
-        inflater.inflate(
-                R.layout.call_card,  // resource
-                this,                // root
-                true);
+//        LayoutInflater inflater = LayoutInflater.from(context);
+//        inflater.inflate(
+//                R.layout.call_card,  // resource
+//                this,                // root
+//                true);
 
         mApplication = PhoneApp.getInstance();
 
@@ -149,10 +206,6 @@ public class CallCard extends FrameLayout
         if (DBG) log("- Density: " + mDensity);
     }
 
-	TextView getCurrentPhoneTextView() {
-		return currentPhone;
-	}
-
     void setInCallScreenInstance(InCallScreen inCallScreen) {
         mInCallScreen = inCallScreen;
     }
@@ -161,11 +214,70 @@ public class CallCard extends FrameLayout
         // While a call is in progress, update the elapsed time shown
         // onscreen.
         updateElapsedTimeWidget(timeElapsed);
+        /* Added by xingping.zheng start */
+        
+        if (mInCallScreen != null && mInCallScreen.mCallStatus != null) {
+            mInCallScreen.mCallStatus.updateElapsedTimeWidgetOfCallStatus(timeElapsed);
+        } else {
+            if (DBG) Log.d("onTickForCallTimeElapsed: ", "mInCallScreen is not ready!");
+        }
+        /* Added by xingping.zheng end */
+    }
+    
+    void setVtCallTimerConnection(Connection c) {
+        mCallTime.vtConnection = c;
+    }
+    
+    Connection getVtCallTimerConnection() {
+        return mCallTime.vtConnection;
+    }
+    
+    void startVtCallTimer(Connection c) {
+        if (this.mCallTime != null) {
+            if (mCallTime.vtConnection != c) {
+                //cancel the pre-connection
+                mCallTime.stopCallTimer();
+                mCallTime.startCallTimer(true, 0);
+                mCallTime.vtConnection = c;
+            }
+        }
+    }
+    
+    void stopVtCallTimer(Connection c) {
+        if (this.mCallTime != null) {
+            if (c != mCallTime.vtConnection) {
+                return ;
+            }
+            mCallTime.stopCallTimer();
+            mCallTime.vtConnection = null;
+        }
+    }
+    
+    void cancelVtCallTimer() {
+        if (this.mCallTime != null) {
+            mCallTime.stopCallTimer();
+            mCallTime.vtConnection = null;
+            mCallTime.mCallTimer.cancel();
+        }
     }
 
     /* package */
     void stopTimer() {
-        mCallTime.cancelTimer();
+        CallManager cm = PhoneApp.getInstance().mCM;
+        
+        //Check if there is active call exist
+        //ALPS00098100 : update the call reminder when InCallScreen not in foreground.
+        if (cm != null && cm.hasActiveFgCall()) {
+            mCallTime.cancelTimer(false);
+        } else {
+            mCallTime.cancelTimer(true);
+        }
+    }
+    
+    void clearReminder() {
+        if (mCallTime != null) {
+            mCallTime.clearReminder();
+        }
     }
 
     @Override
@@ -174,46 +286,75 @@ public class CallCard extends FrameLayout
 
         if (DBG) log("CallCard onFinishInflate(this = " + this + ")...");
 
-        mPrimaryCallInfo = (ViewGroup) findViewById(R.id.primaryCallInfo);
-        mSecondaryCallInfo = (ViewGroup) findViewById(R.id.secondaryCallInfo);
+        //mPrimaryCallInfo = this;//(ViewGroup) findViewById(R.id.primaryCallInfo);
+
+//        launch performance start
+//        mSecondaryCallInfo = (ViewGroup) findViewById(R.id.secondaryCallInfo);
+//        mSecondaryCallInfo.setVisibility(View.GONE);
+//        launch performance end
 
         // "Upper" and "lower" title widgets
-        mUpperTopSimTitle = (TextView) findViewById(R.id.upperTopSimTitle);
-        mUpperTitle = (TextView) findViewById(R.id.upperTitle);
-        mElapsedTime = (TextView) findViewById(R.id.elapsedTime);
+//        launch performance start
+//        mUpperTitle = (TextView) findViewById(R.id.upperTitle);
+//        mElapsedTime = (TextView) findViewById(R.id.elapsedTime);
+//        launch performance end
 
         // Text colors
-        mTextColorDefaultPrimary =  // corresponds to textAppearanceLarge
-                getResources().getColor(android.R.color.primary_text_dark);
+//        launch performance start
+//        mTextColorDefaultPrimary =  // corresponds to textAppearanceLarge
+//                getResources().getColor(android.R.color.primary_text_dark);
         mTextColorDefaultSecondary =  // corresponds to textAppearanceSmall
                 getResources().getColor(android.R.color.secondary_text_dark);
-        mTextColorConnected = getResources().getColor(R.color.incall_textConnected);
-        mTextColorConnectedBluetooth =
-                getResources().getColor(R.color.incall_textConnectedBluetooth);
-        mTextColorEnded = getResources().getColor(R.color.incall_textEnded);
-        mTextColorOnHold = getResources().getColor(R.color.incall_textOnHold);
+//        mTextColorConnected = getResources().getColor(R.color.incall_textConnected);
+//        mTextColorConnectedBluetooth =
+//                getResources().getColor(R.color.incall_textConnectedBluetooth);
+//        mTextColorEnded = getResources().getColor(R.color.incall_textEnded);
+//        mTextColorOnHold = getResources().getColor(R.color.incall_textOnHold);
+//        launch performance end
         mTextColorCallTypeSip = getResources().getColor(R.color.incall_callTypeSip);
 
         // "Caller info" area, including photo / name / phone numbers / etc
         mPhoto = (ImageView) findViewById(R.id.photo);
-        mManageConferencePhotoButton = (Button) findViewById(R.id.manageConferencePhotoButton);
-        mManageConferencePhotoButton.setOnClickListener(this);
+        //mManageConferencePhotoButton = (Button) findViewById(R.id.manageConferencePhotoButton);
+        /* Added by xingping.zheng start */
+        //mManageConferencePhotoButton.setOnClickListener(this);
+        mManageConferenceUiButton = (Button) findViewById(R.id.manageConferenceUiButton);
+        if(mManageConferenceUiButton != null)
+            mManageConferenceUiButton.setOnClickListener(this);
+        /* Added by xingping.zheng end */
         mName = (TextView) findViewById(R.id.name);
-        mPhoneNumber = (TextView) findViewById(R.id.phoneNumber);
-        mLabel = (TextView) findViewById(R.id.label);
-        mRecordFlag = (TextView) findViewById(R.id.recordflag);
-        mRecordingTime = (TextView) findViewById(R.id.recordedTime);
+//        launch performance start
+//        mPhoneNumber = (TextView) findViewById(R.id.phoneNumber);
+//        mLabel = (TextView) findViewById(R.id.label);
+//        launch performance end
+        mLabelAndNumber = (TextView) findViewById(R.id.labelAndNumber);
         mCallTypeLabel = (TextView) findViewById(R.id.callTypeLabel);
         mSocialStatus = (TextView) findViewById(R.id.socialStatus);
 
         // "Other call" info area
-        mSecondaryCallName = (TextView) findViewById(R.id.secondaryCallName);
-        mSecondaryCallStatus = (TextView) findViewById(R.id.secondaryCallStatus);
-        mSecondaryCallPhoto = (ImageView) findViewById(R.id.secondaryCallPhoto);
+//        launch performance start
+//        mSecondaryCallName = (TextView) findViewById(R.id.secondaryCallName);
+//        mSecondaryCallStatus = (TextView) findViewById(R.id.secondaryCallStatus);
+//        mSecondaryCallPhoto = (ImageView) findViewById(R.id.secondaryCallPhoto);
+//        launch performance end
 
         // Menu Button hint
         mMenuButtonHint = (TextView) findViewById(R.id.menuButtonHint);
     }
+
+    // When language changed should call this function.
+    public void updateForLanguageChange() {
+        // Update String "Press Menu for call options".
+        // mMenuButtonHint.setText(R.string.menuButtonHint);
+        mLocaleChanged = true;
+		mLCforUserData = true;
+    }
+
+//    launch performance start
+//    private void updateSecondaryCallStatus() {
+//        mSecondaryCallStatus.setText(R.string.onHold);
+//    }
+//    launch performance end
 
     /**
      * Updates the state of all UI elements on the CallCard, based on the
@@ -221,7 +362,10 @@ public class CallCard extends FrameLayout
      */
     void updateState(CallManager cm) {
         if (DBG) log("updateState(" + cm + ")...");
-
+        // if Language changed, the secondary status need change to other language.
+        // launch performance start
+        // updateSecondaryCallStatus();
+        // launch performance end
         // Update some internal state based on the current state of the phone.
 
         // TODO: clean up this method to just fully update EVERYTHING in
@@ -300,24 +444,31 @@ public class CallCard extends FrameLayout
         }
 
         displayMainCallStatus(cm, fgCall);
-
+        // launch performance start
+        /*
         Phone phone = fgCall.getPhone();
-
-        int phoneType = phone.getPhoneType();
-        if (phoneType == Phone.PHONE_TYPE_CDMA) {
-            if ((mApplication.cdmaPhoneCallState.getCurrentCallState()
-                    == CdmaPhoneCallState.PhoneCallState.THRWAY_ACTIVE)
-                    && mApplication.cdmaPhoneCallState.IsThreeWayCallOrigStateDialing()) {
-                displayOnHoldCallStatus(cm, fgCall);
-            } else {
-                //This is required so that even if a background call is not present
-                // we need to clean up the background call area.
+        if(false) {
+            int phoneType = phone.getPhoneType();
+            if (phoneType == Phone.PHONE_TYPE_CDMA) {
+                if ((mApplication.cdmaPhoneCallState.getCurrentCallState()
+                        == CdmaPhoneCallState.PhoneCallState.THRWAY_ACTIVE)
+                        && mApplication.cdmaPhoneCallState.IsThreeWayCallOrigStateDialing()) {
+                    displayOnHoldCallStatus(cm, fgCall);
+                } else {
+                    //This is required so that even if a background call is not present
+                    // we need to clean up the background call area.
+                    displayOnHoldCallStatus(cm, bgCall);
+                }
+            } else if ((phoneType == Phone.PHONE_TYPE_GSM)
+                    || (phoneType == Phone.PHONE_TYPE_SIP)) {
                 displayOnHoldCallStatus(cm, bgCall);
             }
         } else if ((phoneType == Phone.PHONE_TYPE_GSM)
                 || (phoneType == Phone.PHONE_TYPE_SIP)) {
             displayOnHoldCallStatus(cm, bgCall);
         }
+        */
+        // launch performance end
     }
 
     /**
@@ -336,7 +487,9 @@ public class CallCard extends FrameLayout
         // the current ongoing call and/or the current call on hold.
         // (Since the caller-id info for the incoming call totally trumps
         // any info about the current call(s) in progress.)
-        displayOnHoldCallStatus(cm, null);
+        // launch performance start
+        // displayOnHoldCallStatus(cm, null);
+        // launch performance end
     }
 
     /**
@@ -351,7 +504,9 @@ public class CallCard extends FrameLayout
         if (DBG) log("updateNoCall()...");
 
         displayMainCallStatus(cm, null);
-        displayOnHoldCallStatus(cm, null);
+        // launch performance start
+        //displayOnHoldCallStatus(cm, null);
+        // launch performance end
     }
 
     /**
@@ -359,20 +514,25 @@ public class CallCard extends FrameLayout
      * (ie. the stuff in the primaryCallInfo block) based on the specified Call.
      */
     private void displayMainCallStatus(CallManager cm, Call call) {
-        if (DBG) log("displayMainCallStatus(call " + call + ")...");
+        if (DBG) log("displayMainCallStatus(phone " + cm
+                     + ", call " + call + ")...");
 
         if (call == null) {
             // There's no call to display, presumably because the phone is idle.
-            mPrimaryCallInfo.setVisibility(View.GONE);
+            hideCallCardElements();
             return;
         }
-        mPrimaryCallInfo.setVisibility(View.VISIBLE);
+        //mPrimaryCallInfo.setVisibility(View.VISIBLE);
 
         Call.State state = call.getState();
         if (DBG) log("  - call.state: " + call.getState());
-
+        Connection c = call.getLatestConnection();
+        
         switch (state) {
             case ACTIVE:
+                if (c != null && c.isVideo()) {
+                    startVtCallTimer(c);
+                }
             case DISCONNECTING:
                 // update timer field
                 if (DBG) log("displayMainCallStatus: start periodicUpdateTimer");
@@ -384,27 +544,27 @@ public class CallCard extends FrameLayout
 
             case HOLDING:
                 // update timer field
-                mCallTime.cancelTimer();
+                mCallTime.cancelTimer(true);
 
                 break;
 
             case DISCONNECTED:
                 // Stop getting timer ticks from this call
-                mCallTime.cancelTimer();
+                mCallTime.cancelTimer(true);
 
                 break;
 
             case DIALING:
             case ALERTING:
                 // Stop getting timer ticks from a previous call
-                mCallTime.cancelTimer();
+                mCallTime.cancelTimer(true);
 
                 break;
 
             case INCOMING:
             case WAITING:
                 // Stop getting timer ticks from a previous call
-                mCallTime.cancelTimer();
+                mCallTime.cancelTimer(true);
 
                 break;
 
@@ -413,7 +573,7 @@ public class CallCard extends FrameLayout
                 // an idle call!  In updateState(), if the phone is idle,
                 // we call updateNoCall(), which means that we shouldn't
                 // have passed a call into this method at all.
-                Log.w(LOG_TAG, "displayMainCallStatus: IDLE call in the main call card!");
+                if(DBG) Log.w(LOG_TAG, "displayMainCallStatus: IDLE call in the main call card!");
 
                 // (It is possible, though, that we had a valid call which
                 // became idle *after* the check in updateState() but
@@ -424,12 +584,13 @@ public class CallCard extends FrameLayout
                 break;
 
             default:
-                Log.w(LOG_TAG, "displayMainCallStatus: unexpected call state: " + state);
+                if(DBG) Log.w(LOG_TAG, "displayMainCallStatus: unexpected call state: " + state);
                 break;
         }
-
-        updateCardTitleWidgets(call.getPhone(), call);
-
+        // launch performance start
+        // updateCardTitleWidgets(call.getPhone(), call);
+        // launch performance end
+        
         if (PhoneUtils.isConferenceCall(call)) {
             // Update onscreen info for a conference call.
             updateDisplayForConference(call);
@@ -499,6 +660,12 @@ public class CallCard extends FrameLayout
 
                 if (runQuery) {
                     if (DBG) log("- displayMainCallStatus: starting CallerInfo query...");
+                    if (mLCforUserData)
+                    {                    
+                        if (DBG) log("- displayMainCallStatus: the language changed to clear userdata");
+                    	conn.clearUserData();
+                        mLCforUserData = false;
+                    }
                     PhoneUtils.CallerInfoToken info =
                             PhoneUtils.startGetCallerInfo(getContext(), conn, this, call);
                     updateDisplayForPerson(info.currentInfo, presentation, !info.isFinal, call);
@@ -547,54 +714,17 @@ public class CallCard extends FrameLayout
         // use mPhoneNumber to display a hint like "Rotate to answer".
         if (mRotarySelectorHintTextResId != 0) {
             // Display the hint!
-            mPhoneNumber.setText(mRotarySelectorHintTextResId);
-            mPhoneNumber.setTextColor(getResources().getColor(mRotarySelectorHintColorResId));
-            mPhoneNumber.setVisibility(View.VISIBLE);
-            mLabel.setVisibility(View.GONE);
+            mLabelAndNumber.setText(mRotarySelectorHintTextResId);
+            mLabelAndNumber.setTextColor(getResources().getColor(mRotarySelectorHintColorResId));
+            if(PhoneUtils.isDMLocked())
+                mLabelAndNumber.setVisibility(View.GONE);
+            else
+                mLabelAndNumber.setVisibility(View.VISIBLE);
         }
-
-        mRecordFlag.setText(R.string.record_flag);
-        updateRecordingTimeWidget();
-        if (mIsShowRecordFlag) {
-            mRecordFlag.setVisibility(View.VISIBLE);
-            mRecordingTime.setVisibility(View.VISIBLE);
-        } else {
-            mRecordFlag.setVisibility(View.GONE);
-            mRecordingTime.setVisibility(View.GONE);
-        }
-
         // If we don't have a hint to display, just don't touch
         // mPhoneNumber and mLabel. (Their text / color / visibility have
         // already been set correctly, by either updateDisplayForPerson()
         // or updateDisplayForConference().)
-    }
-
-    public void setRecordingCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public void updateRecordingTimeWidget() {
-        if (DBG)
-            log("updateRecordingTimeWidget: " + createTime);
-        if (mIsShowRecordFlag) {
-            long duration = (System.currentTimeMillis() - createTime) / 1000;
-            if (duration == 0) {
-                mRecordingTime.setText("");
-            } else {
-                mRecordingTime.setText("("+DateUtils.formatElapsedTime(duration)+")");
-            }
-        }
-    }
-
-    public void setRecordFlag(boolean isShow) {
-        mIsShowRecordFlag = isShow;
-        if (mIsShowRecordFlag) {
-            mRecordFlag.setVisibility(View.VISIBLE);
-            mRecordingTime.setVisibility(View.VISIBLE);
-        } else {
-            mRecordFlag.setVisibility(View.GONE);
-            mRecordingTime.setVisibility(View.GONE);
-        }
     }
 
     /**
@@ -603,8 +733,11 @@ public class CallCard extends FrameLayout
      */
     public void onQueryComplete(int token, Object cookie, CallerInfo ci) {
         if (DBG) log("onQueryComplete: token " + token + ", cookie " + cookie + ", ci " + ci);
-
-        if (cookie instanceof Call) {
+        
+        //mtk71029 update for alps00040521. the query implements may be so time consuming, then the call state has changed.
+        //Especially, Phone state from ringing to offhook. RingingCall is idle, it may lead display name 'unknown'
+        //So, now check the call state is idle or not, if call state is idle, we do nothing.
+        if (cookie instanceof Call && !((Call)cookie).isIdle() ) {
             // grab the call object and update the display for an individual call,
             // as well as the successive call to update image via call state.
             // If the object is a textview instead, we update it as we need to.
@@ -655,6 +788,16 @@ public class CallCard extends FrameLayout
         }
     }
 
+    private void updateCardTitleWidgets(Phone phone, Call call) {
+        long duration = 0;
+        Call.State state = call.getState();
+        if(state == Call.State.ACTIVE || state == Call.State.DISCONNECTING || state == Call.State.DISCONNECTED) {
+            duration = CallTime.getCallDuration(call);
+            updateElapsedTimeWidget(duration / 1000);
+            mInCallScreen.mCallStatus.updateElapsedTimeWidgetOfCallStatus(duration / 1000);
+        }
+    }
+
     /**
      * Updates the "card title" (and also elapsed time widget) based on
      * the current state of the call.
@@ -663,6 +806,7 @@ public class CallCard extends FrameLayout
     // getTitleForCallCard() to be separate methods, since they both
     // just list out the exact same "phone state" cases.
     // Let's merge the getTitleForCallCard() logic into here.
+    /*
     private void updateCardTitleWidgets(Phone phone, Call call) {
         if (DBG) log("updateCardTitleWidgets(call " + call + ")...");
         Call.State state = call.getState();
@@ -672,7 +816,6 @@ public class CallCard extends FrameLayout
         // set in all states.  (Then, given that info, refactor the code
         // here to be more clear about exactly which widgets on the card
         // need to be set.)
-        int phoneId = phone.getPhoneId();
 
         String cardTitle;
         int phoneType = phone.getPhoneType();
@@ -690,17 +833,6 @@ public class CallCard extends FrameLayout
         }
         if (DBG) log("updateCardTitleWidgets: " + cardTitle);
 
-        Connection conn;
-        if (phoneType == Phone.PHONE_TYPE_CDMA) {
-            conn = call.getLatestConnection();
-        } else if ((phoneType == Phone.PHONE_TYPE_GSM)
-              || (phoneType == Phone.PHONE_TYPE_SIP)) {
-            conn = call.getEarliestConnection();
-        } else {
-            throw new IllegalStateException("Unexpected phone type: " + phoneType);
-        }
-
-        boolean isEmergencyNumber = PhoneNumberUtils.isEmergencyNumber(conn.getAddress());
         // Update the title and elapsed time widgets based on the current call state.
         switch (state) {
             case ACTIVE:
@@ -739,27 +871,22 @@ public class CallCard extends FrameLayout
                     // CDMA also if the latency there ever gets high enough.
                     if (state == Call.State.DISCONNECTING) {
                         // Display the brief "Hanging up" indication.
-                        if (isEmergencyNumber)
-                            setUpperSimTitle("", 0, state);
-                        else
-                            setUpperSimTitle(getSIMString(phoneId), mTextColorDefaultPrimary, state);
                         setUpperTitle(cardTitle, mTextColorDefaultPrimary, state);
                     } else {  // state == Call.State.ACTIVE
                         // Normal "ongoing call" state; don't use any "title" at all.
-//                        clearUpperTitle();
-                        setUpperTitle(cardTitle, mTextColorDefaultPrimary, state);
-                        if (isEmergencyNumber)
-                            setUpperSimTitle("", 0, state);
-                        else
-                            setUpperSimTitle(getSIMString(phoneId), mTextColorDefaultPrimary, state);
+                        clearUpperTitle();
                     }
                 }
 
                 // Use the elapsed time widget to show the current call duration.
-                mElapsedTime.setVisibility(View.VISIBLE);
-                mElapsedTime.setTextColor(connectedTextColor);
+                // mElapsedTime.setVisibility(View.VISIBLE);
+                // mElapsedTime.setTextColor(connectedTextColor);
+                
+               
+                
                 long duration = CallTime.getCallDuration(call);  // msec
                 updateElapsedTimeWidget(duration / 1000);
+                mInCallScreen.mCallStatus.updateElapsedTimeWidgetOfCallStatus(duration / 1000);
                 // Also see onTickForCallTimeElapsed(), which updates this
                 // widget once per second while the call is active.
                 break;
@@ -770,26 +897,17 @@ public class CallCard extends FrameLayout
 
                 // TODO: display a "call ended" icon somewhere, like the old
                 // R.drawable.ic_incall_end?
-                
-                // add by chengyake for showing the elapsed time when
-                // DISCONNECTED Thursday, October 27 2011 begin
-                duration = CallTime.getCallDuration(call); // msec
-                if (duration == 0) {
-                    updateElapsedTimeWidget(duration / 1000);
-                }
-                // add by chengyake for showing the elapsed time when
-                // DISCONNECTED Thursday, October 27 2011 end
-                if (isEmergencyNumber)
-                    setUpperSimTitle("", 0, state);
-                else
-                    setUpperSimTitle(getSIMString(phoneId), mTextColorDefaultPrimary, state);
+
                 setUpperTitle(cardTitle, mTextColorEnded, state);
 
                 // In the "Call ended" state, leave the mElapsedTime widget
                 // visible, but don't touch it (so  we continue to see the elapsed time of
                 // the call that just ended.)
-                mElapsedTime.setVisibility(View.VISIBLE);
-                mElapsedTime.setTextColor(mTextColorEnded);
+                long duration2 = CallTime.getCallDuration(call);
+                updateElapsedTimeWidget(duration2 / 1000);
+                mInCallScreen.mCallStatus.updateElapsedTimeWidgetOfCallStatus(duration2 / 1000);
+                // mElapsedTime.setVisibility(View.VISIBLE);
+                // mElapsedTime.setTextColor(mTextColorEnded);
                 break;
 
             case HOLDING:
@@ -801,42 +919,34 @@ public class CallCard extends FrameLayout
 
                 // TODO: display an "On hold" icon somewhere, like the old
                 // R.drawable.ic_incall_onhold?
-                clearUpperSimTitle();
+
                 clearUpperTitle();
-
-                mElapsedTime.setText(cardTitle);
-
+                //mElapsedTime.setText(cardTitle);
                 // While on hold, the elapsed time widget displays an
                 // "on hold" indication rather than an amount of time.
-                mElapsedTime.setVisibility(View.VISIBLE);
-                mElapsedTime.setTextColor(mTextColorOnHold);
+                //mElapsedTime.setVisibility(View.VISIBLE);
+                //mElapsedTime.setTextColor(mTextColorOnHold);
                 break;
 
             default:
                 // All other states (DIALING, INCOMING, etc.) use the "upper title":
-                if (isEmergencyNumber)
-                    setUpperSimTitle("", 0, state);
-                else
-                    setUpperSimTitle(getSIMString(phoneId), mTextColorDefaultPrimary, state);
                 setUpperTitle(cardTitle, mTextColorDefaultPrimary, state);
-
                 // ...and we don't show the elapsed time.
-                mElapsedTime.setVisibility(View.INVISIBLE);
+                //mElapsedTime.setVisibility(View.INVISIBLE);
                 break;
         }
     }
+    */
 
     /**
      * Updates mElapsedTime based on the specified number of seconds.
      * A timeElapsed value of zero means to not show an elapsed time at all.
      */
     private void updateElapsedTimeWidget(long timeElapsed) {
-        // if (DBG) log("updateElapsedTimeWidget: " + timeElapsed);
-        if (timeElapsed == 0) {
-            mElapsedTime.setText("");
-        } else {
-            mElapsedTime.setText(DateUtils.formatElapsedTime(timeElapsed));
-        }
+        if (DBG) log("updateElapsedTimeWidget: " + timeElapsed);
+        if( FeatureOption.MTK_VT3G324M_SUPPORT == true &&
+        		null != mInCallScreen && null != mInCallScreen.mVTCallStatus )
+        	mInCallScreen.mVTCallStatus.updateElapsedTimeWidgetOfCallStatus(timeElapsed);
     }
 
     /**
@@ -875,7 +985,8 @@ public class CallCard extends FrameLayout
                 break;
 
             case HOLDING:
-                retVal = context.getString(R.string.card_title_on_hold);
+            	if(mInCallScreen.getSwappingCalls())retVal = "";
+            	else retVal = context.getString(R.string.card_title_on_hold);
                 // TODO: if this is a conference call on hold,
                 // maybe have a special title here too?
                 break;
@@ -887,7 +998,17 @@ public class CallCard extends FrameLayout
 
             case INCOMING:
             case WAITING:
-                retVal = context.getString(R.string.card_title_incoming_call);
+            	if( FeatureOption.MTK_VT3G324M_SUPPORT == true )
+            	{
+            		if( PhoneApp.getInstance().isVTRinging() )
+            			retVal = context.getString(R.string.vt_incoming_call);
+            		else
+            			retVal = context.getString(R.string.card_title_incoming_call);
+            	}
+            	else 
+            	{
+            		retVal = context.getString(R.string.card_title_incoming_call);
+            	}
                 break;
 
             case DISCONNECTING:
@@ -910,146 +1031,153 @@ public class CallCard extends FrameLayout
      * Or, clear out the "on hold" box if the specified call
      * is null or idle.
      */
-    private void displayOnHoldCallStatus(CallManager cm, Call call) {
-        if (DBG) log("displayOnHoldCallStatus(call =" + call + ")...");
-
-        if ((call == null) || (PhoneApp.getInstance().isOtaCallInActiveState())) {
-            mSecondaryCallInfo.setVisibility(View.GONE);
-            return;
-        }
-
-        Phone phone = call.getPhone();
-        boolean showSecondaryCallInfo = false;
-        Call.State state = call.getState();
-        switch (state) {
-            case HOLDING:
-                // Ok, there actually is a background call on hold.
-                // Display the "on hold" box.
-
-                // Note this case occurs only on GSM devices.  (On CDMA,
-                // the "call on hold" is actually the 2nd connection of
-                // that ACTIVE call; see the ACTIVE case below.)
-
-                if (PhoneUtils.isConferenceCall(call)) {
-                    if (DBG) log("==> conference call.");
-                    mSecondaryCallName.setText(getContext().getString(R.string.confCall));
-                    showImage(mSecondaryCallPhoto, R.drawable.picture_conference);
-                } else {
-                    // perform query and update the name temporarily
-                    // make sure we hand the textview we want updated to the
-                    // callback function.
-                    if (DBG) log("==> NOT a conf call; call startGetCallerInfo...");
-                    PhoneUtils.CallerInfoToken infoToken = PhoneUtils.startGetCallerInfo(
-                            getContext(), call, this, mSecondaryCallName);
-                    mSecondaryCallName.setText(
-                            PhoneUtils.getCompactNameFromCallerInfo(infoToken.currentInfo,
-                                                                    getContext()));
-
-                    // Also pull the photo out of the current CallerInfo.
-                    // (Note we assume we already have a valid photo at
-                    // this point, since *presumably* the caller-id query
-                    // was already run at some point *before* this call
-                    // got put on hold.  If there's no cached photo, just
-                    // fall back to the default "unknown" image.)
-                    if (infoToken.isFinal) {
-                        showCachedImage(mSecondaryCallPhoto, infoToken.currentInfo);
-                    } else {
-                        showImage(mSecondaryCallPhoto, R.drawable.picture_unknown);
-                    }
-                }
-
-                showSecondaryCallInfo = true;
-
-                break;
-
-            case ACTIVE:
-                // CDMA: This is because in CDMA when the user originates the second call,
-                // although the Foreground call state is still ACTIVE in reality the network
-                // put the first call on hold.
-                if (phone.getPhoneType() == Phone.PHONE_TYPE_CDMA) {
-                    List<Connection> connections = call.getConnections();
-                    if (connections.size() > 2) {
-                        // This means that current Mobile Originated call is the not the first 3-Way
-                        // call the user is making, which in turn tells the PhoneApp that we no
-                        // longer know which previous caller/party had dropped out before the user
-                        // made this call.
-                        mSecondaryCallName.setText(
-                                getContext().getString(R.string.card_title_in_call));
-                        showImage(mSecondaryCallPhoto, R.drawable.picture_unknown);
-                    } else {
-                        // This means that the current Mobile Originated call IS the first 3-Way
-                        // and hence we display the first callers/party's info here.
-                        Connection conn = call.getEarliestConnection();
-                        PhoneUtils.CallerInfoToken infoToken = PhoneUtils.startGetCallerInfo(
-                                getContext(), conn, this, mSecondaryCallName);
-
-                        // Get the compactName to be displayed, but then check that against
-                        // the number presentation value for the call. If it's not an allowed
-                        // presentation, then display the appropriate presentation string instead.
-                        CallerInfo info = infoToken.currentInfo;
-
-                        String name = PhoneUtils.getCompactNameFromCallerInfo(info, getContext());
-                        boolean forceGenericPhoto = false;
-                        if (info != null && info.numberPresentation !=
-                                Connection.PRESENTATION_ALLOWED) {
-                            name = getPresentationString(info.numberPresentation);
-                            forceGenericPhoto = true;
-                        }
-                        mSecondaryCallName.setText(name);
-
-                        // Also pull the photo out of the current CallerInfo.
-                        // (Note we assume we already have a valid photo at
-                        // this point, since *presumably* the caller-id query
-                        // was already run at some point *before* this call
-                        // got put on hold.  If there's no cached photo, just
-                        // fall back to the default "unknown" image.)
-                        if (!forceGenericPhoto && infoToken.isFinal) {
-                            showCachedImage(mSecondaryCallPhoto, info);
-                        } else {
-                            showImage(mSecondaryCallPhoto, R.drawable.picture_unknown);
-                        }
-                    }
-                    showSecondaryCallInfo = true;
-
-                } else {
-                    // We shouldn't ever get here at all for non-CDMA devices.
-                    Log.w(LOG_TAG, "displayOnHoldCallStatus: ACTIVE state on non-CDMA device");
-                    showSecondaryCallInfo = false;
-                }
-                break;
-
-            default:
-                // There's actually no call on hold.  (Presumably this call's
-                // state is IDLE, since any other state is meaningless for the
-                // background call.)
-                showSecondaryCallInfo = false;
-                break;
-        }
-
-        if (showSecondaryCallInfo) {
-            // Ok, we have something useful to display in the "secondary
-            // call" info area.
-            mSecondaryCallInfo.setVisibility(View.VISIBLE);
-
-            // Watch out: there are some cases where we need to display the
-            // secondary call photo but *not* the two lines of text above it.
-            // Specifically, that's any state where the CallCard "upper title" is
-            // in use, since the title (e.g. "Dialing" or "Call ended") might
-            // collide with the secondaryCallStatus and secondaryCallName widgets.
-            //
-            // We detect this case by simply seeing whether or not there's any text
-            // in mUpperTitle.  (This is much simpler than detecting all possible
-            // telephony states where the "upper title" is used!  But note it does
-            // rely on the fact that updateCardTitleWidgets() gets called *earlier*
-            // than this method, in the CallCard.updateState() sequence...)
+// launch performance start
+//    private void displayOnHoldCallStatus(CallManager cm, Call call) {
+//        if (DBG) log("displayOnHoldCallStatus(call =" + call + ")...");
+//
+//        if ((call == null) || (PhoneApp.getInstance().isOtaCallInActiveState())) {
+//            //mSecondaryCallInfo.setVisibility(View.GONE);
+//            return;
+//        }
+//
+//        boolean showSecondaryCallInfo = false;
+//        Call.State state = call.getState();
+//        switch (state) {
+//            case HOLDING:
+//                // Ok, there actually is a background call on hold.
+//                // Display the "on hold" box.
+//
+//                // Note this case occurs only on GSM devices.  (On CDMA,
+//                // the "call on hold" is actually the 2nd connection of
+//                // that ACTIVE call; see the ACTIVE case below.)
+//
+//                if (PhoneUtils.isConferenceCall(call)) {
+//                    if (DBG) log("==> conference call.");
+//                    mSecondaryCallName.setText(getContext().getString(R.string.confCall));
+//                    showImage(mSecondaryCallPhoto, R.drawable.picture_conference);
+//                } else {
+//                    // perform query and update the name temporarily
+//                    // make sure we hand the textview we want updated to the
+//                    // callback function.
+//                    if (DBG) log("==> NOT a conf call; call startGetCallerInfo...");
+//                    PhoneUtils.CallerInfoToken infoToken = PhoneUtils.startGetCallerInfo(
+//                            getContext(), call, this, mSecondaryCallName);
+//                    if(PhoneUtils.isDMLocked()){
+//                    	mSecondaryCallName.setText("");
+//                    }else
+//                    mSecondaryCallName.setText(
+//                            PhoneUtils.getCompactNameFromCallerInfo(infoToken.currentInfo,
+//                                                                    getContext()));
+//
+//                    // Also pull the photo out of the current CallerInfo.
+//                    // (Note we assume we already have a valid photo at
+//                    // this point, since *presumably* the caller-id query
+//                    // was already run at some point *before* this call
+//                    // got put on hold.  If there's no cached photo, just
+//                    // fall back to the default "unknown" image.)
+//                    if (infoToken.isFinal && !PhoneUtils.isDMLocked()) {
+//                        showCachedImage(mSecondaryCallPhoto, infoToken.currentInfo);
+//                    } else {
+//                        showImage(mSecondaryCallPhoto, R.drawable.picture_unknown);
+//                    }
+//                }
+//                break;
+//
+//            case ACTIVE:
+//                // CDMA: This is because in CDMA when the user originates the second call,
+//                // although the Foreground call state is still ACTIVE in reality the network
+//                // put the first call on hold.
+//                if (mApplication.phone.getPhoneType() == Phone.PHONE_TYPE_CDMA) {
+//                    List<Connection> connections = call.getConnections();
+//                    if (connections.size() > 2) {
+//                        // This means that current Mobile Originated call is the not the first 3-Way
+//                        // call the user is making, which in turn tells the PhoneApp that we no
+//                        // longer know which previous caller/party had dropped out before the user
+//                        // made this call.
+//                    	if(PhoneUtils.isDMLocked()){
+//                        	mSecondaryCallName.setText("");
+//                        }else
+//                        mSecondaryCallName.setText(
+//                                getContext().getString(R.string.card_title_in_call));
+//                        showImage(mSecondaryCallPhoto, R.drawable.picture_unknown);
+//                    } else {
+//                        // This means that the current Mobile Originated call IS the first 3-Way
+//                        // and hence we display the first callers/party's info here.
+//                        Connection conn = call.getEarliestConnection();
+//                        PhoneUtils.CallerInfoToken infoToken = PhoneUtils.startGetCallerInfo(
+//                                getContext(), conn, this, mSecondaryCallName);
+//
+//                        // Get the compactName to be displayed, but then check that against
+//                        // the number presentation value for the call. If it's not an allowed
+//                        // presentation, then display the appropriate presentation string instead.
+//                        CallerInfo info = infoToken.currentInfo;
+//
+//                        String name = PhoneUtils.getCompactNameFromCallerInfo(info, getContext());
+//                        boolean forceGenericPhoto = false;
+//                        if (info != null && info.numberPresentation !=
+//                                Connection.PRESENTATION_ALLOWED) {
+//                            name = getPresentationString(info.numberPresentation);
+//                            forceGenericPhoto = true;
+//                        }
+//                        if(PhoneUtils.isDMLocked()){
+//                        	mSecondaryCallName.setText("");
+//                        }else
+//                        mSecondaryCallName.setText(name);
+//
+//                        // Also pull the photo out of the current CallerInfo.
+//                        // (Note we assume we already have a valid photo at
+//                        // this point, since *presumably* the caller-id query
+//                        // was already run at some point *before* this call
+//                        // got put on hold.  If there's no cached photo, just
+//                        // fall back to the default "unknown" image.)
+//                        if (!forceGenericPhoto && infoToken.isFinal && !PhoneUtils.isDMLocked()) {
+//                            showCachedImage(mSecondaryCallPhoto, info);
+//                        } else {
+//                            showImage(mSecondaryCallPhoto, R.drawable.picture_unknown);
+//                        }
+//                    }
+//                    showSecondaryCallInfo = true;
+//
+//                } else {
+//                    // We shouldn't ever get here at all for non-CDMA devices.
+//                    Log.w(LOG_TAG, "displayOnHoldCallStatus: ACTIVE state on non-CDMA device");
+//                    showSecondaryCallInfo = false;
+//                }
+//                break;
+//
+//            default:
+//                // There's actually no call on hold.  (Presumably this call's
+//                // state is IDLE, since any other state is meaningless for the
+//                // background call.)
+//                showSecondaryCallInfo = false;
+//                break;
+//        }
+//
+//        if (showSecondaryCallInfo) {
+//            // Ok, we have something useful to display in the "secondary
+//            // call" info area.
+//            mSecondaryCallInfo.setVisibility(View.VISIBLE);
+//
+//            // Watch out: there are some cases where we need to display the
+//            // secondary call photo but *not* the two lines of text above it.
+//            // Specifically, that's any state where the CallCard "upper title" is
+//            // in use, since the title (e.g. "Dialing" or "Call ended") might
+//            // collide with the secondaryCallStatus and secondaryCallName widgets.
+//            //
+//            // We detect this case by simply seeing whether or not there's any text
+//            // in mUpperTitle.  (This is much simpler than detecting all possible
+//            // telephony states where the "upper title" is used!  But note it does
+//            // rely on the fact that updateCardTitleWidgets() gets called *earlier*
+//            // than this method, in the CallCard.updateState() sequence...)
 //            boolean okToShowLabels = TextUtils.isEmpty(mUpperTitle.getText());
-            mSecondaryCallName.setVisibility( View.VISIBLE);
-            mSecondaryCallStatus.setVisibility(View.VISIBLE);
-        } else {
-            // Hide the entire "secondary call" info area.
-            mSecondaryCallInfo.setVisibility(View.GONE);
-        }
-    }
+//            mSecondaryCallName.setVisibility(okToShowLabels ? View.VISIBLE : View.INVISIBLE);
+//            mSecondaryCallStatus.setVisibility(okToShowLabels ? View.VISIBLE : View.INVISIBLE);
+//        } else {
+//            // Hide the entire "secondary call" info area.
+//            mSecondaryCallInfo.setVisibility(View.GONE);
+//        }
+//    }
+// launch performance end
 
     private String getCallFailedString(Call call) {
         Connection c = call.getEarliestConnection();
@@ -1074,6 +1202,8 @@ public class CallCard extends FrameLayout
                     break;
 
                 case CONGESTION:
+                case BEARER_NOT_AVAIL:
+                case NO_CIRCUIT_AVAIL:
                     resID = R.string.callFailed_congestion;
                     break;
 
@@ -1142,7 +1272,7 @@ public class CallCard extends FrameLayout
      * If the current call is a conference call, use
      * updateDisplayForConference() instead.
      */
-    private void updateDisplayForPerson(CallerInfo info,
+    /*private*/ void updateDisplayForPerson(CallerInfo info,
                                         int presentation,
                                         boolean isTemporary,
                                         Call call) {
@@ -1154,7 +1284,7 @@ public class CallCard extends FrameLayout
         mPhotoTracker.setPhotoState(ContactsAsyncHelper.ImageTracker.DISPLAY_IMAGE);
 
         // The actual strings we're going to display onscreen:
-        String displayName;
+        String displayName = null;
         String displayNumber = null;
         String label = null;
         Uri personUri = null;
@@ -1174,6 +1304,16 @@ public class CallCard extends FrameLayout
             // appears that this was the ONLY call to PhoneUtils
             // .getCallerInfo() that relied on a NULL CallerInfo to indicate
             // an unknown contact.
+
+            // when language changed if in emergency call, the String 
+            // "Emergency number" should be updated.
+            if(mLocaleChanged == true) {
+                if(info.isEmergencyNumber() == true) {
+                    info.phoneNumber = getContext().getString(
+                            com.android.internal.R.string.emergency_call_dialog_number_for_display);
+                }
+                mLocaleChanged = false;
+            }
 
             // Currently, info.phoneNumber may actually be a SIP address, and
             // if so, it might sometimes include the "sip:" prefix.  That
@@ -1204,13 +1344,19 @@ public class CallCard extends FrameLayout
                 } else if (!TextUtils.isEmpty(info.cnapName)) {
                     displayName = info.cnapName;
                     info.name = info.cnapName;
-                    displayNumber = number;
-                } else {
-                    String name = info.phoneNumber;
-                    //yeezone:jinwei
-                    currentPhone.setText(name);
+                    // CR:129572
+                    if(number != null)
+                        displayNumber = PhoneNumberFormatUtilEx.formatNumber(number);//PhoneNumberUtils.formatNumber(number);
 
-                    displayName = number;
+
+                } else {
+                    // CR:129572
+                    if(number != null) {
+                        if(!PhoneUtils.isEccCall(call))
+                            displayName = PhoneNumberFormatUtilEx.formatNumber(number);
+                        else
+                            displayName = number;
+                    }
                 }
             } else {
                 // We do have a valid "name" in the CallerInfo.  Display that
@@ -1222,7 +1368,9 @@ public class CallCard extends FrameLayout
                     displayName = getPresentationString(presentation);
                 } else {
                     displayName = info.name;
-                    displayNumber = number;
+                    // CR:129572
+                    if(number != null)
+                        displayNumber = PhoneNumberFormatUtilEx.formatNumber(number);//PhoneNumberUtils.formatNumber(number);
                     label = info.phoneLabel;
                 }
             }
@@ -1233,12 +1381,22 @@ public class CallCard extends FrameLayout
             displayName =  getPresentationString(presentation);
         }
 
+        // when the number is an emergency number, the voice recorder is disabled, so do not need to limit the max width
+        if(info.isEmergencyNumber())
+            mName.setMaxWidth(Integer.MAX_VALUE);
+        else
+            mName.setMaxWidth(getResources().getDimensionPixelSize(R.dimen.incall_card_name_max_length));
+
         if (call.isGeneric()) {
             mName.setText(R.string.card_title_in_call);
         } else {
             mName.setText(displayName);
         }
-        mName.setVisibility(View.VISIBLE);
+
+        if(PhoneUtils.isDMLocked())
+            mName.setVisibility(View.GONE);
+        else
+            mName.setVisibility(View.VISIBLE);
 
         // Update mPhoto
         // if the temporary flag is set, we know we'll be getting another call after
@@ -1262,27 +1420,49 @@ public class CallCard extends FrameLayout
         }
         // And no matter what, on all devices, we never see the "manage
         // conference" button in this state.
-        mManageConferencePhotoButton.setVisibility(View.INVISIBLE);
+//        launch performance start
+//        mManageConferencePhotoButton.setVisibility(View.INVISIBLE);
+//        launch performance end
+        if(mManageConferenceUiButton != null)
+            mManageConferenceUiButton.setVisibility(View.INVISIBLE);
 
-        if (displayNumber != null && !call.isGeneric()) {
-            mPhoneNumber.setText(displayNumber);
-            mPhoneNumber.setTextColor(mTextColorDefaultSecondary);
-            mPhoneNumber.setVisibility(View.VISIBLE);
-            currentPhone.setText(displayNumber);
-        } else {
-            mPhoneNumber.setVisibility(View.GONE);
-        }
-
-        if (label != null && !call.isGeneric()) {
-            mLabel.setText(label);
-            mLabel.setVisibility(View.VISIBLE);
-        } else {
-            mLabel.setVisibility(View.GONE);
-        }
+        // label and number
+        mStringBuilder.delete(0, mStringBuilder.length());
+        if(!PhoneUtils.isDMLocked()) {
+            if (label != null && !call.isGeneric()) {
+                if (label.length() > 10)
+                    mStringBuilder.append(label, 0, 9);
+                else
+                    mStringBuilder.append(label);
+            }
+            if(mStringBuilder.length() > 0)
+                mStringBuilder.append("   ");
+            if (displayNumber != null && !call.isGeneric())
+                mStringBuilder.append(displayNumber);
+            mLabelAndNumber.setText(mStringBuilder.toString());
+            mLabelAndNumber.setVisibility(View.VISIBLE);
+        } else
+            mLabelAndNumber.setVisibility(View.GONE);
 
         // Other text fields:
         updateCallTypeLabel(call);
         updateSocialStatus(socialStatusText, socialStatusBadge, call);  // Currently unused
+
+        if (FeatureOption.MTK_VT3G324M_SUPPORT && null != mInCallScreen) {
+            if ((mInCallScreen.getVTScreenMode() == VTCallUtils.VTScreenMode.VT_SCREEN_OPEN) && (info != null)) {
+                String vtPhoneNumber = "";
+                if (info.name != null && info.name.length() > 0)
+                    vtPhoneNumber += mName.getText().toString();
+                
+                if (label != null && label.length() > 0)
+                    vtPhoneNumber += " " + label;
+                
+                if (info.phoneNumber != null && info.phoneNumber.length() > 0)
+                    vtPhoneNumber += " " + PhoneNumberFormatUtilEx.formatNumber(info.phoneNumber);
+                vtPhoneNumber = "\u202D" + vtPhoneNumber + "\u202C";
+                mInCallScreen.updateVTPhoneNumber(vtPhoneNumber);
+            }
+       }
     }
 
     private String getPresentationString(int presentation) {
@@ -1317,29 +1497,46 @@ public class CallCard extends FrameLayout
             mName.setText(R.string.card_title_in_call);
         } else if ((phoneType == Phone.PHONE_TYPE_GSM)
                 || (phoneType == Phone.PHONE_TYPE_SIP)) {
-            if (mInCallScreen.isTouchUiEnabled()) {
-                // Display the "manage conference" button in place of the photo.
-                mManageConferencePhotoButton.setVisibility(View.VISIBLE);
-                mPhoto.setVisibility(View.INVISIBLE);  // Not GONE, since that would break
-                                                       // other views in our RelativeLayout.
-            } else {
-                // Display the "conference call" image in the photo slot,
-                // with no other information.
-                showImage(mPhoto, R.drawable.picture_conference);
-            }
+//            launch performance start
+//            if (mInCallScreen.isTouchUiEnabled()) {
+//                // Display the "manage conference" button in place of the photo.
+//                mManageConferencePhotoButton.setVisibility(View.VISIBLE);
+//                if(mManageConferenceUiButton != null)
+//                    mManageConferenceUiButton.setVisibility(View.VISIBLE);
+//                mPhoto.setVisibility(View.INVISIBLE);  // Not GONE, since that would break
+//                                                       // other views in our RelativeLayout.
+//                mLabel.setText(mInCallScreen.getString(R.string.incall_conference_members, call.getConnections().size()));
+//
+//            } else {
+//                // Display the "conference call" image in the photo slot,
+//                // with no other information.
+//                showImage(mPhoto, R.drawable.picture_conference);
+//            }
+//            launch performance end
+            showImage(mPhoto, R.drawable.picture_conference);
+            mLabelAndNumber.setText(mInCallScreen.getString(R.string.incall_conference_members, call.getConnections().size()));
+            if (mManageConferenceUiButton != null)
+                mManageConferenceUiButton.setVisibility(View.VISIBLE);
             mName.setText(R.string.card_title_conf_call);
         } else {
             throw new IllegalStateException("Unexpected phone type: " + phoneType);
         }
 
-        mName.setVisibility(View.VISIBLE);
+        int maxLength = (int)getContext().getResources().getDimension(R.dimen.incall_card_name_max_length);
+        mName.setMaxWidth(maxLength);
+
+        if(PhoneUtils.isDMLocked())mName.setVisibility(View.GONE);
+        else mName.setVisibility(View.VISIBLE);
 
         // TODO: For a conference call, the "phone number" slot is specced
         // to contain a summary of who's on the call, like "Bill Foldes
         // and Hazel Nutt" or "Bill Foldes and 2 others".
         // But for now, just hide it:
-        mPhoneNumber.setVisibility(View.GONE);
-        mLabel.setVisibility(View.GONE);
+        //mPhoneNumber.setVisibility(View.GONE);
+        /* Added by xingping.zheng start */
+        //mLabel.setVisibility(View.GONE);
+        mLabelAndNumber.setVisibility(View.VISIBLE);
+        /* Added by xingping.zheng end   */
 
         // Other text fields:
         updateCallTypeLabel(call);
@@ -1384,7 +1581,9 @@ public class CallCard extends FrameLayout
                 if (c != null) {
                     Connection.DisconnectCause cause = c.getDisconnectCause();
                     if ((cause == Connection.DisconnectCause.BUSY)
-                        || (cause == Connection.DisconnectCause.CONGESTION)) {
+                        || (cause == Connection.DisconnectCause.CONGESTION)
+                        || (cause == Connection.DisconnectCause.BEARER_NOT_AVAIL)
+                        || (cause == Connection.DisconnectCause.NO_CIRCUIT_AVAIL)) {
                         photoImageResource = R.drawable.picture_busy;
                     }
                 } else if (DBG) {
@@ -1491,6 +1690,7 @@ public class CallCard extends FrameLayout
             }
             return true;
         }
+        showImage(view, R.drawable.picture_unknown);
         return false;
     }
 
@@ -1530,46 +1730,49 @@ public class CallCard extends FrameLayout
         lp.rightMargin = margin;
         vg.setLayoutParams(lp);
     }
-    /**
-     * Sets the CallCard "upper SIM1/SIM2 title".  Also, depending on the passed-in
-     * Call state, possibly display an icon along with the title.
-     */
-    private void setUpperSimTitle(String title, int color, Call.State state) {
-        if (title == null || title.equals("")) color = 0;
-        mUpperTopSimTitle.setText(title);
-        mUpperTopSimTitle.setTextColor(color);
-    }
+
     /**
      * Sets the CallCard "upper title".  Also, depending on the passed-in
      * Call state, possibly display an icon along with the title.
      */
-    private void setUpperTitle(String title, int color, Call.State state) {
-        mUpperTitle.setText(title);
-        mUpperTitle.setTextColor(color);
-
-        int bluetoothIconId = 0;
-        if (!TextUtils.isEmpty(title)
-                && ((state == Call.State.INCOMING) || (state == Call.State.WAITING))
-                && mApplication.showBluetoothIndication()) {
-            // Display the special bluetooth icon also, if this is an incoming
-            // call and the audio will be routed to bluetooth.
-            bluetoothIconId = R.drawable.ic_incoming_call_bluetooth;
-        }
-
-        mUpperTitle.setCompoundDrawablesWithIntrinsicBounds(bluetoothIconId, 0, 0, 0);
-        if (bluetoothIconId != 0) mUpperTitle.setCompoundDrawablePadding((int) (mDensity * 5));
-    }
+//    launch performance start
+//    private void setUpperTitle(String title, int color, Call.State state) {
+//        mUpperTitle.setText(title);
+//        mUpperTitle.setTextColor(color);
+//
+//        int bluetoothIconId = 0;
+//        if (!TextUtils.isEmpty(title)
+//                && ((state == Call.State.INCOMING) || (state == Call.State.WAITING))
+//                && mApplication.showBluetoothIndication()) {
+//            // Display the special bluetooth icon also, if this is an incoming
+//            // call and the audio will be routed to bluetooth.
+//            bluetoothIconId = R.drawable.ic_incoming_call_bluetooth;
+//        }
+//
+//        mUpperTitle.setCompoundDrawablesWithIntrinsicBounds(bluetoothIconId, 0, 0, 0);
+//        if (bluetoothIconId != 0) mUpperTitle.setCompoundDrawablePadding((int) (mDensity * 5));
+//
+//        //xingping.zheng add
+//        if(PhoneApp.getInstance().isQVGAPlusQwerty())
+//        {
+//            if(TextUtils.isEmpty(title))
+//                mUpperTitle.setVisibility(View.GONE);
+//            else
+//                mUpperTitle.setVisibility(View.VISIBLE);
+//        }
+//    }
+//    launch performance end
 
     /**
      * Clears the CallCard "upper title", for states (like a normal
      * ongoing call) where we don't use any "title" at all.
      */
-    private void clearUpperTitle() {
-        setUpperTitle("", 0, Call.State.IDLE);  // Use dummy values for "color" and "state"
-    }
-    private void clearUpperSimTitle() {
-        setUpperSimTitle("", 0, Call.State.IDLE);  // Use dummy values for "color" and "state"
-    }
+//    launch performance start
+//    private void clearUpperTitle() {
+//        setUpperTitle("", 0, Call.State.IDLE);  // Use dummy values for "color" and "state"
+//    }
+//    launch performance end
+
     /**
      * Returns the special card title used in emergency callback mode (ECM),
      * which shows your own phone number.
@@ -1585,6 +1788,14 @@ public class CallCard extends FrameLayout
         String titleFormat = context.getString(R.string.card_title_my_phone_number);
         return String.format(titleFormat, formattedNumber);
     }
+    
+    public boolean isSpecialWidthAndHeight(int width, int height) {
+        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display mDisplay = windowManager.getDefaultDisplay();
+        final int mWidth = mDisplay.getWidth();
+        final int mHeight = mDisplay.getHeight();
+        return ((width == mWidth) && (height == mHeight)) || ((height == mWidth) && (width == mHeight));
+    }
 
     /**
      * Updates the "Call type" label, based on the current foreground call.
@@ -1598,16 +1809,28 @@ public class CallCard extends FrameLayout
      */
     private void updateCallTypeLabel(Call call) {
         int phoneType = (call != null) ? call.getPhone().getPhoneType() : Phone.PHONE_TYPE_NONE;
-        if (phoneType == Phone.PHONE_TYPE_SIP) {
-            mCallTypeLabel.setVisibility(View.VISIBLE);
-            mCallTypeLabel.setText(R.string.incall_call_type_label_sip);
-            mCallTypeLabel.setTextColor(mTextColorCallTypeSip);
-            // If desired, we could also display a "badge" next to the label, as follows:
-            //   mCallTypeLabel.setCompoundDrawablesWithIntrinsicBounds(
-            //           callTypeSpecificBadge, null, null, null);
-            //   mCallTypeLabel.setCompoundDrawablePadding((int) (mDensity * 6));
+        if (phoneType == Phone.PHONE_TYPE_SIP && !isSpecialWidthAndHeight(QVGA_WIDTH, QVGA_HEIGHT)) {
+        	try
+        	{
+        		mCallTypeLabel.setVisibility(View.VISIBLE);
+        		mCallTypeLabel.setText(R.string.incall_call_type_label_sip);
+        		mCallTypeLabel.setTextColor(mTextColorCallTypeSip);
+        		// If desired, we could also display a "badge" next to the label, as follows:
+        		//   mCallTypeLabel.setCompoundDrawablesWithIntrinsicBounds(
+        		//           callTypeSpecificBadge, null, null, null);
+        		//   mCallTypeLabel.setCompoundDrawablePadding((int) (mDensity * 6));
+        	}catch(Exception ex)
+        	{
+        		if (DBG) log("updateCallTypeLabel : can not find the mCallTypeLabel !");
+        	}
         } else {
-            mCallTypeLabel.setVisibility(View.GONE);
+        	try
+        	{
+        		mCallTypeLabel.setVisibility(View.GONE);
+        	}catch(Exception ex)
+        	{
+        		if (DBG) log("updateCallTypeLabel : can not find the mCallTypeLabel !");
+        	}
         }
     }
 
@@ -1648,8 +1871,14 @@ public class CallCard extends FrameLayout
      * updateState() call sequence.
      */
     public void hideCallCardElements() {
-        mPrimaryCallInfo.setVisibility(View.GONE);
-        mSecondaryCallInfo.setVisibility(View.GONE);
+        //mPrimaryCallInfo.setVisibility(View.GONE);
+        mPhoto.setVisibility(View.GONE);
+        mManageConferenceUiButton.setVisibility(View.GONE);
+        mName.setVisibility(View.GONE);
+        mLabelAndNumber.setVisibility(View.GONE);
+//        launch performance start
+//        mSecondaryCallInfo.setVisibility(View.GONE);
+//        launch performance end
     }
 
     /*
@@ -1668,13 +1897,16 @@ public class CallCard extends FrameLayout
 
         switch (id) {
             case R.id.manageConferencePhotoButton:
+            /* Added by xingping.zheng start */
+            case R.id.manageConferenceUiButton:
+            /* Added by xingping.zheng end */
                 // A click on anything here gets forwarded
                 // straight to the InCallScreen.
                 mInCallScreen.handleOnscreenButtonClick(id);
                 break;
 
             default:
-                Log.w(LOG_TAG, "onClick: unexpected click: View " + view + ", id " + id);
+                if(DBG) Log.w(LOG_TAG, "onClick: unexpected click: View " + view + ", id " + id);
                 break;
         }
     }
@@ -1685,17 +1917,18 @@ public class CallCard extends FrameLayout
     // get pronounced by a screen reader, for example.)
     @Override
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        dispatchPopulateAccessibilityEvent(event, mUpperTopSimTitle);
-        dispatchPopulateAccessibilityEvent(event, mUpperTitle);
+//        dispatchPopulateAccessibilityEvent(event, mUpperTitle);
         dispatchPopulateAccessibilityEvent(event, mPhoto);
-        dispatchPopulateAccessibilityEvent(event, mManageConferencePhotoButton);
         dispatchPopulateAccessibilityEvent(event, mName);
-        dispatchPopulateAccessibilityEvent(event, mPhoneNumber);
-        dispatchPopulateAccessibilityEvent(event, mLabel);
         dispatchPopulateAccessibilityEvent(event, mSocialStatus);
-        dispatchPopulateAccessibilityEvent(event, mSecondaryCallName);
-        dispatchPopulateAccessibilityEvent(event, mSecondaryCallStatus);
-        dispatchPopulateAccessibilityEvent(event, mSecondaryCallPhoto);
+//        launch performance start
+//        dispatchPopulateAccessibilityEvent(event, mManageConferencePhotoButton);
+//        dispatchPopulateAccessibilityEvent(event, mPhoneNumber);
+//        dispatchPopulateAccessibilityEvent(event, mLabel);
+//        dispatchPopulateAccessibilityEvent(event, mSecondaryCallName);
+//        dispatchPopulateAccessibilityEvent(event, mSecondaryCallStatus);
+//        dispatchPopulateAccessibilityEvent(event, mSecondaryCallPhoto);
+//        launch performance end
         return true;
     }
 
@@ -1709,15 +1942,7 @@ public class CallCard extends FrameLayout
         }
     }
 
-    private String getSIMString(int phoneId) {
-        String ret = "SIM";
-        if (PhoneFactory.getPhoneCount() < 2) {
-            ret = "";
-        } else {
-            ret = "SIM" + (phoneId + 1);
-        }
-        return ret;
-    }
+
     // Debugging / testing code
 
     private void log(String msg) {

@@ -48,7 +48,6 @@
                 android:singleLine="true"
                 android:scrollHorizontally="true"
                 android:autoText="false"
-                android:maxLength="50"
                 android:capitalize="words" />
 
         </LinearLayout>
@@ -76,7 +75,6 @@
                 android:singleLine="true"
                 android:scrollHorizontally="true"
                 android:autoText="false"
-                android:maxLength="50"
                 android:capitalize="none" />
 
         </LinearLayout>

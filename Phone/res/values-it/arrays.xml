@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="language_list_values" translatable="false">
+		<item>Tulle le lingue</item>
+		<item>Tedesco</item>
+		<item>"Inglese"</item>
+		<item>Italiano</item>
+		<item>"Francese"</item>
+		<item>"Spagnolo"</item>
+		<item>Olandese</item>
+		<item>Svedese</item>
+		<item>Danese</item>
+		<item>Portoghese</item>
+		<item>Finlandese</item>
+		<item>Norvegese</item>
+		<item>Greco</item>
+		<item>Turco</item>
+		<item>Ungherese</item>
+		<item>Polacco</item>
+		<item>Altre</item>
+		<item>Ceco</item>
+		<item>Ebraico</item>
+		<item>Arabo</item>
+		<item>Russo</item>
+		<item>Islandese</item>
+	</string-array>
+	<string-array name="language_list_id" translatable="false">
+		<item>-1</item>
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+		<item>12</item>
+		<item>13</item>
+		<item>14</item>
+		<item>15</item>
+		<item>32</item>
+		<item>33</item>
+		<item>34</item>
+		<item>35</item>
+		<item>36</item>
+	</string-array>
+</resources>

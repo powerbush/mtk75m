@@ -25,23 +25,56 @@
         <LinearLayout
                 style="@style/info_layout"
                 android:orientation="vertical">
+            <LinearLayout
+                    android:id="@+id/puk_panel"
+                    style="@style/info_layout"
+                    android:orientation="vertical">
 
-            <TextView
+                <TextView android:id="@+id/puk2_label"
+                        style="@style/info_label"
+                        android:text="@string/label_puk2_code"/>
+                <TextView android:id="@+id/puk_retry_label"
+                        style="@style/info_label"/>
+
+                <EditText android:id="@+id/puk_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="True"
+                        android:password="true"
+                        android:numeric="integer"
+                        android:maxLength="8"/>
+                <TextView android:id="@+id/bad_puk"
+                        android:textColor="#FFFF0000"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dip"
+                        android:paddingTop="1dip"
+                        android:paddingRight="5dip"
+                        android:paddingBottom="1dip"/>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/old_pin_panel"
+                    style="@style/info_layout"
+                    android:orientation="vertical">
+                <TextView android:id="@+id/old_pin_label"
                     style="@style/info_label"
                     android:text="@string/oldPinLabel"/>
+                <TextView android:id="@+id/pin_retry_label"
+                        style="@style/info_label"/>
 
             <EditText android:id="@+id/old_pin"
                     android:maxLines="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollHorizontally="true"
-                    android:autoText="false"
-                    android:capitalize="none"
-                    android:password="true"/>
+                    android:singleLine="True"
+                    android:password="true"
+                    android:numeric="integer"
+                    android:maxLength="8"/>
 
             <TextView android:id="@+id/bad_pin"
-                    android:textSize="12sp"
-                    android:textColor="#FF888888"
+                    android:textColor="#FFFF0000"
                     android:visibility="gone"
                     android:text="@string/badPin"
                     android:layout_width="match_parent"
@@ -50,8 +83,13 @@
                     android:paddingTop="1dip"
                     android:paddingRight="5dip"
                     android:paddingBottom="1dip"/>
+           </LinearLayout>
 
-            <TextView
+           <LinearLayout
+                    style="@style/info_layout"
+                    android:orientation="vertical">
+
+            <TextView android:id="@+id/new_pin1_label"
                     style="@style/info_label"
                     android:text="@string/newPinLabel"/>
 
@@ -59,12 +97,12 @@
                     android:maxLines="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollHorizontally="true"
-                    android:autoText="false"
-                    android:capitalize="none"
-                    android:password="true"/>
+                    android:singleLine="True"
+                    android:password="true"
+                    android:numeric="integer"
+                    android:maxLength="8"/>
 
-            <TextView
+                <TextView android:id="@+id/new_pin2_label"
                     style="@style/info_label"
                     android:text="@string/confirmPinLabel"/>
 
@@ -72,10 +110,10 @@
                     android:maxLines="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollHorizontally="true"
-                    android:autoText="false"
-                    android:capitalize="none"
-                    android:password="true"/>
+                    android:singleLine="True"
+                    android:password="true"
+                    android:numeric="integer"
+                    android:maxLength="8"/>
 
             <TextView android:id="@+id/mismatch"
                     android:textSize="12sp"
@@ -93,33 +131,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/doneButton"/>
+            </LinearLayout>
                     
         </LinearLayout>
         
     </ScrollView>
     
-    <LinearLayout
-            android:id="@+id/puk_panel"
-            style="@style/info_layout"
-            android:visibility="gone"
-            android:orientation="vertical">
 
-        <TextView
-                style="@style/info_label"
-                android:text="@string/label_puk2_code"/>
-
-        <EditText android:id="@+id/puk_code"
-                android:maxLines="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollHorizontally="true"
-                android:autoText="false"
-                android:capitalize="none"
-                android:password="true"/>
-
-        <Button android:id="@+id/puk_submit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/doneButton"/>
-    </LinearLayout>
 </RelativeLayout>

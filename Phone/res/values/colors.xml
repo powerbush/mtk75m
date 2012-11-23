@@ -29,4 +29,11 @@
     <!-- DTMF Dialer -->
     <color name="dtmf_dialer_background">#333333</color> <!-- green -->
     <color name="dtmf_dialer_display_text">#FFFFFF</color> <!-- white -->
+    
+    <!-- added by xingping.zheng start -->
+    <color name="incall_status_color0">#202222</color>
+    <color name="incall_status_color1">#FFFFFF</color>
+    <!-- added by xingping.zheng end   -->
+    
+    <color name="white">#ffffffff</color>
 </resources>

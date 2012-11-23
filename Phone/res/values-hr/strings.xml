@@ -692,4 +692,15 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Za obavljanje internetskog poziva prvo provjerite internetsku vezu"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Morate se povezati s Wi-Fi mrežom za internetske pozive (upotrijebite postavke Bežično povezivanje &amp; Mreža)"</string>
     <string name="no_voip" msgid="8901474054537199865">"Internetski pozivi nisu podržani"</string>
+
+    <string name="activity_not_found">"Aplikacija nije instalirana na vašem telefonu."</string>
+
+
+<string name="sim_toolkit">"Alatni komplet za SIM"</string>
+
+<string name="simlock_returntocall">"Uzvrati poziv"</string>
+<string name="simlock_emergency">"Hitan poziv"</string>
+<string name="simlock_enterpincode">"Unesite PIN kôd"</string>
+
+
 </resources>

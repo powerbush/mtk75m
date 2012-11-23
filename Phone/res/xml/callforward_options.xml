@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-     xmlns:phone="http://schemas.android.com/apk/res/com.android.phone"
-     android:title="@string/call_forwarding_settings">
+     xmlns:phone="http://schemas.android.com/apk/res/com.android.phone">
 
 
     <!-- Note for all com.android.phone.EditPreference objects

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:phone="http://schemas.android.com/apk/res/com.android.phone"
+     android:title="@string/phone_setting">
+	
+	<ListView android:id="@+id/messages" 
+		android:layout_width="match_parent" 
+        android:layout_height="match_parent">
+	</ListView>
+<!-- 
+    <EditTextPreference
+    	android:key="button_defaultmessage_key"
+    	android:title="@string/default_message_label"
+   		android:persistent="true"
+     	android:dialogTitle="@string/default_message_title"
+      	phone:confirmMode="confirm"
+      	android:singleLine="false"
+       	android:autoText="false" />
+
+    <CheckBoxPreference
+        android:key="button_editmessage_key"
+        android:title="@string/edit_message_label"
+        android:persistent="true"
+        android:summaryOn="@string/edit_message_enabled"
+        android:summaryOff="@string/edit_message_disabled"/>
+        
+    <CheckBoxPreference
+        android:key="button_savecontact_key"
+        android:title="@string/save_contact_label"
+        android:persistent="false"
+        android:summaryOn="@string/save_contact_enabled"
+        android:summaryOff="@string/save_contact_disabled"/>
+-->
+</PreferenceScreen>

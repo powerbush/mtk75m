@@ -692,4 +692,13 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Per fer una trucada per Internet, en primer lloc comprova la connexió a Internet"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Has d\'estar connectat a una xarxa Wi-Fi per fer trucades per Internet (utilitza la configuració Wi-Fi i Xarxa)"</string>
     <string name="no_voip" msgid="8901474054537199865">"No s\'admeten les trucades per Internet"</string>
+
+    <string name="activity_not_found">"L\'aplicació no està instal·lada al telèfon."</string>
+
+<string name="sim_toolkit">"SIM Toolkit"</string>
+
+<string name="simlock_returntocall">"Torna a la trucada"</string>
+<string name="simlock_emergency">"Trucada d\'emergència"</string>
+<string name="simlock_enterpincode">"Introduïu el codi PIN"</string>
+
 </resources>

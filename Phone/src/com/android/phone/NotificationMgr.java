@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -16,34 +51,28 @@
 
 package com.android.phone;
 
-import com.android.internal.telephony.Call;
-import com.android.internal.telephony.CallManager;
-import com.android.internal.telephony.CallerInfo;
-import com.android.internal.telephony.CallerInfoAsyncQuery;
-import com.android.internal.telephony.CommandsInterface;
-import com.android.internal.telephony.Connection;
-import com.android.internal.telephony.Phone;
-import com.android.internal.telephony.PhoneBase;
-import com.android.internal.telephony.PhoneFactory;
-import com.android.internal.telephony.gsm.TDPhone;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.StatusBarManager;
 import android.content.AsyncQueryHandler;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.provider.CallLog.Calls;
 import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.PhoneNumberUtils;
@@ -53,14 +82,28 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.android.internal.telephony.Call;
+import com.android.internal.telephony.CallerInfo;
+import com.android.internal.telephony.CallerInfoAsyncQuery;
+import com.android.internal.telephony.Connection;
+import com.android.internal.telephony.Phone;
+import com.android.internal.telephony.PhoneBase;
+import com.android.internal.telephony.CallManager;
+import com.android.internal.telephony.IccCard;
+import android.provider.Telephony.SIMInfo;
+import android.app.NotificationManagerPlus;
+import android.app.NotificationPlus;
+
+import com.android.internal.telephony.gemini.GeminiPhone;
+import com.mediatek.featureoption.FeatureOption;
+import com.mediatek.telephony.PhoneNumberFormatUtilEx;
 
 /**
  * NotificationManager-related utility code for the Phone app.
  */
 public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteListener{
     private static final String LOG_TAG = "NotificationMgr";
-    private static final boolean DBG =
-            (PhoneApp.DBG_LEVEL >= 1) && (SystemProperties.getInt("ro.debuggable", 0) == 1);
+    private static final boolean DBG = true; //(PhoneApp.DBG_LEVEL >= 2);
 
     private static final String[] CALL_LOG_PROJECTION = new String[] {
         Calls._ID,
@@ -77,20 +120,17 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
     static final int NETWORK_SELECTION_NOTIFICATION = 4;
     static final int VOICEMAIL_NOTIFICATION = 5;
     static final int CALL_FORWARD_NOTIFICATION = 6;
-    static final int VIDEO_CALL_FORWARD_NOTIFICATION = 16;
     static final int DATA_DISCONNECTED_ROAMING_NOTIFICATION = 7;
     static final int SELECTED_OPERATOR_FAIL_NOTIFICATION = 8;
-    static final int SELECTED_SIM1_OPERATOR_FAIL_NOTIFICATION = 10;
-    static final int SELECTED_SIM2_OPERATOR_FAIL_NOTIFICATION = 11;
-    /** The singleton NotificationMgr instance. */
-    protected static NotificationMgr sInstance;
+    static final int SELECTED_OPERATOR_FAIL_NOTIFICATION_2 = 9;
+    static final int CALL_FORWARD_NOTIFICATION_EX = 10;
 
     private static NotificationMgr sMe = null;
     private Phone mPhone;
     private CallManager mCM;
 
-    protected Context mContext;
-    protected NotificationManager mNotificationManager;
+    private Context mContext;
+    private NotificationManager mNotificationMgr;
     private StatusBarManager mStatusBar;
     private StatusBarMgr mStatusBarMgr;
     private Toast mToast;
@@ -105,21 +145,49 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
     private int mInCallResId;
 
     // used to track the notification of selected network unavailable
-    private boolean mSelectedUnavailableNotify = false;
+    private int mSelectedUnavailableNotify = 0;
+    private static final int UNAVAILABLE_NOTIFY_SIM1 = 0x01;
+    private static final int UNAVAILABLE_NOTIFY_SIM2 = 0x02;
 
     // Retry params for the getVoiceMailNumber() call; see updateMwi().
-    protected static final int MAX_VM_NUMBER_RETRIES = 5;
-    protected static final int VM_NUMBER_RETRY_DELAY_MILLIS = 10000;
-    protected int mVmNumberRetriesRemaining = MAX_VM_NUMBER_RETRIES;
+    private static final int MAX_VM_NUMBER_RETRIES = 5;
+    private static final int VM_NUMBER_RETRY_DELAY_MILLIS = 10000;
+    private int mVmNumberRetriesRemaining = MAX_VM_NUMBER_RETRIES;
 
     // Query used to look up caller-id info for the "call log" notification.
     private QueryHandler mQueryHandler = null;
     private static final int CALL_LOG_TOKEN = -1;
     private static final int CONTACT_TOKEN = -2;
 
-    protected NotificationMgr(Context context) {
+    private boolean CALL_FORWARD_INDICATOR_SIM1 = false; /* 0 : disable, 0x01 : enable */ 
+    private boolean CALL_FORWARD_INDICATOR_SIM2 = false; /* 0 : disable, 0x01 : enable */ 
+ 
+    private static final String INTENTFORSIM1 = "com.android.notifysim1";
+    private static final String INTENTFORSIM2 = "com.android.notifysim2";
+    private static final String MISSEDCALL_INTENT = "com.android.phone.NotificationMgr.MissedCall_intent";
+    private static final String MISSECALL_EXTRA = "MissedCallNumber";
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver(){
+
+    public void onReceive(Context context, Intent intent) {
+	   String action = intent.getAction();
+           if(action.equals(INTENTFORSIM1)||action.equals(INTENTFORSIM2)){
+                  Intent simIntent = new Intent(Intent.ACTION_MAIN);
+                  simIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                 // Use NetworkSetting to handle the selection intent
+                  simIntent.setComponent(new ComponentName("com.android.phone",
+                  "com.android.phone.NetworkSetting"));
+                  Bundle bundle =intent.getExtras();
+                  if(bundle != null) {
+                      simIntent.putExtras(bundle);
+                      context.startActivity(simIntent);
+                  }
+              }
+	}
+    };
+
+    NotificationMgr(Context context) {
         mContext = context;
-        mNotificationManager = (NotificationManager)
+        mNotificationMgr = (NotificationManager)
             context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         mStatusBar = (StatusBarManager) context.getSystemService(Context.STATUS_BAR_SERVICE);
@@ -127,6 +195,13 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
         PhoneApp app = PhoneApp.getInstance();
         mPhone = app.phone;
         mCM = app.mCM;
+         if(FeatureOption.MTK_GEMINI_SUPPORT == true){
+	        IntentFilter filter=new IntentFilter();
+	        filter.addAction(INTENTFORSIM1);
+	        filter.addAction(INTENTFORSIM2);
+	        mContext.registerReceiver(mReceiver, filter);
+        }
+
     }
 
     static void init(Context context) {
@@ -221,7 +296,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
      * Makes sure phone-related notifications are up to date on a
      * freshly-booted device.
      */
-    protected void updateNotificationsAtStartup() {
+    private void updateNotificationsAtStartup() {
         if (DBG) log("updateNotificationsAtStartup()...");
 
         // instantiate query handler
@@ -237,9 +312,26 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
         mQueryHandler.startQuery(CALL_LOG_TOKEN, null, Calls.CONTENT_URI,  CALL_LOG_PROJECTION,
                 where.toString(), null, Calls.DEFAULT_SORT_ORDER);
 
-        // Update (or cancel) the in-call notification
-        if (DBG) log("- updating in-call notification at startup...");
+        // synchronize the in call notification
+
+        Phone.State state;
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+        {
+            state = mCM.getState();  // IDLE, RINGING, or OFFHOOK	
+        }
+        else
+        {
+            state = mCM.getState();  // IDLE, RINGING, or OFFHOOK
+        }	
+
+        if (state != Phone.State.OFFHOOK) {
+
+            if (DBG) log("Phone is idle, canceling notification.");
+            cancelInCall();
+        } else {
+            if (DBG) log("Phone is offhook, updating notification.");
         updateInCallNotification();
+        }
 
         // Depend on android.app.StatusBarManager to be set to
         // disable(DISABLE_NONE) upon startup.  This will be the
@@ -314,7 +406,12 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
                         }
 
                         if (DBG) log("closing call log cursor.");
-                        cursor.close();
+                        if (PhoneApp.getInstance().mWorkerHandler != null) {
+                            PhoneApp.getInstance().mWorkerHandler.sendMessage(
+                                    PhoneApp.getInstance().mWorkerHandler.obtainMessage(PhoneUtils.WorkerThread.CLOSE_CURSOR, cursor));
+                        } else {
+                            cursor.close();
+                        }
                     }
                     break;
                 case CONTACT_TOKEN:
@@ -336,7 +433,12 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
                         notifyMissedCall(n.name, n.number, n.label, n.date);
 
                         if (DBG) log("closing contact cursor.");
-                        cursor.close();
+                        if (PhoneApp.getInstance().mWorkerHandler != null) {
+                            PhoneApp.getInstance().mWorkerHandler.sendMessage(
+                                    PhoneApp.getInstance().mWorkerHandler.obtainMessage(PhoneUtils.WorkerThread.CLOSE_CURSOR, cursor));
+                        } else {
+                            cursor.close();
+                        }
                     }
                     break;
                 default:
@@ -374,10 +476,18 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
      * Configures a Notification to emit the blinky green message-waiting/
      * missed-call signal.
      */
-    protected static void configureLedNotification(Notification note) {
+    private static void configureLedNotification(Notification note) {
         note.flags |= Notification.FLAG_SHOW_LIGHTS;
         note.defaults |= Notification.DEFAULT_LIGHTS;
     }
+
+    private void sentMissedCallIntent()
+    {
+        Intent newIntent = new Intent(MISSEDCALL_INTENT);
+        newIntent.putExtra(MISSECALL_EXTRA, mNumberMissedCalls);
+        mContext.sendBroadcast(newIntent);
+    }
+
 
     /**
      * Displays a notification about a missed call.
@@ -429,14 +539,49 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
                 expandedText, // expandedText
                 intent // contentIntent
                 );
+        note.deleteIntent = PendingIntent.getBroadcast(mContext, 0,
+                                new Intent(PhoneApp.MISSEDCALL_DELETE_INTENT), 0);
+		
+     // add for CTA 5.3.3
+        //if (FeatureOption.MTK_CTA_SUPPORT) {
+            PendingIntent calllogIntent = PendingIntent.getBroadcast(mContext, 0, intent, 0);
+            NotificationPlus notiPlus = new NotificationPlus.Builder(mContext)
+                .setTitle(mContext.getString(titleResId))
+                    .setMessage(mContext.getString(R.string.notification_missedCallTicker, callName))
+                    .setPositiveButton(mContext.getString(R.string.ok), calllogIntent)
+                    .create();
+            NotificationManagerPlus.notify(1, notiPlus);
+        //}
+        
         configureLedNotification(note);
-        mNotificationManager.notify(MISSED_CALL_NOTIFICATION, note);
+        mNotificationMgr.notify(MISSED_CALL_NOTIFICATION, note);
+        sentMissedCallIntent();
     }
 
     void cancelMissedCallNotification() {
         // reset the number of missed calls to 0.
         mNumberMissedCalls = 0;
-        mNotificationManager.cancel(MISSED_CALL_NOTIFICATION);
+        mNotificationMgr.cancel(MISSED_CALL_NOTIFICATION);
+        sentMissedCallIntent();
+    }
+    private void resetNewCallsFlag() {
+        // Mark all "new" missed calls as not new anymore
+        StringBuilder where = new StringBuilder("type=");
+        where.append(Calls.MISSED_TYPE);
+        where.append(" AND new=1");
+        
+        ContentValues values = new ContentValues(1);
+        values.put(Calls.NEW, "0");
+        mContext.getContentResolver().update(Calls.CONTENT_URI,
+        	values, where.toString(), null);
+    }
+    
+    
+    void resetMissedCallNumber() {
+        // reset the number of missed calls to 0, not need to cancel notification yet.
+        mNumberMissedCalls = 0;
+        sentMissedCallIntent();
+        resetNewCallsFlag();
     }
 
     void notifySpeakerphone() {
@@ -460,7 +605,17 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
     void updateSpeakerNotification() {
         AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
-        if ((mCM.getState() == Phone.State.OFFHOOK) && audioManager.isSpeakerphoneOn()) {
+        Phone.State state;
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+        {
+            state = mCM.getState();  // IDLE, RINGING, or OFFHOOK	
+        }
+        else
+        {
+            state = mCM.getState();  // IDLE, RINGING, or OFFHOOK
+        }	
+
+        if ((state == Phone.State.OFFHOOK) && audioManager.isSpeakerphoneOn()) {
             if (DBG) log("updateSpeakerNotification: speaker ON");
             notifySpeakerphone();
         } else {
@@ -488,7 +643,18 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
      * the actual current mute state of the Phone.
      */
     void updateMuteNotification() {
-        if ((mCM.getState() == Phone.State.OFFHOOK) && PhoneUtils.getMute()) {
+
+        Phone.State state;
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+        {
+            state = mCM.getState();  // IDLE, RINGING, or OFFHOOK	
+        }
+        else
+        {
+            state = mCM.getState();  // IDLE, RINGING, or OFFHOOK
+        }	
+        if ((state == Phone.State.OFFHOOK) && PhoneUtils.getMute()) {
+			
             if (DBG) log("updateMuteNotification: MUTED");
             notifyMute();
         } else {
@@ -511,10 +677,10 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             return;
         }
 
-        final PhoneApp app = PhoneApp.getInstance();
         final boolean hasRingingCall = mCM.hasActiveRingingCall();
         final boolean hasActiveCall = mCM.hasActiveFgCall();
         final boolean hasHoldingCall = mCM.hasActiveBgCall();
+
         if (DBG) {
             log("  - hasRingingCall = " + hasRingingCall);
             log("  - hasActiveCall = " + hasActiveCall);
@@ -523,7 +689,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
 
         // Display the appropriate icon in the status bar,
         // based on the current phone and/or bluetooth state.
-
+        final PhoneApp app = PhoneApp.getInstance();
         boolean enhancedVoicePrivacy = app.notifier.getCdmaVoicePrivacyState();
         if (DBG) log("updateInCallNotification: enhancedVoicePrivacy = " + enhancedVoicePrivacy);
 
@@ -572,16 +738,26 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
         // from the foreground call.  And if there's a ringing call,
         // display that regardless of the state of the other calls.
 
+        Call ring_call, fg_call, bg_call;
+        
+        ring_call = mCM.getFirstActiveRingingCall();
+        fg_call = mCM.getActiveFgCall();
+        bg_call = mCM.getFirstActiveBgCall();			
+
         Call currentCall;
         if (hasRingingCall) {
-            currentCall = mCM.getFirstActiveRingingCall();
+            currentCall = ring_call;
         } else if (hasActiveCall) {
-            currentCall = mCM.getActiveFgCall();
+            currentCall = fg_call;
         } else {
-            currentCall = mCM.getFirstActiveBgCall();
+            currentCall = bg_call;
         }
-        Connection currentConn = currentCall.getEarliestConnection();
-
+        Connection currentConn;
+        if (null != currentCall) {
+            currentConn = currentCall.getEarliestConnection();
+        } else {
+            currentConn = null;
+        }
         Notification notification = new Notification();
         notification.icon = mInCallResId;
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
@@ -593,8 +769,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
         // call (see the "fullScreenIntent" field below).
         PendingIntent inCallPendingIntent =
                 PendingIntent.getActivity(mContext, 0,
-                                          PhoneApp.getInstance().createInCallIntent(
-                                          currentCall.getPhone().getPhoneId()), PendingIntent.FLAG_UPDATE_CURRENT);
+                                          PhoneApp.createInCallIntent(), 0);
         notification.contentIntent = inCallPendingIntent;
 
         // When expanded, the "Ongoing call" notification is (visually)
@@ -622,8 +797,25 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             //   Instead we start with the current connection's duration,
             // and translate that into the elapsedRealtime() timebase.
             long callDurationMsec = currentConn.getDurationMillis();
-            long chronometerBaseTime = SystemClock.elapsedRealtime() - callDurationMsec;
-
+            long chronometerBaseTime = 0l;
+    		if (true == FeatureOption.MTK_VT3G324M_SUPPORT ){
+    			if( currentConn.isVideo()
+    				&& VTCallUtils.VTTimingMode.VT_TIMING_SPECIAL == PhoneApp.getInstance().getVTTimingMode()) {
+	    			if ( false == VTInCallScreenFlags.getInstance().mVTInTiming
+	    				 || VTInCallScreenFlags.getInstance().mVTConnectionStarttime.mStarttime < 0) {
+	    				callDurationMsec = 0;
+	    			}
+	    			else
+	    				chronometerBaseTime = VTInCallScreenFlags.getInstance().mVTConnectionStarttime.mStarttime;
+    			} else if( currentConn.isVideo()
+        				   && VTCallUtils.VTTimingMode.VT_TIMING_NONE == PhoneApp.getInstance().getVTTimingMode()){
+    				callDurationMsec = 0;
+    			} else {
+    				chronometerBaseTime = SystemClock.elapsedRealtime() - callDurationMsec;
+    			}
+    		} else {
+    			chronometerBaseTime = SystemClock.elapsedRealtime() - callDurationMsec;
+    		}
             // Line 1 of the expanded view (in bold text):
             String expandedViewLine1;
             if (hasRingingCall) {
@@ -640,15 +832,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             } else {
                 // Normal ongoing call.
                 // Format string with a "%s" where the current call time should go.
-                
-                //add by chengyake for NEWMS00123344 Friday, November 04 2011 begin
-                if (mPhone.getForegroundCall().getState() == Call.State.DIALING
-                        || mPhone.getForegroundCall().getState() == Call.State.ALERTING){
-                    expandedViewLine1 = mContext.getString(R.string.ongoing); //notification_ongoing_call_format);
-                } else {
-                    expandedViewLine1 = mContext.getString(R.string.notification_ongoing_call_format);
-                }
-                //add by chengyake for NEWMS00123344 Friday, November 04 2011 end
+                expandedViewLine1 = mContext.getString(R.string.notification_ongoing_call_format);
             }
 
             if (DBG) log("- Updating expanded view: line 1 '" + /*expandedViewLine1*/ "xxxxxxx" + "'");
@@ -656,10 +840,18 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             // Text line #1 is actually a Chronometer, not a plain TextView.
             // We format the elapsed time of the current call into a line like
             // "Ongoing call (01:23)".
-            contentView.setChronometer(R.id.text1,
+            if (0 == callDurationMsec)
+            {
+                contentView.setTextViewText(R.id.text1, 
+                                            mContext.getString(R.string.ongoing));
+            }
+            else
+            {
+                contentView.setChronometer(R.id.text1,
                                        chronometerBaseTime,
                                        expandedViewLine1,
                                        true);
+            }
         } else if (DBG) {
             Log.w(LOG_TAG, "updateInCallNotification: null connection, can't set exp view line 1.");
         }
@@ -674,10 +866,10 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
         // checks for isConferenceCall, so we need to think about
         // possibly including this in startGetCallerInfo or some other
         // common point.
-        if (PhoneUtils.isConferenceCall(currentCall)) {
+        if (null != currentCall && PhoneUtils.isConferenceCall(currentCall)) {
             // if this is a conference call, just use that as the caller name.
             expandedViewLine2 = mContext.getString(R.string.card_title_conf_call);
-        } else {
+        } else if (null != currentCall) {
             // If necessary, start asynchronous query to do the caller-id lookup.
             PhoneUtils.CallerInfoToken cit =
                 PhoneUtils.startGetCallerInfo(mContext, currentCall, this, this);
@@ -730,17 +922,17 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             // TODO: there should be a cleaner way of avoiding this
             // problem (see discussion in bug 3184149.)
             Call ringingCall = mCM.getFirstActiveRingingCall();
-            if ((ringingCall.getState() == Call.State.WAITING) && !app.isShowingCallScreen()) {
+            if (null != ringingCall && (ringingCall.getState() == Call.State.WAITING) && !app.isShowingCallScreen()) {
                 Log.i(LOG_TAG, "updateInCallNotification: call-waiting! force relaunch...");
                 // Cancel the IN_CALL_NOTIFICATION immediately before
                 // (re)posting it; this seems to force the
                 // NotificationManager to launch the fullScreenIntent.
-                mNotificationManager.cancel(IN_CALL_NOTIFICATION);
+                mNotificationMgr.cancel(IN_CALL_NOTIFICATION);
             }
         }
 
         if (DBG) log("Notifying IN_CALL_NOTIFICATION: " + notification);
-        mNotificationManager.notify(IN_CALL_NOTIFICATION,
+        mNotificationMgr.notify(IN_CALL_NOTIFICATION,
                                 notification);
 
         // Finally, refresh the mute and speakerphone notifications (since
@@ -783,7 +975,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
         if (DBG) log("cancelInCall()...");
         cancelMute();
         cancelSpeakerphone();
-        mNotificationManager.cancel(IN_CALL_NOTIFICATION);
+        mNotificationMgr.cancel(IN_CALL_NOTIFICATION);
         mInCallResId = 0;
     }
 
@@ -802,8 +994,14 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
      *
      * @param visible true if there are messages waiting
      */
-    /* package */ void updateMwi(boolean visible) {
+    /* package */ void updateMwi(boolean visible, int simId) {
         if (DBG) log("updateMwi(): " + visible);
+        if (DBG) log("updateMwi(): " + visible +"simId:" + simId);
+
+        Notification notification=null;
+        Intent intent = null;
+        PendingIntent pendingIntent = null;
+		
         if (visible) {
             int resId = android.R.drawable.stat_notify_voicemail;
 
@@ -817,8 +1015,21 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             // is supposed to be visible, just show a single generic
             // notification.
 
-            String notificationTitle = mContext.getString(R.string.notification_voicemail_title);
-            String vmNumber = mPhone.getVoiceMailNumber();
+            //String notificationTitle = mContext.getString(R.string.notification_voicemail_title);
+            
+            String notificationTitle = mContext.getString(R.string.notification_voicemail);
+
+            String vmNumber;
+
+            if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+            {		 
+                vmNumber = ((GeminiPhone)mPhone).getVoiceMailNumberGemini(simId);
+            }
+            else
+            {		 
+                vmNumber = mPhone.getVoiceMailNumber();
+            }
+
             if (DBG) log("- got vm number: '" + vmNumber + "'");
 
             // Watch out: vmNumber may be null, for two possible reasons:
@@ -836,7 +1047,18 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             // So handle case (2) by retrying the lookup after a short
             // delay.
 
-            if ((vmNumber == null) && !mPhone.getIccRecordsLoaded()) {
+            boolean iccRecordloaded=false;
+
+            if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+            {		 
+                iccRecordloaded = ((GeminiPhone)mPhone).getIccRecordsLoadedGemini(simId);
+            }
+            else
+            {		 
+                iccRecordloaded = mPhone.getIccRecordsLoaded();
+            }
+			
+            if ((vmNumber == null) && !iccRecordloaded) {
                 if (DBG) log("- Null vm number: SIM records not loaded (yet)...");
 
                 // TODO: rather than retrying after an arbitrary delay, it
@@ -853,7 +1075,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
                 if (mVmNumberRetriesRemaining-- > 0) {
                     if (DBG) log("  - Retrying in " + VM_NUMBER_RETRY_DELAY_MILLIS + " msec...");
                     PhoneApp.getInstance().notifier.sendMwiChangedDelayed(
-                            VM_NUMBER_RETRY_DELAY_MILLIS);
+                            VM_NUMBER_RETRY_DELAY_MILLIS, simId);
                     return;
                 } else {
                     Log.w(LOG_TAG, "NotificationMgr.updateMwi: getVoiceMailNumber() failed after "
@@ -863,27 +1085,45 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
                 }
             }
 
-            if (TelephonyCapabilities.supportsVoiceMessageCount(mPhone)) {
+          /*if (TelephonyCapabilities.supportsVoiceMessageCount(mPhone)) {
                 int vmCount = mPhone.getVoiceMessageCount();
                 String titleFormat = mContext.getString(R.string.notification_voicemail_title_count);
                 notificationTitle = String.format(titleFormat, vmCount);
-            }
+            }*/
 
             String notificationText;
-            if (TextUtils.isEmpty(vmNumber)) {
+            notificationText = mContext.getString(R.string.notification_voicemail_title);
+/*            if (TextUtils.isEmpty(vmNumber)) {
                 notificationText = mContext.getString(
                         R.string.notification_voicemail_no_vm_number);
             } else {
                 notificationText = String.format(
                         mContext.getString(R.string.notification_voicemail_text_format),
-                        PhoneNumberUtils.formatNumber(vmNumber));
+                        PhoneNumberFormatUtilEx.formatNumber(vmNumber)PhoneNumberUtils.formatNumber(vmNumber));
+            }*/
+
+            /*intent = new Intent(Intent.ACTION_CALL,
+                    Uri.fromParts("voicemail", "", null));*/
+            intent = new Intent();
+            if (!TextUtils.isEmpty(vmNumber)) {
+                intent.putExtra("voicemail_number", vmNumber);
+            } else {
+            	intent.putExtra("voicemail_number", "");
             }
 
-            Intent intent = new Intent(Intent.ACTION_CALL,
-                    Uri.fromParts("voicemail", "", null));
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+            /*intent = new Intent(Intent.ACTION_CALL,
+                    Uri.fromParts("voicemail", "", null));*/
 
-            Notification notification = new Notification(
+	    intent.setComponent(new ComponentName("com.android.phone", "com.android.phone.VoicemailDialog"));
+
+            log("updateMwi(): new intent CALL, simId: " + simId);
+			
+            intent.putExtra(Phone.GEMINI_SIM_ID_KEY, simId);
+			
+            pendingIntent = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+            notification = new Notification(
                     resId,  // icon
                     null, // tickerText
                     System.currentTimeMillis()  // Show the time the MWI notification came in,
@@ -896,43 +1136,50 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
                     notificationText,  // contentText
                     pendingIntent  // contentIntent
                     );
+            notification.simId = getSimId(simId);
+            notification.simInfoType = 3;
             notification.defaults |= Notification.DEFAULT_SOUND;
             notification.flags |= Notification.FLAG_NO_CLEAR;
             configureLedNotification(notification);
-            mNotificationManager.notify(VOICEMAIL_NOTIFICATION, notification);
+            mNotificationMgr.notify(VOICEMAIL_NOTIFICATION, notification);
         } else {
-            mNotificationManager.cancel(VOICEMAIL_NOTIFICATION);
+            mNotificationMgr.cancel(VOICEMAIL_NOTIFICATION);
         }
+    }
+    
+    private long getSimId(int slot) {
+        SIMInfo info = SIMInfoWrapper.getDefault().getSimInfoBySlot(slot);//SIMInfo.getSIMInfoBySlot(PhoneApp.getInstance().getApplicationContext(), slot);
+        if (info != null) {
+            return info.mSimId;
+        }
+        
+        return -1;
     }
 
     /**
      * Updates the message call forwarding indicator notification.
      *
      * @param visible true if there are messages waiting
-     */
-    /* package */ void updateCfi(boolean visible) {
-        if (DBG) log("updateCfi(): " + visible);
-        updateCfi(visible, CommandsInterface.SERVICE_CLASS_VOICE);
-    }
-
-    /**
-     * updateCfi by serviceClass
-     * @param visible
-     * @param serviceClass
-     */
-    void updateCfi(boolean visible, int serviceClass) {
-        if (DBG) log("updateCfi(): " + visible + ",serviceClass:" + serviceClass);
-        int notificationId = CALL_FORWARD_NOTIFICATION;
-        int iconId = R.drawable.stat_sys_phone_call_forward;
-        String intentClassName = "com.android.phone.GsmUmtsCallForwardOptions";
-        String expandedTitle = mContext.getString(R.string.labelCF);
-        //for video call forwarding
-        if (TDPhone.SERVICE_CLASS_VIDEO == serviceClass) {
-            notificationId = VIDEO_CALL_FORWARD_NOTIFICATION;
-            iconId = R.drawable.stat_sys_phone_video_call_forward;
-            intentClassName = "com.android.phone.VideoPhoneCallForwardOptions";
-            expandedTitle = mContext.getString(R.string.videophone_callforward_setting_title);
+     */    
+    /* package */ void updateCfi(boolean visible, int simId) {
+        if (DBG) log("updateCfi(): " + visible +"simId:" + simId);
+        int notifyId = CALL_FORWARD_NOTIFICATION;
+        Notification notification=null;
+        
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+        {
+            if (simId == Phone.GEMINI_SIM_1)
+            {
+                CALL_FORWARD_INDICATOR_SIM1 = true;
+            }
+            else if (simId == Phone.GEMINI_SIM_2)
+            {
+                CALL_FORWARD_INDICATOR_SIM2 = true;
+                notifyId = CALL_FORWARD_NOTIFICATION_EX;
+            }
+            log("CALL_FORWARD_INDICATOR - sim1: " + CALL_FORWARD_INDICATOR_SIM1 +",sim2:"+CALL_FORWARD_INDICATOR_SIM2); 
         }
+            
         if (visible) {
             // If Unconditional Call Forwarding (forward all calls) for VOICE
             // is enabled, just show a notification.  We'll default to expanded
@@ -945,52 +1192,78 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             // effort though, since there are multiple layers of messages that
             // will need to propagate that information.
 
-            Notification notification;
             final boolean showExpandedNotification = true;
             if (showExpandedNotification) {
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setClassName("com.android.phone", intentClassName);
 
+                /*if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+                {
+                    intent.setClassName("com.android.phone",
+                        "com.android.phone.DualSimCallSetting");
+                }
+                else
+                {        
+                intent.setClassName("com.android.phone",
+                        "com.android.phone.CallFeaturesSetting");
+                }*/
+                
+                //For enhancement, we always take user to the call feature setting
+                intent.setClassName("com.android.phone",
+                                 "com.android.phone.CallFeaturesSetting");
+
+                intent.putExtra(Phone.GEMINI_SIM_ID_KEY, simId);
+          
                 notification = new Notification(
-                        mContext,  // context
-                        iconId,  // icon
-                        null, // tickerText
-                        0,  // The "timestamp" of this notification is meaningless;
-                            // we only care about whether CFI is currently on or not.
-                        expandedTitle, // expandedTitle
-                        mContext.getString(R.string.sum_cfu_enabled_indicator),  // expandedText
-                        intent // contentIntent
-                        );
-
+                            mContext,  // context
+                            android.R.drawable.stat_sys_phone_call_forward,  // icon
+                            null, // tickerText
+                            0,  // The "timestamp" of this notification is meaningless;
+                                // we only care about whether CFI is currently on or not.
+                            mContext.getString(R.string.labelCF), // expandedTitle
+                            mContext.getString(R.string.sum_cfu_enabled_indicator),  // expandedText
+                            intent // contentIntent
+                            );
+                       
             } else {
                 notification = new Notification(
-                        iconId,  // icon
+                            android.R.drawable.stat_sys_phone_call_forward,  // icon
                         null,  // tickerText
                         System.currentTimeMillis()  // when
                         );
             }
 
             notification.flags |= Notification.FLAG_ONGOING_EVENT;  // also implies FLAG_NO_CLEAR
-
-            mNotificationManager.notify(
-                    notificationId,
+            notification.simId = getSimId(simId);
+            notification.simInfoType = 3;
+            mNotificationMgr.notify(
+                    notifyId,
                     notification);
         } else {
-            mNotificationManager.cancel(notificationId);
+            mNotificationMgr.cancel(notifyId);
         }
     }
+
+    
 
     /**
      * Shows the "data disconnected due to roaming" notification, which
      * appears when you lose data connectivity because you're roaming and
      * you have the "data roaming" feature turned off.
      */
-    /* package */ void showDataDisconnectedRoaming() {
+    /* package */ void showDataDisconnectedRoaming(int simId) {
         if (DBG) log("showDataDisconnectedRoaming()...");
-
-        Intent intent = new Intent(mContext,
+        Intent intent = null;
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+        {
+            intent = new Intent();
+            intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.gemini.SimDataRoamingSettings"));
+        }
+        else
+        {
+            intent = new Intent(mContext,
                                    Settings.class);  // "Mobile network settings" screen
+        }
 
         Notification notification = new Notification(
                 mContext,  // context
@@ -1001,7 +1274,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
                 mContext.getString(R.string.roaming_reenable_message),  // expandedText
                 intent // contentIntent
                 );
-        mNotificationManager.notify(
+        mNotificationMgr.notify(
                 DATA_DISCONNECTED_ROAMING_NOTIFICATION,
                 notification);
     }
@@ -1011,18 +1284,29 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
      */
     /* package */ void hideDataDisconnectedRoaming() {
         if (DBG) log("hideDataDisconnectedRoaming()...");
-        mNotificationManager.cancel(DATA_DISCONNECTED_ROAMING_NOTIFICATION);
+        mNotificationMgr.cancel(DATA_DISCONNECTED_ROAMING_NOTIFICATION);
     }
 
     /**
      * Display the network selection "no service" notification
      * @param operator is the numeric operator number
      */
-    private void showNetworkSelection(String operator, int phoneId) {
-        if (DBG) log("showNetworkSelection(" + operator + ")..."+"phoneId="+ phoneId);
+    private void showNetworkSelection(String operator, int simId) {
+        if (DBG) log(((simId==Phone.GEMINI_SIM_1)?"SIM1":"SIM2")+" showNetworkSelection(" + operator + ")...");
 
-        String titleText = mContext.getString(
-                R.string.notification_network_selection_title, String.valueOf(phoneId+1));
+        int notificationId = SELECTED_OPERATOR_FAIL_NOTIFICATION;
+        String titleText = mContext.getString(R.string.notification_network_selection_title);
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true) {
+            if (simId == Phone.GEMINI_SIM_1) {
+                //titleText = "SIM1 - " + mContext.getString(R.string.notification_network_selection_title);
+            } else {
+                //titleText = "SIM2 - " + mContext.getString(R.string.notification_network_selection_title);
+                notificationId = SELECTED_OPERATOR_FAIL_NOTIFICATION_2;
+            }
+        }else{
+        	titleText = mContext.getString(
+                R.string.notification_network_selection_title);
+        }
         String expandedText = mContext.getString(
                 R.string.notification_network_selection_text, operator);
 
@@ -1032,29 +1316,48 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         notification.tickerText = null;
 
+        Intent intent = new Intent();
+        PendingIntent pi;
+        if(FeatureOption.MTK_GEMINI_SUPPORT == true){
+            if (simId == Phone.GEMINI_SIM_1) {
+                intent.setAction(INTENTFORSIM1);
+                intent.putExtra(Phone.GEMINI_SIM_ID_KEY, simId);
+                pi = PendingIntent.getBroadcast(mContext,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            } else {
+                intent.setAction(INTENTFORSIM2);
+                intent.putExtra(Phone.GEMINI_SIM_ID_KEY, simId);
+                pi = PendingIntent.getBroadcast(mContext,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+            }
+        }
+       else{
         // create the target network operators settings intent
-        Intent intent = new Intent(Intent.ACTION_MAIN);
+           intent.setAction(Intent.ACTION_MAIN);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        Bundle mbundle = new Bundle();
-        mbundle.putInt("sub_id", phoneId);
-        intent.putExtras(mbundle);
         // Use NetworkSetting to handle the selection intent
         intent.setComponent(new ComponentName("com.android.phone",
                 "com.android.phone.NetworkSetting"));
-        PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent, 0);
-
+        intent.putExtra(Phone.GEMINI_SIM_ID_KEY, simId);
+           pi = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        notification.simId = getSimId(simId);
+        notification.simInfoType = 3;
         notification.setLatestEventInfo(mContext, titleText, expandedText, pi);
 
-        mNotificationManager.notify((SELECTED_SIM1_OPERATOR_FAIL_NOTIFICATION + phoneId), notification);
+        mNotificationMgr.notify(notificationId, notification);
     }
 
     /**
      * Turn off the network selection "no service" notification
      */
-    private void cancelNetworkSelection(int phoneId) {
+    private void cancelNetworkSelection(int simId) {
         if (DBG) log("cancelNetworkSelection()...");
-        mNotificationManager.cancel((SELECTED_SIM1_OPERATOR_FAIL_NOTIFICATION + phoneId));
+
+        if (simId == Phone.GEMINI_SIM_1) {
+        mNotificationMgr.cancel(SELECTED_OPERATOR_FAIL_NOTIFICATION);
+        } else {
+            mNotificationMgr.cancel(SELECTED_OPERATOR_FAIL_NOTIFICATION_2);
+        }
     }
 
     /**
@@ -1062,33 +1365,71 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
      *
      * @param serviceState Phone service state
      */
-    void updateNetworkSelection(int serviceState, int phoneId) {
-        if (TelephonyCapabilities.supportsNetworkSelection(PhoneFactory.getPhones()[phoneId])) {
+    void updateNetworkSelection(int serviceState, int simId) {
+        if (mPhone.getPhoneType() == Phone.PHONE_TYPE_GSM) {
             // get the shared preference of network_selection.
             // empty is auto mode, otherwise it is the operator alpha name
             // in case there is no operator name, check the operator numeric
             SharedPreferences sp =
                     PreferenceManager.getDefaultSharedPreferences(mContext);
-            String networkSelection =
-                    sp.getString(PhoneFactory.getSetting(PhoneBase.NETWORK_SELECTION_NAME_KEY, phoneId), "");
-            if (TextUtils.isEmpty(networkSelection)) {
-                networkSelection =
-                        sp.getString(PhoneFactory.getSetting(PhoneBase.NETWORK_SELECTION_KEY, phoneId), "");
+            
+            String networkSelection;
+            if (simId == Phone.GEMINI_SIM_1) {
+                networkSelection = sp.getString(PhoneBase.NETWORK_SELECTION_NAME_KEY, "");
+            } else {
+                networkSelection = sp.getString(PhoneBase.NETWORK_SELECTION_NAME_KEY_2, "");
             }
-            boolean hasSim=PhoneFactory.isCardExist(phoneId);
-            if (DBG) log("simCardIsExit"+phoneId+"="+hasSim+"updateNetworkSelection()..." + "state = " +
+            
+            if (TextUtils.isEmpty(networkSelection)) {
+                if (simId == Phone.GEMINI_SIM_1) {
+                    networkSelection = sp.getString(PhoneBase.NETWORK_SELECTION_KEY, "");
+                } else {
+                    networkSelection = sp.getString(PhoneBase.NETWORK_SELECTION_KEY_2, "");
+                }
+            }
+
+            if (DBG) log("updateNetworkSelection()..." + "state = " +
                     serviceState + " new network " + networkSelection);
 
             if (serviceState == ServiceState.STATE_OUT_OF_SERVICE
                     && !TextUtils.isEmpty(networkSelection)) {
-                if (!mSelectedUnavailableNotify) {
-                    showNetworkSelection(networkSelection, phoneId);
-                    mSelectedUnavailableNotify = true;
+                IccCard sim;
+
+                if (FeatureOption.MTK_GEMINI_SUPPORT != true) {
+                    sim = mPhone.getIccCard();
+                } else {
+                    sim = ((GeminiPhone)mPhone).getIccCardGemini(simId);
+                }
+
+                // [ALPS00127132]
+                // Only when SIM ready, alert network service notification
+                if (sim.getState() != IccCard.State.READY) {
+                    log("SIM" + ((simId==Phone.GEMINI_SIM_1)?"1":"2") + " not ready, don't alert network service notification");
+                    return;
+                }
+                
+                if (simId == Phone.GEMINI_SIM_1) {
+                    if ((mSelectedUnavailableNotify & UNAVAILABLE_NOTIFY_SIM1) == 0) {
+                        showNetworkSelection(networkSelection, simId);
+                        mSelectedUnavailableNotify = (mSelectedUnavailableNotify | UNAVAILABLE_NOTIFY_SIM1);
+                    }
+                } else {
+                    if ((mSelectedUnavailableNotify & UNAVAILABLE_NOTIFY_SIM2) == 0) {
+                        showNetworkSelection(networkSelection, simId);
+                        mSelectedUnavailableNotify = (mSelectedUnavailableNotify | UNAVAILABLE_NOTIFY_SIM2);
+                    }
                 }
             } else {
-                if (mSelectedUnavailableNotify) {
-                    cancelNetworkSelection(phoneId);
-                    mSelectedUnavailableNotify = false;
+                if (simId == Phone.GEMINI_SIM_1) {            
+                    if ((mSelectedUnavailableNotify & UNAVAILABLE_NOTIFY_SIM1) > 0) {
+                        cancelNetworkSelection(simId);
+                        mSelectedUnavailableNotify = (mSelectedUnavailableNotify & (~UNAVAILABLE_NOTIFY_SIM1));
+                    }
+                } else {
+                    if ((mSelectedUnavailableNotify & UNAVAILABLE_NOTIFY_SIM2) > 0) {
+                        cancelNetworkSelection(simId);
+                        mSelectedUnavailableNotify = (mSelectedUnavailableNotify & (~UNAVAILABLE_NOTIFY_SIM2));
+                    }
                 }
             }
         }
@@ -1099,7 +1440,7 @@ public class NotificationMgr implements CallerInfoAsyncQuery.OnQueryCompleteList
             mToast.cancel();
         }
 
-        mToast = Toast.makeText(mContext, msg, Toast.LENGTH_SHORT);
+        mToast = Toast.makeText(mContext, msg, Toast.LENGTH_LONG);
         mToast.show();
     }
 

@@ -52,33 +52,13 @@
     <!-- Onscreen "Dial" button, used on all platforms by
          default. Its usage can be disabled using resources (see
          config.xml.) -->
-    <!-- <ImageButton android:id="@+id/dialButton"
+    <ImageButton android:id="@+id/dialButton"
         android:layout_width="116dip"
         android:layout_height="50dip"
         android:layout_gravity="center_vertical|top"
         android:state_enabled="false"
         android:background="@drawable/btn_dial_action"
-        android:src="@drawable/ic_dial_action_call" /> -->
-
-	<RelativeLayout
-            android:layout_width="fill_parent" android:layout_height="58dip" 
-            android:layout_gravity="center_horizontal"  
-            android:background="@drawable/btn_dial_action_middle_normal"
-            android:id="@+id/emergency_button_layout" android:gravity="center">
-            <Button
-                android:id="@+id/emergency_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_emergency"
-                android:paddingLeft="15dip"
-                android:paddingRight="15dip"
-                android:background="@drawable/emergency_button_background"
-                android:drawablePadding="15dip"
-                android:textSize="20dip"
-                android:text="@string/emergency_call"
-                />
-        </RelativeLayout>
-
+        android:src="@drawable/ic_dial_action_call" />
 
     <!-- Onscreen "Backspace/Delete" button
          The width is 75 (from the mocks) + 12 of padding from the

@@ -1,4 +1,51 @@
-<?xml version="1.0"  encoding="utf-8"?>
-<resources
-xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="language_list_values" translatable="false">
+		<item>Mọi ngôn ngữ</item>
+    <item>Tiếng Đức</item>
+    <item>Tiếng Anh</item>
+    <item>Tiếng Ý</item>
+    <item>Tiếng Pháp</item>
+    <item>T.TBNha</item>
+    <item>T.Hà Lan</item>
+    <item>Tiếng T.Điển</item>
+    <item>Tiếng ĐMạch</item>
+    <item>T.Bđnha</item>
+    <item>Tiếng P.Lan</item>
+    <item>Tiếng Nauy</item>
+    <item>T.Hy Lạp</item>
+    <item>Tiếng TNKỳ</item>
+    <item>Tiếng Hungari</item>
+    <item>T.Ba Lan</item>
+    <item>Khác</item>
+    <item>Tiếng Séc</item>
+    <item>T.Do Thái</item>
+    <item>T.Ả Rập</item>
+    <item>Tiếng Nga</item>
+    <item>Tiếng Aixơlen</item>
+	</string-array>
+	<string-array name="language_list_id" translatable="false">
+		<item>-1</item>
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+		<item>7</item>
+		<item>8</item>
+		<item>9</item>
+		<item>10</item>
+		<item>11</item>
+		<item>12</item>
+		<item>13</item>
+		<item>14</item>
+		<item>15</item>
+		<item>32</item>
+		<item>33</item>
+		<item>34</item>
+		<item>35</item>
+		<item>36</item>
+	</string-array>
 </resources>

@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *
@@ -18,6 +53,7 @@ package com.android.phone;
 
 import android.app.Service;
 import android.content.Intent;
+import com.android.internal.telephony.gemini.GeminiPhone;
 import com.android.internal.telephony.gsm.NetworkInfo;
 import android.os.AsyncResult;
 import android.os.Binder;
@@ -28,11 +64,9 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.PhoneFactory;
-import android.util.Log;
-
+import com.mediatek.featureoption.FeatureOption;
+import com.mediatek.xlog.Xlog;
 import java.util.ArrayList;
-
-import static com.android.internal.telephony.MsmsConstants.SUBSCRIPTION_KEY;
 
 /**
  * Service code used to assist in querying the network for service
@@ -40,11 +74,13 @@ import static com.android.internal.telephony.MsmsConstants.SUBSCRIPTION_KEY;
  */
 public class NetworkQueryService extends Service {
     // debug data
-    private static final String LOG_TAG = "NetworkQuery";
-    private static final boolean DBG = false;
+    private static final String LOG_TAG = "Settings/NetworkQuery";
+    private static final boolean DBG = true;
 
     // static events
     private static final int EVENT_NETWORK_SCAN_COMPLETED = 100; 
+    //mtk80908, add for dual SIM mode 
+    private static final int EVENT_NETWORK_SCAN_COMPLETED_2 = 101;
     
     // static states indicating the query status of the service 
     private static final int QUERY_READY = -1;
@@ -59,6 +95,9 @@ public class NetworkQueryService extends Service {
     
     /** local handle to the phone object */
     private Phone mPhone;
+    private GeminiPhone mGeminiPhone;
+    private int mSimId = -1;
+    private boolean _GEMINI_PHONE = false;
     
     /**
      * Class for clients to access.  Because we know this service always
@@ -83,9 +122,33 @@ public class NetworkQueryService extends Service {
                 // if the scan is complete, broadcast the results.
                 // to all registerd callbacks.
                 case EVENT_NETWORK_SCAN_COMPLETED:
+                	//mtk80908 add begin
+                    if (DBG) log("EVENT_NETWORK_SCAN_COMPLETED--mSimId:"+mSimId);
+                    if(_GEMINI_PHONE && mSimId == Phone.GEMINI_SIM_2){
+                    	if (DBG) log("SIM2 receives the query result of SIM1");
+                    	mState = QUERY_READY;
+                    	mGeminiPhone.getAvailableNetworksGemini(mHandler.obtainMessage(EVENT_NETWORK_SCAN_COMPLETED_2), mSimId);
+                    	mState = QUERY_IS_RUNNING;
+                    	return;
+                    }
+                    //mtk80908 add end
                     if (DBG) log("scan completed, broadcasting results");
                     broadcastQueryResults((AsyncResult) msg.obj);
                     break;
+                    //mtk80908 add begin
+                case EVENT_NETWORK_SCAN_COMPLETED_2:
+                    if (DBG) log("EVENT_NETWORK_SCAN_COMPLETED_2--mSimId:"+mSimId);
+                	if(_GEMINI_PHONE && mSimId == Phone.GEMINI_SIM_1){
+                		if (DBG) log("SIM1 receives the query result of SIM2");
+                    	mState = QUERY_READY;
+                    	mGeminiPhone.getAvailableNetworksGemini(mHandler.obtainMessage(EVENT_NETWORK_SCAN_COMPLETED), mSimId);
+                    	mState = QUERY_IS_RUNNING; 
+                    	return;
+                	}
+                	if (DBG) log("scan completed, broadcasting results.");
+                	 broadcastQueryResults((AsyncResult) msg.obj);
+                	break;
+                	//mtk80908 add end
             }
         }
     };
@@ -120,8 +183,17 @@ public class NetworkQueryService extends Service {
                         case QUERY_READY:
                             // TODO: we may want to install a timeout here in case we
                             // do not get a timely response from the RIL.
+			    if (_GEMINI_PHONE) {
+			    	//mtk80908
+			    	if(mSimId == Phone.GEMINI_SIM_2)
+			    	    mGeminiPhone.getAvailableNetworksGemini(mHandler.obtainMessage(EVENT_NETWORK_SCAN_COMPLETED_2), mSimId);
+			    	else
+			    		mGeminiPhone.getAvailableNetworksGemini(mHandler.obtainMessage(EVENT_NETWORK_SCAN_COMPLETED), mSimId);
+			    		
+			    } else {
                             mPhone.getAvailableNetworks(
                                     mHandler.obtainMessage(EVENT_NETWORK_SCAN_COMPLETED));
+			    }
                             mState = QUERY_IS_RUNNING;
                             if (DBG) log("starting new query");
                             break;
@@ -160,32 +232,27 @@ public class NetworkQueryService extends Service {
     public void onCreate() {
         mState = QUERY_READY;
         mPhone = PhoneFactory.getDefaultPhone();
+	if (FeatureOption.MTK_GEMINI_SUPPORT) {
+		_GEMINI_PHONE = true;
+		mGeminiPhone = (GeminiPhone) PhoneFactory.getDefaultPhone();
+	}
     }
     
     /**
      * Required for service implementation.
      */
     @Override
-    public void onStart(Intent intent, int startId) {
-        //cienet add liqiangwu 2011-6-10:
-/*
-        if (TelephonyManager.getPhoneCount() > 1) {
-            int mPhoneId = intent.getIntExtra(Settings.SUB_ID, 0);
-            log("onStart sub :" + mPhoneId);
-            mPhone = (PhoneFactory.getPhones())[mPhoneId];
-        }
-*/
-        //cienet end liqiangwu.
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (DBG) log("onStartCommand");
+		if (intent != null) {
+			mSimId = intent.getIntExtra(Phone.GEMINI_SIM_ID_KEY, -1);
+       	 	} else {
+			mSimId = -1;
+		}
+//	        return START_REDELIVER_INTENT;
+		return Service.START_NOT_STICKY;
     }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        int subscription = intent.getIntExtra(SUBSCRIPTION_KEY, 0);
-        log("onStart subscription :" + subscription);
-        mPhone = PhoneApp.getInstance().getPhone(subscription);
-        return START_REDELIVER_INTENT;
-    }
-
+    
     /**
      * Handle the bind request.
      */
@@ -234,6 +301,6 @@ public class NetworkQueryService extends Service {
     }
     
     private static void log(String msg) {
-        Log.d(LOG_TAG, msg);
+        Xlog.d(LOG_TAG, msg);
     }    
 }

@@ -6,7 +6,8 @@
     <PreferenceScreen
         android:key="button_cf_expand_key"
         android:title="@string/labelCF"
-        android:persistent="false">
+        android:persistent="false"
+        android:summary="@string/call_forwarding_settings">
 
         <intent android:action="android.intent.action.MAIN"
             android:targetPackage="com.android.phone"
@@ -15,21 +16,34 @@
 
     <PreferenceScreen
         android:key="button_cb_expand_key"
-        android:title="@string/labelCB"
-        android:persistent="false">
+        android:title="@string/lable_call_barring" 
+        android:persistent="false"
+        android:summary="@string/call_barring_sum">
 
         <intent android:action="android.intent.action.MAIN"
             android:targetPackage="com.android.phone"
-            android:targetClass="com.android.phone.CallBarringOptions"/>
+            android:targetClass="com.android.phone.CallBarring" />
     </PreferenceScreen>
+
+	<!-- <PreferenceScreen 
+	    android:key="button_aoc_expand_key"
+	    android:title="@string/call_cost_settings"
+		android:persistent="false">
+        
+		<intent android:action="android.intent.action.MAIN"
+			android:targetPackage="com.android.phone" 
+            android:targetClass="com.android.phone.CallCostSettings" />
+	</PreferenceScreen>-->
 
     <PreferenceScreen
         android:key="button_more_expand_key"
         android:title="@string/additional_gsm_call_settings"
-        android:persistent="false">
+        android:persistent="false"
+        android:summary="@string/call_additional_sum">
 
         <intent android:action="android.intent.action.MAIN"
             android:targetPackage="com.android.phone"
             android:targetClass="com.android.phone.GsmUmtsAdditionalCallOptions"/>
     </PreferenceScreen>
+
 </PreferenceScreen>

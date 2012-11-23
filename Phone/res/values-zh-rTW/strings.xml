@@ -23,7 +23,7 @@
     <string name="phoneIconLabel" msgid="2331230813161304895">"電話"</string>
     <string name="recentCallsIconLabel" msgid="8717350893637245164">"通話記錄"</string>
     <string name="fdnListLabel" msgid="8630418672279521003">"固定撥號清單"</string>
-    <string name="unknown" msgid="6878797917991465859">"不明"</string>
+    <string name="unknown" msgid="6878797917991465859">"未知"</string>
     <string name="private_num" msgid="6713286113000232309">"私人號碼"</string>
     <string name="payphone" msgid="1931775086311769314">"公共電話"</string>
     <string name="onHold" msgid="9035493194749959955">"通話保留"</string>
@@ -39,10 +39,10 @@
     <string name="callFailed_noSignal" msgid="1889803273616031933">"沒有訊號"</string>
     <string name="callFailed_limitExceeded" msgid="4958065157970101491">"已達 ACM 限制"</string>
     <string name="callFailed_powerOff" msgid="2766035859391549713">"無線通訊關閉"</string>
-    <string name="callFailed_simError" msgid="5652345589458834655">"沒有 SIM 或 SIM 錯誤"</string>
+    <string name="callFailed_simError" msgid="5652345589458834655">"沒有 SIM 卡或 SIM 卡錯誤"</string>
     <string name="callFailed_outOfService" msgid="4825791466557236225">"超出服務範圍"</string>
     <string name="callFailed_fdn_only" msgid="2850204579765430641">"撥出受固定撥號限制。"</string>
-    <string name="callFailed_cb_enabled" msgid="3057131228725500761">"通話限制啟用時，無法撥出電話。"</string>
+    <string name="callFailed_cb_enabled" msgid="3057131228725500761">"限制通話"</string>
     <string name="callFailed_dsac_restricted" msgid="2180223622768522345">"所有通話都受存取控制限制。"</string>
     <string name="callFailed_dsac_restricted_emergency" msgid="4353654268813314466">"緊急通話受存取控制限制。"</string>
     <string name="callFailed_dsac_restricted_normal" msgid="2680774510252408620">"正常通話受存取控制限制。"</string>
@@ -66,6 +66,8 @@
     <string name="cancel" msgid="5044513931633602634">"取消"</string>
     <string name="menu_speaker" msgid="6069700688651964705">"擴音"</string>
     <string name="menu_bluetooth" msgid="8842523654717305695">"藍牙"</string>
+    <string name="menu_bluetooth_on">"開啟藍牙"</string>
+    <string name="menu_bluetooth_off">"關閉藍牙"</string>
     <string name="menu_mute" msgid="4399723633363773145">"靜音"</string>
     <string name="menu_hold" msgid="6970441130344786273">"保留"</string>
     <string name="menu_endCall" msgid="2142958047156634241">"結束通話"</string>
@@ -73,8 +75,8 @@
     <string name="menu_mergeCalls" msgid="6414754941392181303">"合併通話"</string>
     <string name="menu_addCall" msgid="7829255032442131930">"新增通話"</string>
     <string name="menu_manageConference" msgid="3770984362002266733">"管理多方通話"</string>
-    <string name="menu_showDialpad" msgid="5198200217528406980">"顯示撥號面板"</string>
-    <string name="menu_hideDialpad" msgid="2733813546746296771">"隱藏撥號面板"</string>
+    <string name="menu_showDialpad" msgid="5198200217528406980">"撥號面板"</string>
+    <string name="menu_hideDialpad" msgid="2733813546746296771">"撥號面板"</string>
     <string name="menu_answerAndHold" msgid="8830891495953688905">"保留目前通話"\n"並接聽"</string>
     <string name="menu_answerAndEnd" msgid="2071708281281611854">"結束目前通話"\n"並接聽"</string>
     <string name="ok" msgid="3811371167865772377">"確定"</string>
@@ -82,6 +84,9 @@
     <string name="menuButtonKeyboardDialHint" msgid="2869270434715312458">"按一下 [Menu] 開啟通話選項•使用鍵盤撥號"</string>
     <string name="menu_answer" msgid="116686205042231098">"接聽"</string>
     <string name="menu_ignore" msgid="2112030835852537344">"忽略"</string>
+    <string name="menu_disconnect_hold">結束所有保留的通話</string>
+    <string name="menu_disconnect_all">結束所有通話</string>
+    <string name="menu_ect">來電轉接</string>
     <string name="wait_prompt_str" msgid="7601815427707856238">"傳送此鈴聲？"\n</string>
     <string name="pause_prompt_str" msgid="341477243019906241">"正在傳送信號音"\n</string>
     <string name="send_button" msgid="4106860097497818751">"傳送"</string>
@@ -94,7 +99,7 @@
     <string name="dialer_emptyListWorking" msgid="6022498519770859790">"載入中..."</string>
     <string name="enterPin" msgid="4753300834213388397">"輸入 PIN 碼以解鎖 SIM 卡。"</string>
     <string name="pinUnlocked" msgid="3260617001055506794">"SIM 已解鎖"</string>
-    <string name="enterNewPin" msgid="5311243769004752401">"新增 SIM PIN 碼"</string>
+    <string name="enterNewPin" msgid="5311243769004752401">"新 SIM PIN 碼"</string>
     <string name="verifyNewPin" msgid="2593629913010458867">"再次輸入新的 SIM PIN 碼以確認"</string>
     <string name="verifyFailed" msgid="3875778795754857903">"您輸入的 SIM PIN 不符合。請再試一次。"</string>
     <string name="enterPuk" msgid="6144749655582862324">"輸入 PUK 碼以解鎖 SIM 卡"</string>
@@ -116,8 +121,6 @@
     <string name="voicemail" msgid="8693759337917898954">"語音信箱"</string>
     <string name="voicemail_abbreviated" msgid="2215592488517217448">"語音信箱："</string>
     <string name="networks" msgid="8873030692174541976">"電信業者"</string>
-    <string name="call_settings" msgid="6112441768261754562">"通話設定"</string>
-    <string name="additional_gsm_call_settings" msgid="1391795981938800617">"其他設定"</string>
     <string name="sum_gsm_call_settings" msgid="4076647190996778012">"其他 GSM 僅限通話設定"</string>
     <string name="additional_cdma_call_settings" msgid="8628958775721886909">"其他 CDMA 通話設定"</string>
     <string name="sum_cdma_call_settings" msgid="284753265979035549">"其他 CDMA 僅限通話設定"</string>
@@ -129,8 +132,6 @@
     <string name="labelCW" msgid="6120513814915920200">"來電待接"</string>
     <string name="sum_cw_enabled" msgid="8083061901633671397">"通話時如有來電請通知我"</string>
     <string name="sum_cw_disabled" msgid="3648693907300104575">"通話時如有來電請通知我"</string>
-    <string name="call_forwarding_settings" msgid="3378927671091537173">"來電轉接設定"</string>
-    <string name="labelCF" msgid="2574386948026924737">"來電轉接"</string>
     <string name="labelCFU" msgid="8147177368148660600">"永遠轉接"</string>
     <string name="messageCFU" msgid="3560082430662923687">"永遠使用此號碼"</string>
     <string name="sum_cfu_enabled_indicator" msgid="4014187342724130197">"轉接所有來電"</string>
@@ -165,11 +166,6 @@
     <string name="enable" msgid="1059008390636773574">"啟用"</string>
     <string name="disable" msgid="7274240979164762320">"停用"</string>
     <string name="change_num" msgid="239476305819844391">"更新"</string>
-    <string name="network_wrong" msgid="">"網絡響應異常"</string>
-    <string name="number_empty" msgid="">"號碼是空"</string>
-    <string name="cb_pw_error" msgid="">"密碼不正確"</string>
-    <string name="cb_pw_correct" msgid="">"密碼已改"</string>
-    <string name="cb_pw_no_match" msgid="">"密碼不匹配"</string>
   <string-array name="clir_display_values">
     <item msgid="5560134294467334594">"網路預設值"</item>
     <item msgid="7876195870037833661">"隱藏號碼"</item>
@@ -183,6 +179,12 @@
     <string name="no_change" msgid="3186040086622435212">"未變更設定。"</string>
     <string name="sum_voicemail_choose_provider" msgid="59911196126278922">"選擇語音信箱服務"</string>
     <string name="voicemail_default" msgid="5902099213882352338">"我的服務業者"</string>
+   
+    <!-- Minute Reminder strings -->
+    <string name="minutereminder_title">通話分鐘提醒</string>
+    <string name="minutereminder_turnon">於每分鐘的第 50 秒開啟通話分鐘提醒</string>
+    <string name="minutereminder_turnoff">關閉通話分鐘提醒</string>
+   
     <string name="mobile_networks" msgid="5540397602919106177">"行動網路設定"</string>
     <string name="label_available" msgid="1181658289009300430">"可用網路"</string>
     <string name="load_networks_progress" msgid="5230707536168902952">"搜尋中..."</string>
@@ -222,7 +224,7 @@
     <item msgid="2568449734331711605">"0"</item>
   </string-array>
     <string name="data_enabled" msgid="5972538663568715366">"已啟用資料"</string>
-    <string name="data_enable_summary" msgid="5022018967714633874">"啟用 Google 行動服務網路的資料存取"</string>
+    <string name="data_enable_summary" msgid="5022018967714633874">"啟用行動服務網路的資料存取"</string>
     <string name="roaming" msgid="8871412572928323707">"資料漫遊"</string>
     <string name="roaming_enable" msgid="7331106985174381987">"漫遊時連線到資料傳輸服務"</string>
     <string name="roaming_disable" msgid="1843417228755568110">"漫遊時連線到資料傳輸服務"</string>
@@ -230,9 +232,7 @@
     <string name="roaming_warning" msgid="7820963598559553967">"要允許資料漫遊嗎？您可能會需要支付龐大漫遊費用！"</string>
     <string name="gsm_umts_options" msgid="6538311689850981686">"GSM/UMTS 選項"</string>
     <string name="cdma_options" msgid="4016822858172249884">"CDMA 選項"</string>
-    <string name="throttle_data_usage" msgid="3715677828160555808">"資料用量"</string>
     <string name="throttle_settings_title" msgid="2761975408383706589">"行動業者資料傳輸政策"</string>
-    <string name="throttle_current_usage" msgid="8762280193043815361">"目前週期已使用的資料量"</string>
     <string name="throttle_time_frame" msgid="1915198770363734685">"資料使用量週期"</string>
     <string name="throttle_rate" msgid="4710388992676803508">"資料傳輸速率政策"</string>
     <string name="throttle_help" msgid="243651091785169900">"瞭解更多資訊"</string>
@@ -248,9 +248,6 @@
     <string name="cell_bc_sms_enable" msgid="6441688565738921084">"已啟用區域廣播簡訊"</string>
     <string name="cell_bc_sms_disable" msgid="3398365088309408749">"已停用區域廣播簡訊"</string>
     <string name="cb_sms_settings" msgid="651715019785107312">"區域廣播簡訊設定"</string>
-    <string name="menu_add_channel">"添加信道" </string>
-    <string name="menu_delete_channel">"删除全部"</string>
-    <string name="menu_delete_sigle_channel">"删除"</string>
     <string name="enable_disable_emergency_broadcast" msgid="2157014609041245335">"緊急廣播"</string>
     <string name="emergency_broadcast_enable" msgid="2645980025414010211">"已啟用緊急廣播"</string>
     <string name="emergency_broadcast_disable" msgid="3665199821267569426">"已停用緊急廣播"</string>
@@ -340,14 +337,23 @@
     <item msgid="935612021902787683">"GSM/WCDMA (自動模式)"</item>
     <item msgid="8912042051809329533">"僅限 WCDMA"</item>
     <item msgid="8776934131146642662">"僅限 GSM"</item>
-    <item msgid="4684679567848300935">"GSM/WCDA (WCDMA 優先)"</item>
   </string-array>
   <string-array name="gsm_umts_network_preferences_values">
     <item msgid="117293148930527265">"0"</item>
-    <item msgid="2264578612775462302">"1"</item>
-    <item msgid="1268081943590316978">"2"</item>
-    <item msgid="4469871047641902607">"3"</item>
+    <item msgid="2264578612775462302">"2"</item>
+    <item msgid="1268081943590316978">"1"</item>
+    <!-- item msgid="4469871047641902607">"3"</item-->
   </string-array>
+  
+  <string-array name="umts_network_preferences_choices">
+        <item>"GSM/WCDMA (自動模式)"</item>
+        <item>"僅限 WCDMA"</item>
+    </string-array>
+    <string-array name="umts_network_preferences_values">
+        <item>"0"</item>
+        <item>"2"</item>
+    </string-array>
+  
     <string name="prefer_2g" msgid="8442550937280449639">"只使用 2G 網路"</string>
     <string name="prefer_2g_summary" msgid="1976491403210690759">"節省電力"</string>
     <string name="cdma_system_select_title" msgid="5757657769327732833">"選取系統"</string>
@@ -383,6 +389,17 @@
     <item msgid="5741268642513143762">"1"</item>
     <item msgid="419525200910932450">"2"</item>
   </string-array>
+    <string name="subscription_title" msgid="5813493350326486">"CDMA 訂閱測試"</string>
+    <string name="subscription_summary" msgid="8435941016743418124">"在 RUIM/SIM 和 NV 之間切換"</string>
+    <string name="subscription_dialogtitle" msgid="531571450448009255">"訂閱"</string>
+  <string-array name="subscription_choices">
+    <item msgid="6540107472553796600">"RUIM/SIM"</item>
+    <item msgid="1433427108940308332">"NV"</item>
+  </string-array>
+  <string-array name="subscription_values">
+    <item msgid="4377788417250295786">"0"</item>
+    <item msgid="1193066664940329729">"1"</item>
+  </string-array>
     <string name="cdma_subscription_title" msgid="445607520753045412">"CDMA 訂閱"</string>
     <string name="cdma_subscription_summary" msgid="2530890766115781140">"在 RUIM/SIM 和 NV 之間切換"</string>
     <string name="cdma_subscription_dialogtitle" msgid="2699527950523333110">"訂閱"</string>
@@ -397,11 +414,11 @@
     <string name="fdn" msgid="7878832555095183202">"固定撥號"</string>
     <string name="manage_fdn_list" msgid="8777755791892122369">"固定撥號清單"</string>
     <string name="fdn_activation" msgid="2156479741307463576">"啟用固定撥號"</string>
-    <string name="fdn_enabled" msgid="5238109009915521240">"已啟用 [固定撥號]"</string>
+    <string name="fdn_enabled" msgid="5238109009915521240">"已啟用固定撥號"</string>
     <string name="fdn_disabled" msgid="4700049736675368279">"已停用固定撥號"</string>
     <string name="enable_fdn" msgid="3740191529180493851">"啟用固定撥號"</string>
     <string name="disable_fdn" msgid="7944020890722540616">"停用固定撥號"</string>
-    <string name="change_pin2" msgid="2153563695382176676">"更改 PIN2"</string>
+    <string name="change_pin2" msgid="2153563695382176676">"變更 PIN2"</string>
     <string name="enable_fdn_ok" msgid="7215588870329688132">"停用固定撥號"</string>
     <string name="disable_fdn_ok" msgid="5727046928930740173">"啟用固定撥號"</string>
     <string name="sum_fdn" msgid="1959399454900272878">"管理固定撥號"</string>
@@ -409,10 +426,7 @@
     <string name="sum_fdn_manage_list" msgid="8431088265332628316">"管理電話號碼清單"</string>
     <string name="voice_privacy" msgid="7803023024169078619">"語音加密保護"</string>
     <string name="voice_privacy_summary" msgid="3159383389833516214">"已啟用加強型隱私保護模式"</string>
-    <string name="tty_mode_title" msgid="3171521903490559138">"TTY 模式"</string>
-    <string name="tty_mode_summary" msgid="5057244302665817977">"啟用 TTY 模式"</string>
     <string name="tty_mode_option_title" msgid="9033098925144434669">"TTY 模式"</string>
-    <string name="tty_mode_option_summary" msgid="1073835131534808732">"設定 TTY 模式"</string>
     <string name="auto_retry_mode_title" msgid="1478311108889330757">"自動重試"</string>
     <string name="auto_retry_mode_summary" msgid="4921028586041909574">"啟用「自動重試」模式"</string>
     <string name="menu_add" msgid="1882023737425114762">"新增聯絡人"</string>
@@ -422,18 +436,20 @@
     <string name="name" msgid="7329028332786872378">"名稱"</string>
     <string name="number" msgid="7905950798349903858">"號碼"</string>
     <string name="save" msgid="4094274636321939086">"儲存"</string>
-    <string name="add_fdn_contact" msgid="2481915899633353976">"新增固定撥號"</string>
-    <string name="adding_fdn_contact" msgid="7627379633721940991">"正在新增固定撥號..."</string>
-    <string name="fdn_contact_added" msgid="7458335758501736665">"已新增固定撥號。"</string>
-    <string name="edit_fdn_contact" msgid="7976936035587081480">"編輯固定撥號"</string>
-    <string name="updating_fdn_contact" msgid="8370929876849803600">"正在更新固定撥號..."</string>
-    <string name="fdn_contact_updated" msgid="5497828782609005017">"固定撥號已更新。"</string>
-    <string name="delete_fdn_contact" msgid="6668958073074151717">"刪除固定撥號"</string>
-    <string name="deleting_fdn_contact" msgid="5669163206349319969">"正在刪除固定撥號..."</string>
-    <string name="fdn_contact_deleted" msgid="7154162327112259569">"已刪除固定撥號。"</string>
-    <string name="pin2_invalid" msgid="7176360264228076810">"FDN 未更新：您輸入的 PIN 碼不正確。"</string>
-    <string name="fdn_invalid_number" msgid="9193130794297997290">"FDN 未更新：號碼不能超過 20 碼。"</string>
+    <string name="add_fdn_contact" msgid="5412242719704146070">"新增固定撥號聯絡人"</string>
+    <string name="adding_fdn_contact" msgid="1008984230265031168">"正在新增固定撥號聯絡人..."</string>
+    <string name="fdn_contact_added" msgid="3283284983265410270">"已新增固定撥號聯絡人。"</string>
+    <string name="edit_fdn_contact" msgid="3440054765948798731">"編輯固定撥號聯絡人"</string>
+    <string name="updating_fdn_contact" msgid="5918299270800552372">"正在更新固定撥號聯絡人..."</string>
+    <string name="fdn_contact_updated" msgid="510187720367785051">"固定撥號清單已更新。"</string>
+    <string name="delete_fdn_contact" msgid="2237838617123538040">"刪除固定撥號聯絡人"</string>
+    <string name="deleting_fdn_contact" msgid="6162824054507660151">"正在刪除固定撥號聯絡人..."</string>
+    <string name="fdn_contact_deleted" msgid="5596742031140651283">"已刪除固定撥號聯絡人。"</string>
+    <string name="pin2_invalid" msgid="6408721267712649637">"PIN2 無效！"</string>
+    <string name="fdn_invalid_number" msgid="1484959418054136856">"號碼不能超過 40 位數。"</string>
     <string name="simContacts_emptyLoading" msgid="2203331234764498011">"從 SIM 卡讀取中..."</string>
+    <string name="sim1Contacts_emptyLoading">"從 SIM1 卡讀取中\u2026"</string>
+    <string name="sim2Contacts_emptyLoading">"從 SIM2 卡讀取中\u2026"</string>
     <string name="simContacts_empty" msgid="5270660846489561932">"您的 SIM 卡上沒有聯絡人。"</string>
     <string name="simContacts_title" msgid="1861472842524839921">"選取要匯入的聯絡人"</string>
     <string name="enable_pin" msgid="5422767284133234860">"啟用/停用 SIM PIN"</string>
@@ -443,7 +459,7 @@
     <string name="newPinLabel" msgid="207488227285336897">"新的 PIN"</string>
     <string name="confirmPinLabel" msgid="257597715098070206">"確認新的 PIN"</string>
     <string name="badPin" msgid="4154316827946559447">"您輸入的舊 PIN 不正確。請再試一次。"</string>
-    <string name="mismatchPin" msgid="5974597541268042785">"您輸入的 PIN 不符合。請再試一次。"</string>
+    <string name="mismatchPin" msgid="5974597541268042785">"您輸入的 PIN 不匹配。請再試一次。"</string>
     <string name="invalidPin" msgid="5981171102258684792">"輸入 4 至 8 個數字的 PIN。"</string>
     <string name="disable_sim_pin" msgid="3992926931620188855">"停用 SIM PIN"</string>
     <string name="enable_sim_pin" msgid="5803702443844458831">"啟用 SIM PIN"</string>
@@ -453,15 +469,22 @@
     <string name="pin_failed" msgid="6597695909685242127">"您輸入的 PIN 不正確"</string>
     <string name="pin_changed" msgid="9000716792724195093">"成功變更 SIM PIN"</string>
     <string name="puk_requested" msgid="3898394204193202803">"密碼錯誤，SIM 已鎖定！需要 PUK2 解鎖。"</string>
+    <string name="one_retry_left">"剩餘 1 次"</string>
+    <string name="retries_left">"剩餘"<xliff:g id="number">%d</xliff:g>"次"</string> 
+    <string name="pin2_unblocked">"PIN2 碼已解鎖"</string>  
+    <string name="unblock_pin2">"解鎖 PIN2 碼"</string> 
+    <string name="sim_permanently_locked">"PUK2 碼已輸入錯誤 10 次，SIM 卡已銷毀"</string>   
+    <string name="pin_length_indicate">"(4-8 位數字)"</string>   
+    <string name="puk_length_indicate">"(8 位數字)"</string>
     <string name="enter_pin2_text" msgid="8339444124477720345">"PIN2"</string>
     <string name="oldPin2Label" msgid="8559146795026261502">"舊的 PIN2"</string>
     <string name="newPin2Label" msgid="4573956902204349054">"新的 PIN2"</string>
     <string name="confirmPin2Label" msgid="8100319484454787708">"確認新的 PIN2"</string>
-    <string name="badPuk2" msgid="4072035207011308856">"您輸入的 PUK2 不正確。請再試一次。"</string>
-    <string name="badPin2" msgid="515218795152422178">"您輸入的舊 PIN2 不正確。請再試一次。"</string>
-    <string name="mismatchPin2" msgid="4177060915600342718">"您輸入的 PIN2 不符。請再試一次。"</string>
-    <string name="invalidPin2" msgid="8237110107480395938">"輸入 4 至 8 個數字的 PIN2。"</string>
-    <string name="invalidPuk2" msgid="1290977391033057871">"輸入 8 個數字的 PUK2。"</string>
+    <string name="badPuk2" msgid="4072035207011308856">"您輸入的 PUK2 不正確，請再試一次。"</string>
+    <string name="badPin2" msgid="515218795152422178">"您輸入的舊 PIN2 不正確，請再試一次。"</string>
+    <string name="mismatchPin2" msgid="4177060915600342718">"您輸入的 PIN2 不匹配，請再試一次。"</string>
+    <string name="invalidPin2" msgid="8237110107480395938">"輸入 4 至 8 位數字的 PIN2。"</string>
+    <string name="invalidPuk2" msgid="1290977391033057871">"輸入 8 位數字的 PUK2。"</string>
     <string name="pin2_changed" msgid="2670422162555916562">"成功變更 PIN2"</string>
     <string name="label_puk2_code" msgid="302845876240219560">"輸入 PUK2 碼"</string>
     <string name="fdn_enable_puk2_requested" msgid="2608836967081385948">"密碼錯誤，請更改 PIN2 並再試一次！"</string>
@@ -493,6 +516,8 @@
     <string name="notification_ongoing_call_format" msgid="227216462548540316">"目前通話 (<xliff:g id="DURATION">%s</xliff:g>)"</string>
     <string name="notification_on_hold" msgid="3480694969511790465">"通話保留"</string>
     <string name="notification_incoming_call" msgid="2820429205043529642">"來電"</string>
+    <string name="notification_voicemail">語音信箱</string>
+    <string name="voice_mail_dialog_text">現在有新的語音信箱表單<xliff:g id="voicemail_sim_display_name">%s</xliff:g>，是否要取得？ </string>
     <string name="notification_voicemail_title" msgid="8933468752045550523">"新留言"</string>
     <string name="notification_voicemail_title_count" msgid="4366360747660929916">"新留言 (<xliff:g id="COUNT">%d</xliff:g>)"</string>
     <string name="notification_voicemail_text_format" msgid="4447323569453981685">"撥打 <xliff:g id="VOICEMAIL_NUMBER">%s</xliff:g>"</string>
@@ -541,15 +566,11 @@
     <string name="importSimEntry" msgid="6614358325359736031">"匯入"</string>
     <string name="importAllSimEntries" msgid="1503181169636198673">"全部匯入"</string>
     <string name="importingSimContacts" msgid="7374056215462575769">"匯入 SIM 聯絡人"</string>
+    <string name="importingSim1Contacts">"匯入 SIM1 聯絡人"</string>
+    <string name="importingSim2Contacts">"匯入 SIM2 聯絡人"</string>
     <string name="importToFDNfromContacts" msgid="2130620207013368580">"從聯絡人匯入"</string>
     <string name="hac_mode_title" msgid="8740268574688743289">"助聽器"</string>
     <string name="hac_mode_summary" msgid="6833851160514929341">"開啟助聽器相容功能"</string>
-  <string-array name="tty_mode_entries">
-    <item msgid="512950011423868021">"關閉 TTY"</item>
-    <item msgid="3971695875449640648">"TTY 全能"</item>
-    <item msgid="1937509904407445684">"TTY HCO"</item>
-    <item msgid="5644925873488772224">"TTY VCO"</item>
-  </string-array>
     <string name="eri_text_label" msgid="4326942349915331461">"ERI 文字"</string>
     <string name="dtmf_tones_title" msgid="3866923093113274152">"DTMF 信號音"</string>
     <string name="dtmf_tones_summary" msgid="3351820372864020331">"設定 DTMF 信號音長度"</string>
@@ -568,7 +589,7 @@
     <string name="ota_activate" msgid="1368528132525626264">"啟用"</string>
     <string name="ota_title_activate_success" msgid="3344632328991980578">"手機已啟用！"</string>
     <string name="ota_title_problem_with_activation" msgid="7095824491970084367">"啟用失敗"</string>
-    <string name="ota_listen" msgid="162923839877584937">"依照語音指示進行，直到您聽到啟用完成為止。"</string>
+    <string name="ota_listen" msgid="3656020498420727053">"請聽取手機啟用說明。在聽到手機啟用的確認訊息前，請勿掛斷電話。"</string>
     <string name="ota_dialpad" msgid="3530900997110658409">"小鍵盤"</string>
     <string name="ota_speaker" msgid="6904589278542719647">"擴音"</string>
     <string name="ota_progress" msgid="4644512049143969504">"手機正在進行程式化設定，請稍候。"</string>
@@ -616,18 +637,15 @@
     <string name="slide_to_answer_and_end_onhold" msgid="638748048960663506">"向右拖曳以接聽來電並結束"\n"目前保留的通話"</string>
     <string name="slide_to_answer_hint" msgid="4901042355463593903">"接聽"</string>
     <string name="slide_to_decline_hint" msgid="4484576372463030324">"拒絕"</string>
-    <string name="cb_error">呼叫限制被拒絕</string>
     <string name="contactPhoto" msgid="4713193418046639466">"聯絡人相片"</string>
     <string name="goPrivate" msgid="865837794424530980">"私人通話"</string>
     <string name="selectContact" msgid="781975788478987237">"選取聯絡人"</string>
-    <string name="sip_settings" msgid="6699045718560859691">"網路電話設定"</string>
     <string name="sip_accounts" msgid="2097054001288457163">"網路電話 (SIP) 帳戶"</string>
     <string name="sip_accounts_title" msgid="1212889069281054570">"帳戶"</string>
     <string name="sip_accounts_summary" msgid="6812629993146552527">"管理網路電話 (SIP) 帳戶和狀態"</string>
     <string name="sip_receive_calls" msgid="5635685570889971559">"接聽來電"</string>
     <string name="sip_receive_calls_summary" msgid="8403613238633679184">"會減少電池電量"</string>
     <string name="sip_call_options" msgid="7128315120104066133">"設定通話選項"</string>
-    <string name="sip_call_options_title" msgid="27433718808839672">"使用網路電話"</string>
     <string name="sip_call_options_wifi_only_title" msgid="145572394529090811">"撥打網路電話 (僅限 Wi-Fi)"</string>
     <string name="sip_call_options_entry_1" msgid="6556668894178520760">"數據網路可用時，適用於所有通話"</string>
     <string name="sip_call_options_entry_2" msgid="6789764029719494361">"僅適用於網路電話"</string>
@@ -702,189 +720,372 @@
     <string name="no_wifi_available" msgid="3389743006886634541">"您必須連上 Wi-Fi 網路才能使用網路電話 (使用 [無線網路和網路] 設定)"</string>
     <string name="no_voip" msgid="8901474054537199865">"不支援網路電話"</string>
 
-    <string name="mobile_networks_sim1">SIM1 移動網絡設置</string>
-    <string name="mobile_networks_sim2">SIM2 移動網絡設置</string>
-    <string name="label_available_sim1">SIM1 可用網絡</string>
-    <string name="label_available_sim2">SIM2 可用網絡</string>
-    <string name="disk_full">"剩餘的儲存空間不足，無法新增通話記錄"</string>
-    <string name="add_calllog_error">"無法新增通話記錄！程式内部錯誤或剩餘儲存空間不足。"</string>
-
-    <string name="fast_dial">快速撥號</string>
-    <string name="fast_dial_settings">快速撥號設置</string>
-    <string name="fast_dial_changed">#快速撥號號碼已更改。</string>
-    <string name="fast_dial_no_changed">快速撥號號碼未更改。</string>
-    <string name="fast_dial_change_failed">快速撥號號碼更改失敗。</string>
-    <string name="fast_dial_2">2#快速撥號</string>
-    <string name="fast_dial_3">3#快速撥號</string>
-    <string name="fast_dial_4">4#快速撥號</string>
-    <string name="fast_dial_5">5#快速撥號</string>
-    <string name="fast_dial_6">6#快速撥號</string>
-    <string name="fast_dial_7">7#快速撥號</string>
-    <string name="fast_dial_8">8#快速撥號</string>
-    <string name="fast_dial_9">9#快速撥號</string>
-    <string name ="no_fast_dial">此SIM卡对应按鍵未設定快速撥號電話號碼</string>
-    <string name ="not_set">未設定</string>
-    <string name="sim_state_set_timeout">SIM卡待機設定超時</string>
-    <string name = "updating_dualsim_title">雙卡設置</string>
-    <string name="standby_select">開機待機選擇</string>
-    <string name="sim_state_not_changes">SIM卡啟用狀態沒有改變</string>
-    <string name="data_enable_set">數據連接設置</string>
-    <string name="data_enable_set_timeout">數據連接設置超時</string>
-    <string name="selectsim_settings_label">SIM卡啟用設置</string>
-        <!-- for ds call setting -->
-    <string name="sim1">SIM 1</string>
-    <string name="sim2">SIM 2</string>
-    <string name="other_setting">其他設定</string>
-    <string name="sim1_call_settings">SIM1 通話設定</string>
-    <string name="sim2_call_settings">SIM2 通話設定</string>
-    <string name="toast_message_name_too_long">名字內容過長，請先修改。</string>
-    <string name="toast_message_name_number_null">名稱和號碼不能同時為空，請修改。</string>
-     <string name="toast_message_data_business_on">數據鏈接已開啓，請關閉後再進行選網</string>
-     <!-- add by donghw start -->
-    <string name="set_ip_dailing_title">IP 撥號</string>
-    <string name="ip_dailing">IP 撥號號碼</string>
-    <string name="ip_dailing_setting_title">設置IP撥號</string>
-    <string name="ip_dailing_one_title">IP撥號 1 </string>
-    <string name="ip_dailing_two_title">IP撥號 2</string>
-    <string name="ip_dailing_three_title">IP撥號 3</string>
-    <string name="ip_dailing_four_title">IP撥號 4</string>
-    <string name="ip_dailing_five_title">IP撥號 5</string>
-    <string name="ip_dailing_save_button_text">保存</string>
-    <string name = "dialing_selector">"撥號選擇器"</string>
-    <string name = "directly_call">"直撥"</string>
-    <string name = "ip_call">"IP撥號："</string>
-    <string name="emergency_call">"緊急電話"</string>
-    <!-- for uplmn setting -->
-    <string name="UPLMN_setting">"UPLMN 設定"</string>
-
-    <string name="hangup_reply_message_title">短信拒接來電</string>
-    <string name="hangup_reply_message">掛斷電話時禮貌回复短信</string>
-    <string name="hangup_reply_message_tip">掛斷電話後會回复預設信息給來電號碼</string>
-    <string name="auto_send_message">自動發送信息</string>
-    <string name="auto_send_message_tip">是否使用自動發送預設信息</string>
-    <string name="edit_message_content_for_hangup">編輯預設信息內容</string>
-    <string name="edit_message_content_introdution">點擊開始編輯短信內容</string>
-    <string name="label_message_reject">預設來電回复信息內容</string>
-    <string name="tip_input_content">輸入預設信息</string>
-    <string name="label_button_edit">編輯</string>
-    <string name="label_button_ok">確定</string>
-    <string name="label_button_add_special_reply">增加指定號碼預設內容</string>
-    <string name="reply_message_default">我現在很忙，一會兒給你回電話！</string>
-    <string name="title_message_reply_for_hangup">信息編輯</string>
-    <string name="videophonesetting_label">可視電話設置</string>
-    <string name="videophone_setting">可視電話</string>
-    <string name="videophone_setting_title">可視電話通用設置</string>
-    <string name="videophone_setting_summary">設置可視電話的顯示，佈局等等...</string>
-    <string name="videophone_callforward_setting_title">可視電話來電轉接</string>
-    <string name="videophone_callbarring_setting_title">可視電話呼叫限制</string>
-    <string name="videophone_setting_title_static_image">顯示靜態圖片</string>
-    <string name="videophone_setting_title_static_image_set">設置靜態圖片</string>
-    <string name="videophone_setting_title_remote_static_image_set">設置遠端靜態圖片</string>
-    <string name="videophone_setting_title_local_static_image_set">設置本地靜態圖片</string>
-    <string name="videophone_setting_title_take_photo">拍照</string>
-    <string name="videophone_setting_title_pick_photo">從圖庫中選擇照片</string>
-    <string name="videophone_setting_title_delete_photo">清空圖片</string>
-    <string name="videophone_setting_photoPickerNotFoundText">手機上沒有照片。</string>
-    <string name="videophone_setting_summary_static_image">當遠端攝像頭關閉時顯示靜態圖片</string>
-    <string name="videophone_setting_title_layout">視頻屏幕首選項</string>
-    <string name="videophone_layout_my_small">我的視頻較小</string>
-    <string name="videophone_layout_my_large">我的視頻較大</string>
-    <string name="videophone_setting_default_image">默認圖片</string>
-    <string name="videophone_setting_picture_oversize">圖片尺寸不能超過640 * 480</string>
-    <string name="videophone_setting_picture_widthtoosmall">圖片寬度不能小於64</string>
-    <string name="videophone_setting_picture_heightoosmall">圖片高度不能小於64</string>
-    <string name="videophone_setting_picture_notjpg">只支持jpg圖片</string>
-    <string name="videophone_setting_title_fallback">語音回落請求</string>
-    <string name="videophone_fallback_always_ask">每次都詢問</string>
-    <string name="videophone_fallback_always_callback">始終回撥</string>
-    <string name="videophone_fallback_never_callback">從不回撥</string>
-    <string name="videophone_setting_dialog_title_layout">可視電話設置</string>
-    <string name="videophone_setting_dialog_title_fallback">語音回落請求</string>
-    <string name="videophone_setting_layout_defaultvalue">1</string>
-    <string name="videophone_setting_fallback_defaultvalue">1</string>
-    <string name="videophone_fallback_title">可視電話回落</string>
-    <string name="videophone_never_fallback">對方請求語音回撥，自動放棄</string>
-    <string name="videophone_always_fallback">對方請求語音回撥，自動回撥</string>
-    <string name="videophone_notin3g_never_fallback">當前網絡不支持視頻呼叫，自動放棄</string>
-    <string name="videophone_notin3g_always_fallback">當前網絡不支持視頻呼叫，自動回撥</string>
-    <string name="videophone_fallback_menu_videocall">可視電話</string>
-    <string name="videophone_fallback_menu_voicecall">語音電話</string>
-    <string name="videophone_fallback_menu_cancel">取消</string>
-    <string name="videophone_fallback_question">您要進行什麼操作?</string>
-    <string name="videophone_failcause_1000">上一通可視電話沒有正常結束，請稍後再試</string>
-    <string name="videophone_failcause_1">號碼錯誤</string>
-    <string name="videophone_failcause_3">對方無法接通</string>
-    <string name="videophone_failcause_8">呼叫禁止</string>
-    <string name="videophone_failcause_17">對方用戶忙</string>
-    <string name="videophone_failcause_19">對方無應答</string>
-    <string name="videophone_failcause_27">對方已關機</string>
-    <string name="videophone_failcause_34">連接已斷開</string>
-    <string name="videophone_failcause_63">漫遊呼叫禁止</string>
-    <string name="videophone_failcause_79">對方不支持可視電話</string>
-    <string name="videophone_failcause_default">對方無法接通</string>
-    <string name="videophone_failcause_47">對不起，不能發起可視電話</string>
-    <string name="videophone_failcause_57">對方未開通可視電話</string>
-    <string name="videophone_failcause_58">對方暫不支持可視電話</string>
-    <string name="videophone_failcause_88">被叫選擇語音呼叫</string>
-    <string name="videophone_failcause_minus_1">無法獲得3G網絡</string>
-    <string name="videophone_incoming_prompt">可視來電</string>
-    <string name="call_barring_settings">呼叫限制</string>
-    <string name="labelCB">呼叫限制</string>
-    <string name="labelAO">所有呼出</string>
-    <string name="messageAO">輸入呼叫限制密碼。</string>
-    <string name="sum_ao_enabled">已啟用</string>
-    <string name="sum_ao_disabled">已禁用</string>
-    <string name="enable_ao_forbidden">您的運營商不支持啟用限制所有呼出功能。</string>
-    <string name="disable_ao_forbidden">您的運營商不支持禁用限制所有呼出功能。</string>
-    <string name="labelOI">國際長途呼出</string>
-    <string name="messageOI">輸入呼叫限制密碼。</string>
-    <string name="sum_oi_enabled">已啟用</string>
-    <string name="sum_oi_disabled">已禁用</string>
-    <string name="enable_oi_forbidden">您的運營商不支持啟用限制國際長途呼出功能。</string>
-    <string name="disable_oi_forbidden">您的運營商不支持禁用限制國際長途呼出功能。</string>
-    <string name="labelOX">國際長途漫遊呼出</string>
-    <string name="messageOX">輸入呼叫限制密碼。</string>
-    <string name="sum_ox_enabled">已啟用</string>
-    <string name="sum_ox_disabled">已禁用</string>
-    <string name="enable_ox_forbidden">您的運營商不支持啟用限制國際長途漫遊呼出功能。</string>
-    <string name="disable_ox_forbidden">您的運營商不支持禁用限制國際長途漫遊呼出功能。</string>
-    <string name="labelAI">所有來電</string>
-    <string name="messageAI">輸入呼叫限制密碼。</string>
-    <string name="sum_ai_enabled">已啟用</string>
-    <string name="sum_ai_disabled">已禁用</string>
-    <string name="enable_ai_forbidden">您的運營商不支持禁用限制所有來電功能。</string>
-    <string name="disable_ai_forbidden">您的運營商不支持禁用限制所有來電功能。</string>
-    <string name="labelIR">漫遊時來電</string>
-    <string name="messageIR">輸入呼叫限制密碼。</string>
-    <string name="sum_ir_enabled">已啟用</string>
-    <string name="sum_ir_disabled">已禁用</string>
-    <string name="enable_ir_forbidden">您的運營商不支持啟用限制漫遊時來電功能。</string>
-    <string name="disable_ir_forbidden">您的運營商不支持禁用限制漫遊時來電功能。</string>
-    <string name="labelAB">全部取消</string>
-    <string name="messageAB">輸入呼叫限制密碼。</string>
-    <string name="sum_ab_enabled">已啟用</string>
-    <string name="sum_ab_disabled">已禁用</string>
-    <string name="enable_ab_forbidden">您的運營商不支持全部取消呼叫限制功能。</string>
-    <string name="labelChgPwd">修改密碼</string>
-    <string name="DlgChgPwd_oldpwd">輸入呼叫限制密碼。</string>
-    <string name="DlgChgPwd_newpwd_first">輸入新密碼</string>
-    <string name="DlgChgPwd_newpwd_last">確認新密碼</string>
-    <!-- add for call setting call vibrate-->
-    <string name="call_vibrate_title">震動</string>
-    <string name="call_vibrate_summary">對方接通/掛斷時震動</string>
-    <string name="china_mobile_provider">中國移動</string>
-    <string name="chn_cugsm_provider">中國聯通</string>
-    <string name="network_inhibit">禁用</string>
-    <string name="network_unknown">未知</string>
+    <string name="sip_system_decide">自動</string>
+    <string name="sip_always_send_keepalive">一律傳送</string>
     
-	<string name="sim_card_unlock">"解鎖sim卡"</string>
-	<string name="sim_card_lock">"鎖定sim卡"</string>
-	<string name="sim_lock_or_unlock">"解鎖或鎖定sim卡"</string>
-	<string name="sim_card_lock_title">"鎖定卡"</string>
-	<string name="sim_card_lock_summary">"鎖定sim卡"</string>
-	<string name="sim_card_unlock_title">"解鎖"</string>
-	<string name="sim_card_unlock_summary">"解鎖sim卡"</string>
-	<string name="sim_lock_state_is_new">"不需要改變sim卡鎖的狀態。"</string>
-	<string name="sim_lock_process_success">操作成功，請重啟手機。</string>
-	<string name="sim_lock_process_failed">操作失敗。</string>
+    <!-- Added by lei.ye@archermind.com -->
+    <string name="start_record">"開始錄音"</string>
+    <string name="stop_record">"停止錄音"</string>
+    <!-- Added by lei.ye@archermind.com end -->
+
+    <!-- Added by tianxiang.qin@archermind.com -->
+    <string name="alert_device_error">錄音時發生錯誤</string>
+    <string name="btn_confirminfo_title">確認信息</string>
+    <string name="btn_Alertinfo_title">提示訊息</string>
+    <string name="str_alertinfo_return">確定</string>
+    <string name="str_confirminfo_save">儲存</string>
+    <string name="str_confirminfo_return">捨棄</string>
+    <string name="ext_media_badremoval_notification_title">"SD 卡非正常移除"</string>
+    <!-- Added by tianxiang.qin@archermind.com end -->
+
+    <string name="last_call_cost">上次通話費用</string>
+    <string name="total_call_cost">總通話費用</string>
+    <string name="max_call_cost">通話費用上限</string>
+    <string name="reset_call_cost">清除通話費用</string>
+    <string name="set_ppu_currency">設定貨幣與單位價格</string>
+    <string name="enter_your_pin">輸入 PIN2 碼（4-8 位數字）</string>
+    <string name="reset_call_cost_success">通話費用清除成功</string>
+    <string name="max_call_cost_set">最大通話費用設定</string>
+    <string name="input_max_cost">輸入最大費用（0 -16777215）</string>
+    <string name="show_ppu_menu">輸入單位價格（0 -100000.0）</string>
+    <string name="show_currency_menu">輸入貨幣（3 個字元）</string>
+    <string name="error_title">錯誤</string>
+    <string name="call_cost_input_pin_error_msg">PIN2 碼格式錯誤，請輸入 4 到 8 位數字。</string>
+    <string name="call_cost_input_ppu_error_msg">單位價格格式錯誤，請輸入 0-100000.0。</string>
+    <string name="call_cost_input_currency_error_msg">貨幣格式錯誤，請輸入 3 個字元。</string>
+    <string name="call_cost_input_max_error_msg">最大費用格式錯誤，請輸入 0 -16777215。</string>
+    <string name="loading_data_error">載入資料失敗。</string>
+    <string name="pin_retry_count">次剩餘</string>
+    <string name="pin_one_retry_left">次剩餘</string>
+    <string name="pin_retry_error_info">SIM 卡已鎖定，請用 PUK2 碼解鎖。</string>
+    <string name="cb_channel_dialog_edit_channel">編輯頻道</string>
+    <string name="cb_error_channel_num">請輸入頻道編號（0-999）。</string>
+    <string name="cb_error_channel_name">頻道名稱的長度不正確，長度必須介於 1 到 10 個字元。</string>
+    <string name="cb_error_language_select">請至少選擇一種語言。</string>
+    <string name="cb_error_channel_id_exist">頻道編號已經存在。</string>
+    <string name="cb_default_new_channel_name">新頻道</string>
+    <string name="no_sdcard">無記憶卡</string>
+    <string name="full_sdcard">記憶卡已滿</string>
+    <string name="lable_all_outgoing">禁撥所有電話</string>
+    <string name="lable_all_outgoing_international">禁撥國際電話</string>
+    <string name="lable_all_out_except">禁撥本國 PLMN 外的國際電話</string>
+    <string name="lable_all_incoming">拒接所有來電</string>
+    <string name="lable_incoming_calls_except">漫遊時拒接</string>
+    <string name="deactivate_all">取消所有限制</string>
+    <string name="change_password">變更撥號限制密碼</string>
+    <string name="lable_disable">禁用</string>
+    <string name="lable_enable">啟用</string>
+    <string name="old_password_label">舊密碼 (4 位數字)</string>
+    <string name="new_password_label">新密碼 (4 位數字)</string>
+    <string name="invalid_password">輸入 4 位數字的密碼。</string>
+    <string name="confirm_password_label">確認新密碼</string>
+    <string name="mismatch_password">您輸入的密碼不一致，請重新輸入。</string>
+    <string name="password_changed">成功變更密碼</string>
+    <string name="enter_callbarring_password">輸入撥號限制密碼 (4 位數字)</string>
+    <string name="wrong_password">密碼錯誤。</string>
+    <string name="str_db_playlist_name">我的錄音</string>
+    <string name="menu_unhold">恢復</string>
+    <string name="fdn_contact_invalid">聯絡人名稱或號碼無效！</string>
+    <string name="fdn_contact_number_invalid">號碼無效。</string>
+    <string name="audio_recordings">錄音</string>
+    <string name="your_recordings">您的錄音</string>    
+	<string name="mo_code_unconditional_cf_active">所有來電轉接已啟動</string> 
+	<string name="mo_code_some_cf_active">依設定轉接</string> 
+	<string name="mo_code_call_forwarded">通話轉接</string> 
+	<string name="mo_code_call_is_waiting">等待中</string> 
+	<string name="mo_code_cug_call">封閉使用者群組</string> 
+	<string name="mo_code_outgoing_calls_barred">限制撥出</string> 
+	<string name="mo_code_incoming_calls_barred">限制接聽</string> 
+	<string name="mo_code_clir_suppression_rejected">確認來電顯示傳送服務</string> 
+	<string name="mo_code_call_deflected">通話轉接</string> 
+	<string name="mt_code_forwarded_call">此為轉接電話</string> 
+	<string name="mt_code_call_on_hold">通話保留</string> 
+	<string name="mt_code_call_retrieved">通話恢復</string> 
+	<string name="mt_code_multi_party_call">電話會議</string> 
+	<string name="mt_code_on_hold_call_released">保留通話結束</string> 
+	<string name="mt_code_forward_check_received">轉接檢查 SS 訊息已接收</string> 
+	<string name="mt_code_call_connecting_ect">通話轉接中</string> 
+	<string name="mt_code_call_connected_ect">通話轉接啟用</string> 
+	<string name="mt_code_deflected_call">此為轉接電話</string> 
+	<string name="mt_code_additional_call_forwarded">來電轉接</string> 
+	<string name="mt_code_forwarded_cf">通話轉接</string> 
+	<string name="mt_code_forwarded_cf_uncond">所有來電轉接</string> 
+	<string name="mt_code_forwarded_cf_cond">依設定轉接</string> 
+	<string name="mt_code_forwarded_cf_busy">忙線時轉接</string> 
+	<string name="mt_code_forwarded_cf_no_reply">無回應時轉接</string> 
+	<string name="mt_code_forwarded_cf_not_reachable">無法撥通時轉接</string> 
+	<string name="fdn_contact_max">聯絡人已滿</string>     
+
+    <string name="cb_menu_language">語言</string>
+    <string name="cb_menu_add_channel">新增頻道</string>
+    <string name="cb_menu_channel_list">頻道清單</string>
+    <string name="cb_dialog_title_language_choice">選擇語言</string>
+    <string name="cb_channel_dialog_channel_name">頻道名稱 (1 到 10 個字元)</string>
+    <string name="cb_channel_dialog_channel_number">頻道編號(0-999)</string>
+    <string name="cb_channel_dialog_channel_state">啟用頻道</string>
+    <string name="cb_menu_edit">編輯</string>
+    <string name="cb_menu_delete">刪除</string>
+    <string name="cb_all_languages">所有語言</string>
+
+	<string name="fdn_errorcode_unknown_info">失敗，發生不明錯誤，請稍後再試。</string>
+	<string name="fdn_errorcode_number_info">失敗，聯絡人電話號碼太長。</string>
+	<string name="fdn_errorcode_name_info">失敗，聯絡人名字太長。</string>
+	<string name="fdn_errorcode_storage_info">失敗，儲存空間已滿。</string>
+	<string name="fdn_errorcode_phb_info">失敗，電話簿尚未就緒，請稍後再試。</string>
+	<string name="fdn_errorcode_pin2_info">失敗，PIN2 無效。</string>  
+	
+	<string name="fdn_contact_name_number_invalid">"名稱與號碼必須擇一輸入。"</string>
+<string name="fdn_phone_book_busy">"通訊錄忙碌中，請稍後再試。"</string>
+<string name="gemini_mobile_network_sim1_tab_tag">"SIM1"</string>
+<string name="gemini_mobile_network_sim1_tab_label">"SIM1"</string>
+<string name="gemini_mobile_network_sim2_tab_tag">"SIM2"</string>
+<string name="gemini_mobile_network_sim2_tab_label">"SIM2"</string>
+<string name="gemini_simid">"SIM卡ID"</string>
+<string name="sim_1">"0"</string>
+<string name="sim_2">"1"</string>
+<string name="menu_more">""更多""</string>
+<string name="mt_code_cug_call">"封閉使用者群組"</string>
+<string name="fake_phone_activity_phoneNumber_text">"(650) 555-1234"</string>
+<string name="call_correct">"密碼正確"</string>
+<string name="net_or_simcard_busy">網路或SIM卡忙碌中，請稍後再試。</string>
+<string name="sim1">"SIM1"</string>
+<string name="sim2">"SIM2"</string>
+<string name="inCallTitleText1">"SIM1 正在使用中"</string>
+<string name="inCallTitleText2">"SIM2 正在使用中"</string>
+
+<!-- mtk80794 for change feature ALPS00120835 -->
+    <string name="import_sim_contact_success">成功匯入 SIM 卡聯絡人.</string>
+
+	<!-- Added by lianyu.zhang for VT-->
+    <string name="vt_incoming_call">傳入的視訊撥號</string>
+    <string name="vt_settings">視訊設定</string>
+    <string name="vt_local_video_zoom">本機視訊縮放</string>
+    <string name="vt_local_video_brightness">本機視訊亮度</string>
+    <string name="vt_local_video_effect">本機視訊效果</string>
+    <string name="vt_local_video_nightmode">本機視訊夜間模式</string>
+    <string name="vt_peer_video_quality">P2P視訊品質</string>
+    <string name="vt_video_call">視訊通話</string>
+    <string name="vt_pic_replace_local">取代本機視訊的圖片</string>
+    <string name="vt_pic_replace_local_description">設定攝影機未使用時的圖片</string>
+    <string name="vt_enable_back_camera">啟用後攝影機</string>
+    <string name="vt_enable_back_camera_description">開啟時可切換攝影機</string>
+    <string name="vt_peer_video_bigger">P2P視訊大於本機視訊</string>
+    <string name="vt_peer_video_bigger_description">開啟時可使P2P視訊大於本機視訊</string>
+    <string name="vt_outgoing_call">傳出的視訊撥號</string>
+    <string name="vt_outgoing_call_description">進行視訊撥號時，顯示本機視訊</string>
+    <string name="vt_incoming_call_description">接受傳入的視訊撥號時，顯示本機視訊</string>
+    <string name="vt_incoming_showme_always">永遠要</string>
+    <string name="vt_incoming_showme_ask">詢問</string>
+    <string name="vt_incoming_showme_disable">停用</string>
+    <string name="vt_call_settings">視訊通話設定</string>
+    <string name="vt_pic_replace_local_default">預設圖片</string>
+    <string name="vt_pic_replace_local_freezeme">定格</string>
+    <string name="vt_pic_replace_local_mypic">我的圖片</string>
+    <string name="vt_local_video_display">本機視訊顯示</string>
+    <string name="vt_sd_null">無法使用 SD 卡</string>
+    <string name="vt_sd_not_enough">SD 卡容量不足</string>
+    <string name="vt_peer_video_quality_normal">普通</string>
+    <string name="vt_peer_video_quality_sharp">清晰</string>
+    <string name="pref_camera_coloreffect_entry_none">"無"</string>
+    <string name="pref_camera_coloreffect_entry_mono">"單色效果"</string>
+    <string name="pref_camera_coloreffect_entry_sepia">"懷舊色調"</string>
+    <string name="pref_camera_coloreffect_entry_negative">"負片效果"</string>
+    <string name="pref_camera_coloreffect_entry_solarize">"曝光效果"</string>
+    <string name="pref_camera_coloreffect_entry_posterize">"色調分離"</string>
+    <string name="pref_camera_coloreffect_entry_whiteboard">"白板效果"</string>
+    <string name="pref_camera_coloreffect_entry_blackboard">"黑板效果"</string>
+    <string name="pref_camera_coloreffect_entry_aqua">"水底效果"</string>
+    <string name="pref_camera_coloreffect_entry_pastel">"粉蠟筆效果"</string>
+    <string name="pref_camera_coloreffect_entry_mosaic">"馬賽克效果"</string>
+    <string name="pref_camera_coloreffect_entry_redtint">"紅色調"</string>
+    <string name="pref_camera_coloreffect_entry_bluetint">"藍色調"</string>
+    <string name="pref_camera_coloreffect_entry_greentint">"綠色調"</string>
+    <string name="pref_camera_coloreffect_entry_sepiablue">"懷舊藍"</string>
+    <string name="pref_camera_coloreffect_entry_sepiagreen">"懷舊綠"</string>
+    <string name="vt_ask_show_local">是否讓對方看見自己的影像?</string>
+    <string name="vt_ask_show_local_yes">是</string>
+    <string name="vt_ask_show_local_no">否</string>
+    <string name="vt_change_my_pic">變更</string>
+    <string name="vt_pic_saved_to_sd">快照已儲存至 SD 卡</string>
+    <string name="vt_pic_saved_to_sd_fail">無法儲存快照</string>
+    <string name="vt_error_network">無法連接網路，即將中斷視訊通話。</string>
+    <string name="vt_error_media">視訊無法正確顯示，即將中斷視訊通話。</string>
+    <string name="vt_swap_video">切換視訊</string>  
+    <string name="vt_local_video_contrast">本機視訊對比</string>
+    <string name="vt_button_switch">切換相機</string>
+    <string name="vt_menu_hide_me">隱藏本機視訊</string>
+    <string name="vt_menu_show_me">顯示本機視訊</string>
+    <string name="vt_menu_snapshot">對等快照</string>
+    <string name="vt_out_dis">通話已中斷。任一方皆無法使用 3G 網路。您可利用語音通話回撥。</string>
+    <string name="vt_dis_exit">結束</string>
+    <string name="vt_dis_callback">回撥</string>
+    <string name="vt_local_video_rep">本機視訊取代</string>
+    <string name="vt_dis_peer_rep">顯示對等取代</string>
+    <string name="vt_dis_peer_rep_des">顯示無法使用對等視訊時的取代圖片</string>
+    <string name="vt_peer_video_rep">對等視訊取代</string>
+    <string name="vt_peer_video_rep_des">設定無法使用對等視訊時的顯示圖片</string>
+    <string name="vt_vocie_answer">語音接聽</string>
+    <string name="vt_wait_voice">等待語音通話連線</string>
+    <string name="vt_ask_voice_dial">通訊方已選擇語音接聽，是否要利用語音通話回撥？</string>
+    <string name="vt_voice_connecting">語音通話連線中</string>
+    <string name="vt_auto_dropback">自動轉換</string>
+    <string name="vt_auto_dropback_des">自動轉換成語音通訊連線</string>
+    <string name="vt_cannot_support_setting">目前的相機不支援此設定</string>
+    <string name="vt_network_unreachable">無法連線至網路</string>
+    
+    <string name="vt_iot_error_01">無法設定視訊通話</string>
+    <string name="vt_iot_error_02">手機忙線中</string>
+    <string name="vt_iot_error_03">沒有回應</string>
+    <string name="vt_iot_error_04">網路忙碌中</string>
+
+    <!-- Added for VT dropback-->
+    <string name="callFailed_dsac_vt_incompatible_destination">無法設定視訊通話，通話對象的手機不支援視訊電話。是否撥打語音通話？</string>
+    <string name="callFailed_dsac_vt_resource_unavailable">無法設定視訊通話，通話對象的手機不在 3G 服務範圍內。是否撥打語音通話？</string>
+    <string name="callFailed_dsac_vt_bear_not_authorized">無法設定視訊通話，您未啟動手機的視訊電話功能。是否撥打語音通話？</string>
+    <string name="callFailed_dsac_vt_bearer_not_avail">無法設定視訊通話。是否撥打語音通話？</string>
+    <string name="callFailed_dsac_vt_out_of_3G_yourphone">您的手機不在 3G 服務範圍內。要撥打語音電話？</string>
+
+    <!-- added for auto reject -->
+    <string name="auto_reject_title">拒絕來電</string>
+    <string name="auto_reject_sum">直接拒絕其他來電</string>
+    <string name="auto_reject_title_voice">語音通話</string>
+    <string name="auto_reject_title_video">視訊通話</string>
+    <string name="auto_reject_title_sip">網路通話</string>
+    <string name="auto_reject_sum_voice">設為直接拒絕所有語音來電</string>
+    <string name="auto_reject_sum_video">設為直接拒絕所有視訊來電</string>
+    <string name="auto_reject_sum_sip">設為直接拒絕所有網路來電</string>
+
+	<string name="phone_setting">手機設定</string>
+    <string name="phone_setting_summary">裝置的手機設定</string>
+    <string name="eidt_default_message">編輯預設訊息</string> 
+    <string name="edit_message_before_sending">傳送前編輯訊息</string>  
+    <string name="send_message_after_reject">傳送簡訊</string> 
+    <string name="add_message">新增訊息</string>  
+    <string name="edit_message">編輯訊息</string> 
+    <string name="delete_message">刪除訊息</string>
+    <string name="messages_to_sent">即將傳送的訊息</string> 
+    <string name="message">訊息</string>     
+    <string name="max_item">系統無法新增訊息，請先刪除現有訊息!</string>  
+    
+    <!-- Added by xingping.zheng start -->
+    <string name="dtmf_hideDialpad">隱藏撥號板</string>
+    <string name="incoming_call_widget_answer_text">接話</string>
+    <string name="incoming_call_widget_reject_text">拒絕</string>
+    <string name="call_status_ringing">來電...</string>
+    <string name="incall_conference_members">"%d 成員"</string>
+    <string name="incall_conference_private">私人</string>
+    <string name="incall_end_conference">結束會議</string>
+    <string name="incall_sim_collision_dialog_title">提醒</string>
+    <string name="incall_sim_collision_dialog_message">SIM 並非預設語音通話 SIM 卡。您要繼續透過此 SIM 增加新通話嗎？</string>
+    <!-- Added by xingping.zheng end -->
+
+    <string name="activity_not_found">"應用程式未安裝到手機。"</string>
+    <string name="call_settings">通話設定</string>
+<string name="voice_call">語音通話</string>
+<string name="video_call">視訊通話</string>
+<string name="internet_call">網路通話</string>
+<string name="others">其他設定</string>
+<string name="sum_voice_call">語音通話相關設定</string>
+<string name="sum_video_call">視訊通話相關設定</string>
+<string name="sum_internet_call">網路通話相關設定</string>
+<string name="voice_call_settings">語音通話設定</string>
+<string name="voice_mail">語音信箱</string>
+<string name="sum_voice_mail">語音信箱服務與號碼</string>
+<string name="labelCF">通話轉接</string>
+<string name="call_forwarding_settings">語音通話轉接設定</string>
+<string name="lable_call_barring">通話限制</string>
+<string name="additional_gsm_call_settings">其他設定</string>
+<string name="call_additional_sum">電話號碼與插撥設定</string>
+<string name="call_barring_sum">語音通話限制設定</string>
+<string name ="vt_cf_call_description">視訊通話轉接設定</string>
+<string name ="vt_cb_call_description">視訊通話限制設定</string>
+<string name="sip_settings">網路通話設定</string>
+<string name="sip_call_options_title">使用網路通話</string>
+<string name="call_cost_settings">通話費用</string>
+<string name="sum_call_cost">通話費用資訊</string>
+<string name="cell_broadcast">區域廣播</string>
+<string name="cell_broadcast_settings">區域廣播設定</string>
+<string name="sum_cell_broadcast_control_on">啟用區域廣播</string>
+<string name="sum_cell_broadcast_control_off">停用區域廣播</string>
+<string name="sum_cell_broadcast_setting">區域廣播的與語言頻道設定</string>
+<string name="tty_setting">TTY 設定</string>
+<string name="dual_mic_title">雙麥克風噪音降低</string>
+<string name="dual_mic_turnoff">雙麥克風關閉</string>
+<string name="dual_mic_turnon">雙麥克風開啟</string>
+<string name="throttle_data_usage">資料使用量</string>
+<string name="throttle_current_usage">目前時段使用的資料</string>
+<string name="reset_data_usage">重設資料數量</string>
+<string name="reset_alert">您確定要清除資料使用數量？</string>
+<string name="reset">重設</string>
+<string name="tty_mode_title">TTY 模式</string>
+<string name="tty_mode_summary">啟用 TTY 模式</string>
+<string name="tty_mode_option_summary">設定 TTY 模式</string>
+<string-array name="tty_mode_entries">
+        <item>TTY 關閉</item>
+        <item>TTY 裝置</item>
+        <item>TTY HCO</item>
+        <item>TTY VCO</item>
+</string-array>
+
+<string name="pin2_name">"PIN2"</string>
+<string name="simlock_enternewpincode">"輸入新 PIN 碼"</string>
+<string name="simlock_newsim">"新 SIM"</string>
+<string name="simlock_entersimmelock">"輸入 SIM ME 鎖"</string>
+<string name="simlock_enterpin2code">"輸入新 PIN2 碼"</string>
+<string name="simlock_unlocking">"解鎖中…"</string>
+<string name="simlock_enterpuk2code">"輸入 PUK2 碼"</string>
+<string name="pin_name">"PIN"</string>
+<string name="simlock_enterconfirmpincode">"確認新 PIN 碼"</string>
+<string name="simlock_ok">"確定"</string>
+<string name="simlock_enterpincode">"輸入 PIN 碼"</string>
+<string name="simlock_name">"SIM ME 鎖定"</string>
+<string name="simlock_input4_8digits">"輸入 4-8 個數字。"</string>
+<string name="simlock_enterconfirmpin2code">"確認新 PIN2 碼"</string>
+<string name="simlock_wrongcode">"錯誤碼。"</string>
+<string name="simlock_dismiss">"跳過"</string>
+<string name="simlock_nocard">"無"</string>
+<string name="simlock_input8digits">"輸入 8 個數字。"</string>
+<string name="simlock_retriesleft">"剩餘："</string>
+<string name="simlock_emergency">"緊急電話"</string>
+<string name="simlock_for">"為"</string>
+<string name="simlock_enterpukcode">"輸入 PUK 碼"</string>
+<string name="simlock_pinnotmatched">"不符合。"</string>
+    <string name="simlock_returntocall">"返回通話"</string>
+
+<string name="confirm_device_info_full">SD 卡空間已用盡，錄音已儲存。</string>
+<string name="confirm_save_info_saved">錄音已儲存</string>   
+
+<string name="sim_toolkit">"SIM 工具箱"</string> 
+<string name="simContacts_emptyLoading_ex">正在讀取來自%s的聯絡人\u2026</string>
+
+    <string name="simlock_firstsim">"第一張 SIM 卡"</string>
+    <string name="simlock_secondsim">"第二張 SIM 卡"</string>
+    <string name="simlock_newsiminsert">"此為已插入的新 SIM 卡。"</string>
+    <string name="simlock_moreinfo">"更多資訊"</string>
+    
+    <string name="vt_start_time_from">從</string>
+    
+    <string name="network_forbidden">禁用</string>
+<!-- IP dial -->
+<string name="ip_prefix_setting">IP 前置碼</string>
+<string name="ip_prefix_setting_sum">IP 前置碼設定</string>
+<string name="enter_ip_prefix_number">輸入前置碼</string>
+<string name="ip_dial_error_toast_for_no_ip_prefix_number">請先在語音通話設定中輸入 IP 前置碼。</string>
+<string name="ip_prefix_edit_default_sum">输入IP拨号前缀</string>
+
+<!-- 3G switch -->
+<string name="confirm_3g_switch">確定要將 3G 服務設定至此 SIM 卡？這會同時將視訊通話的預設 SIM 卡自動設至此 SIM 卡。</string>
+<string name="modem_switching">切換 SIM 卡約需 10 秒。請稍候…</string>
+<string name="confirm_3g_switch_to_off">確定要關閉 3G 服務？這會自動關閉視訊通話服務。</string>
+<string name="service_3g_off">關閉</string>
+<string name="enable_3G_service">啟用3G服務</string>
+<string name="setting_for_3G_service">3G 服務</string>
+
+<string name="error_sdcard_access">"無法存取 SD 卡"</string>
+<string name="enable_sip_dialog_message">網路電話功能已停用，是否要啟用？</string>
+
+<!--Video call or voice call cannot be answered -->
+<string name="cannot_answered_Video_Call">語音通話中，無法接聽視訊電話</string>
+<string name="cannot_answered_Voice_Call">視訊通話中，無法接聽語音電話</string>
+    
 </resources>

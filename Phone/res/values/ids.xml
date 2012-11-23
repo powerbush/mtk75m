@@ -18,27 +18,40 @@
     <!-- Views created dynamically in InCallMenu.java -->
     <item type="id" name="menuManageConference" />
     <item type="id" name="menuShowDialpad" />
+    <item type="id" name="record" />
     <item type="id" name="menuEndCall" />
     <item type="id" name="menuAddCall" />
     <item type="id" name="menuSwapCalls" />
     <item type="id" name="menuMergeCalls" />
     <item type="id" name="menuBluetooth" />
     <item type="id" name="menuSpeaker" />
+    <item type="id" name="menuMore" />
     <item type="id" name="menuMute" />
     <item type="id" name="menuHold" />
     <item type="id" name="menuAnswerAndHold" />
     <item type="id" name="menuAnswerAndEnd" />
     <item type="id" name="menuAnswer" />
     <item type="id" name="menuIgnore" />
-    
-	<item type="id" name="menuPhoneRecorder" />
+    <item type="id" name="menuDisconnectHold" />
+    <item type="id" name="menuDisconnectAll" />
+    <item type="id" name="menuECT" />
     <!-- IDs used with events from some in-call touch UI elements;
          we treat these as "button clicks" even though the UI elements
          themselves may not actually be buttons. -->
     <item type="id" name="answerButton" />
     <item type="id" name="rejectButton" />
-        <!-- add for end bg call and end all calls start-->
-    <item type="id" name="endbgcall" />
-    <item type="id" name="endallcalls" />
-    <!-- add for end bg call and end all calls end-->
+    <item type="id" name="EditPassword" />
+    <!-- Added by lianyu.zhang start -->
+    <item type="id" name="vtmenuitemBluetoothon" />
+    <item type="id" name="vtmenuitemSwapvideos" />
+    <item type="id" name="vtmenuitemDialpad" />
+    <item type="id" name="vtmenuitemVideosettings" />
+    <item type="id" name="vtmenuitemvoiceanswer" />
+    <!-- Added by lianyu.zhang end -->
+    
+    <!-- Added by yantao.lu start -->
+    <item type="id" name="vtmenuitemHidelocalvideo" />
+    <item type="id" name="vtmenuitemTakepeerphoto" />
+    <item type="id" name="vtmenuitemSwitchCamera" />
+    <!-- Added by yantao.lu end -->
 </resources>

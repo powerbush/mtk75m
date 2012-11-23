@@ -38,17 +38,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="80dip"
         />
-        <!-- yeezone:jinwei add Reject and reply a message which content is ready -->
-        <ImageButton android:id="@+id/reject_reply_message"
-        			android:visibility="gone"
-        			android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:gravity="center"
-		            android:layout_alignParentBottom="true"
-		            android:layout_centerHorizontal="true"
-		            android:layout_marginBottom="5dip"
-                    style="@style/InCallRoundTouchButton"
-                    android:src="@drawable/btn_in_call_reject_reply_message" />
+
     <!--
         (2) inCallControls: the widgets visible while a regular call
         (or calls) is in progress
@@ -71,6 +61,7 @@
                 style="@style/InCallRoundButtonContainer"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dip"
+                android:layout_marginTop="60dip"
                 android:visibility="gone">
             <ImageButton android:id="@+id/holdButton"
                     style="@style/InCallRoundTouchButton"
@@ -86,6 +77,7 @@
                 style="@style/InCallRoundButtonContainer"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dip"
+                android:layout_marginTop="60dip"
                 android:visibility="gone">
             <ImageButton android:id="@+id/swapButton"
                     style="@style/InCallRoundTouchButton"
@@ -103,6 +95,7 @@
                 style="@style/InCallRoundButtonContainer"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dip"
+                android:layout_marginTop="60dip"
                 android:visibility="gone">
             <ImageButton android:id="@+id/cdmaMergeButton"
                     style="@style/InCallRoundTouchButton"
@@ -118,6 +111,7 @@
         <!-- TODO: this should be a ViewStub, and should only get inflated
              when first needed. -->
         <include layout="@layout/non_drawer_dialpad"/>
+
         <!-- Main cluster of onscreen buttons on the lower part of the screen. -->
         <LinearLayout android:id="@+id/bottomButtons"
                       android:orientation="vertical"

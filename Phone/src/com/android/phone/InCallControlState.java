@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2009 The Android Open Source Project
  *
@@ -24,6 +59,10 @@ import com.android.internal.telephony.Connection;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.CallManager;
 
+//MTK begin:
+import com.android.internal.telephony.gemini.GeminiPhone;
+import com.mediatek.featureoption.FeatureOption;
+//MTK end
 
 /**
  * Helper class to keep track of enabledness, visibility, and "on/off"
@@ -43,7 +82,8 @@ import com.android.internal.telephony.CallManager;
  */
 public class InCallControlState {
     private static final String LOG_TAG = "InCallControlState";
-    private static final boolean DBG = (PhoneApp.DBG_LEVEL >= 2);
+    //private static final boolean DBG = (PhoneApp.DBG_LEVEL >= 2);
+    private static final boolean DBG = true;
 
     private InCallScreen mInCallScreen;
     private CallManager mCM;
@@ -58,6 +98,7 @@ public class InCallControlState {
     //
     public boolean canAddCall;
     //
+    public boolean canShowSwap;
     public boolean canSwap;
     public boolean canMerge;
     //
@@ -84,6 +125,9 @@ public class InCallControlState {
     // should be visible.
     public boolean canHold;
 
+    /* Added by xingping.zheng start */
+    public boolean contactsEnabled;
+    /* Added by xingping.zheng end   */
 
     public InCallControlState(InCallScreen inCallScreen, CallManager cm) {
         if (DBG) log("InCallControlState constructor...");
@@ -96,19 +140,46 @@ public class InCallControlState {
      * the Phone.
      */
     public void update() {
-        final Call fgCall = mCM.getActiveFgCall();
+/*Google:final Call fgCall = mCM.getActiveFgCall();
         final Call.State fgCallState = fgCall.getState();
         final boolean hasActiveForegroundCall = (fgCallState == Call.State.ACTIVE);
-        final boolean hasHoldingCall = mCM.hasActiveBgCall();
-
+        final boolean hasHoldingCall = mCM.hasActiveBgCall(); */
+//MTK begin:
+        final Call fgCall;
+        final Call.State fgCallState;
+        final boolean hasActiveForegroundCall;
+        final boolean hasHoldingCall;
+        
+        fgCall = mCM.getActiveFgCall();
+        hasHoldingCall = mCM.hasActiveBgCall();
+        if (null != fgCall) {
+            fgCallState = fgCall.getState();
+            hasActiveForegroundCall = (fgCallState == Call.State.ACTIVE);
+        } else {
+        	fgCallState = Call.State.IDLE;
+        	hasActiveForegroundCall = false;
+        }
+//MTK end
+        
+        /* Added by xingping.zheng start */
+        if ((fgCallState == Call.State.DIALING) || (fgCallState == Call.State.ALERTING))
+            contactsEnabled = false;
+        else
+            contactsEnabled = true;
+        /* Added by xingping.zheng end   */
+        
         // Manage conference:
-        if (TelephonyCapabilities.supportsConferenceCallManagement(fgCall.getPhone())) {
+        if (Call.State.IDLE != fgCall.getState() && TelephonyCapabilities.supportsConferenceCallManagement(fgCall.getPhone())) {
             // This item is visible only if the foreground call is a
             // conference call, and it's enabled unless the "Manage
             // conference" UI is already up.
             manageConferenceVisible = PhoneUtils.isConferenceCall(fgCall);
             manageConferenceEnabled =
                     manageConferenceVisible && !mInCallScreen.isManageConferenceMode();
+        } else if (hasHoldingCall && TelephonyCapabilities.supportsConferenceCallManagement(mCM.getBgPhone())) {
+        	manageConferenceVisible = PhoneUtils.isConferenceCall(mCM.getBgPhone().getBackgroundCall());
+        	manageConferenceEnabled =
+                manageConferenceVisible && !mInCallScreen.isManageConferenceMode();
         } else {
             // This device has no concept of managing a conference call.
             manageConferenceVisible = false;
@@ -119,11 +190,12 @@ public class InCallControlState {
         canAddCall = PhoneUtils.okToAddCall(mCM);
 
         // Swap / merge calls
+        canShowSwap = PhoneUtils.okToShowSwapButton(mCM);
         canSwap = PhoneUtils.okToSwapCalls(mCM);
         canMerge = PhoneUtils.okToMergeCalls(mCM);
 
         // "Bluetooth":
-        if (mInCallScreen.isBluetoothAvailable() && mInCallScreen.isAudioConfirm()) {
+        if (mInCallScreen.isBluetoothAvailable()) {
             bluetoothEnabled = true;
             bluetoothIndicatorOn = mInCallScreen.isBluetoothAudioConnectedOrPending();
         } else {
@@ -140,7 +212,12 @@ public class InCallControlState {
         // (It's meaningless while on hold, or while DIALING/ALERTING.)
         // It's also explicitly disabled during emergency calls or if
         // emergency callback mode (ECM) is active.
-        Connection c = fgCall.getLatestConnection();
+        Connection c;
+        if (null != fgCall) {
+            c = fgCall.getLatestConnection();
+        } else {
+            c = null;
+        }
         boolean isEmergencyCall = false;
         if (c != null) isEmergencyCall = PhoneNumberUtils.isEmergencyNumber(c.getAddress());
         boolean isECM = PhoneUtils.isPhoneInEcm(fgCall.getPhone());
@@ -161,13 +238,13 @@ public class InCallControlState {
         dialpadVisible = mInCallScreen.isDialerOpened();
 
         // "Hold:
-        if (TelephonyCapabilities.supportsHoldAndUnhold(mCM.getPhoneInCall())) {
+        if (null != fgCall && TelephonyCapabilities.supportsHoldAndUnhold(fgCall.getPhone())) {
             // This phone has the concept of explicit "Hold" and "Unhold" actions.
             supportsHold = true;
             // "On hold" means that there's a holding call and
             // *no* foreground call.  (If there *is* a foreground call,
             // that's "two lines in use".)
-            onHold = hasHoldingCall && (fgCallState == Call.State.IDLE);
+            onHold = hasHoldingCall && (fgCallState == Call.State.IDLE) && !PhoneUtils.holdAndActiveFromDifPhone(mCM);
             // The "Hold" control is disabled entirely if there's
             // no way to either hold or unhold in the current state.
             boolean okToHold = hasActiveForegroundCall && !hasHoldingCall;

@@ -692,4 +692,15 @@
     <string name="no_internet_available" msgid="1100564991026313234">"Tarkista internetyhteytesi ennen internetpuhelun soittamista"</string>
     <string name="no_wifi_available" msgid="3389743006886634541">"Sinulla täytyy olla yhteys wifi-verkkoon soittaaksesi internetpuheluita (käytä Langaton verkko- ja verkkoasetuksia)"</string>
     <string name="no_voip" msgid="8901474054537199865">"Internetpuheluita ei tueta"</string>
+
+    <string name="activity_not_found">"Sovellusta ei ole asennettu puhelimeesi."</string>
+
+
+<string name="sim_toolkit">"SIM Toolkit"</string>
+
+<string name="simlock_returntocall">"Palaa puheluun"</string>
+<string name="simlock_emergency">"Hätäpuhelu"</string>
+<string name="simlock_enterpincode">"Anna PIN-koodi"</string>
+
+
 </resources>

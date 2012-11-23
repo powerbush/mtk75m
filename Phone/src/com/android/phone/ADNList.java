@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2007 The Android Open Source Project
  *
@@ -21,17 +56,22 @@ import static android.view.Window.PROGRESS_VISIBILITY_ON;
 
 import android.app.ListActivity;
 import android.content.AsyncQueryHandler;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.UriMatcher;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Telephony.SIMInfo;
 import android.util.Log;
 import android.view.Window;
 import android.widget.CursorAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import com.android.internal.telephony.Phone;
 
 /**
  * ADN List activity for the Phone app.
@@ -39,17 +79,24 @@ import android.widget.TextView;
 public class ADNList extends ListActivity {
     protected static final String TAG = "ADNList";
     protected static final boolean DBG = false;
-    protected int curRecordSize = 0;
-    protected int maxRecordSize = -1;
+
+	protected boolean mAirplaneMode = false;    // used for SimContacts only for now. mtk80909, 2010-10-28
+
     private static final String[] COLUMN_NAMES = new String[] {
+    	"index",
         "name",
         "number",
-        "emails"
+        "emails",
+        "additionalNumber",	        
+        "groupIds"
     };
 
-    protected static final int NAME_COLUMN = 0;
-    protected static final int NUMBER_COLUMN = 1;
-    protected static final int EMAILS_COLUMN = 2;
+    protected static final int INDEX_COLUMN = 0;
+    protected static final int NAME_COLUMN = 1;
+    protected static final int NUMBER_COLUMN = 2;
+    protected static final int EMAIL_COLUMN = 3;
+    protected static final int ADDITIONAL_NUMBER_COLUMN = 4;
+    protected static final int GROUP_COLUMN = 5;
 
     private static final int[] VIEW_NAMES = new int[] {
         android.R.id.text1,
@@ -60,7 +107,6 @@ public class ADNList extends ListActivity {
     protected static final int INSERT_TOKEN = 1;
     protected static final int UPDATE_TOKEN = 2;
     protected static final int DELETE_TOKEN = 3;
-    protected static final int QUERY_SIZE_TOKEN = 4;
 
 
     protected QueryHandler mQueryHandler;
@@ -69,9 +115,11 @@ public class ADNList extends ListActivity {
 
     private TextView mEmptyText;
 
-    protected int mInitialSelection = -1;
-    
+    protected int mInitialSelection = 0;
+    protected int mSimId;
+    protected int mIndicate;
 
+    private final BroadcastReceiver mReceiver = new ADNListBroadcastReceiver();
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -79,6 +127,10 @@ public class ADNList extends ListActivity {
         setContentView(R.layout.adn_list);
         mEmptyText = (TextView) findViewById(android.R.id.empty);
         mQueryHandler = new QueryHandler(getContentResolver());
+
+        IntentFilter intentFilter =
+            new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        registerReceiver(mReceiver, intentFilter);
     }
 
     @Override
@@ -95,17 +147,6 @@ public class ADNList extends ListActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(mCursorAdapter != null){
-        	mCursorAdapter.changeCursor(null);
-        }
-        if (mCursor != null && !mCursor.isClosed()) {
-            mCursor.close();
-        }
-    }
-
     protected Uri resolveIntent() {
         Intent intent = getIntent();
         if (intent.getData() == null) {
@@ -115,18 +156,10 @@ public class ADNList extends ListActivity {
         return intent.getData();
     }
 
-    protected String[] getQueryColumnNames(){
-
-	   return COLUMN_NAMES;
-
-   }
-    
     private void query() {
         Uri uri = resolveIntent();
-	  String[] columnNames = getQueryColumnNames();
-	  Log.i("ADNList","columnNames " +columnNames);
         if (DBG) log("query: starting an async query");
-        mQueryHandler.startQuery(QUERY_TOKEN, null, uri, columnNames,
+        mQueryHandler.startQuery(QUERY_TOKEN, null, uri, COLUMN_NAMES,
                 null, null, null);
         displayProgress(true);
     }
@@ -176,33 +209,32 @@ public class ADNList extends ListActivity {
     }
 
     protected CursorAdapter newAdapter() {
-	  String[] columnNames = getQueryColumnNames();
         return new SimpleCursorAdapter(this,
-                    android.R.layout.simple_list_item_2,
-                    mCursor, columnNames, VIEW_NAMES);
+                    R.layout.adn_list_item,
+                    mCursor, new String[]{COLUMN_NAMES[1], COLUMN_NAMES[2]}, VIEW_NAMES);
     }
 
     private void displayProgress(boolean flag) {
         if (DBG) log("displayProgress: " + flag);
-        mEmptyText.setText(flag ? R.string.simContacts_emptyLoading: R.string.simContacts_empty);
+        int LoadingResId; 
+        if (mSimId == Phone.GEMINI_SIM_1 || mSimId == Phone.GEMINI_SIM_2) {
+            LoadingResId = R.string.simContacts_emptyLoading_ex;
+            SIMInfo info = SIMInfo.getSIMInfoBySlot(this, mSimId);
+            String text = "";
+            if (info != null && flag) {
+                text = this.getResources().getString(LoadingResId, info.mDisplayName);
+                mEmptyText.setText(text);
+            } else {
+                mEmptyText.setText(R.string.simContacts_empty);
+            }
+        } else {
+            LoadingResId = R.string.simContacts_emptyLoading;
+            mEmptyText.setText(flag ? LoadingResId: R.string.simContacts_empty);
+        }
+        //mEmptyText.setText(flag ? LoadingResId: R.string.simContacts_empty);
         getWindow().setFeatureInt(
                 Window.FEATURE_INDETERMINATE_PROGRESS,
                 flag ? PROGRESS_VISIBILITY_ON : PROGRESS_VISIBILITY_OFF);
-    }
-
-    private static final UriMatcher URL_MATCHER =
-        new UriMatcher(UriMatcher.NO_MATCH);
-    static {
-        URL_MATCHER.addURI("icc","fdn",0);
-        URL_MATCHER.addURI("icc1","fdn",1);
-    }
-
-    private Uri parseUri() {
-        if (URL_MATCHER.match(resolveIntent())==0) {
-            return Uri.parse("content://icc/fdn_s");
-        }else{
-            return Uri.parse("content://icc1/fdn_s");
-        }
     }
 
     private class QueryHandler extends AsyncQueryHandler {
@@ -212,23 +244,11 @@ public class ADNList extends ListActivity {
 
         @Override
         protected void onQueryComplete(int token, Object cookie, Cursor c) {
-            log("onQueryComplete: cursor.count= " + c.getCount());
-            if (token == QUERY_TOKEN) {
-                if (maxRecordSize < 0) {
-                    startQuery(QUERY_SIZE_TOKEN, null, parseUri(), null,
-                            null, null, null);
-                }
-                curRecordSize = c.getCount();
-                if (mCursor!=null) {
-                    mCursor.close();
-                }
-                mCursor = c;
-                setAdapter();
-                displayProgress(false);
-            }else{
-                c.moveToFirst();
-                maxRecordSize = c.getInt(0);
-            }
+            if (DBG) log("onQueryComplete: cursor.count=" + c.getCount());
+            mCursor = c;
+            if (mAirplaneMode) mCursor = null;
+            setAdapter();
+            displayProgress(false);
         }
 
         @Override
@@ -253,5 +273,21 @@ public class ADNList extends ListActivity {
 
     protected void log(String msg) {
         Log.d(TAG, "[ADNList] " + msg);
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+}
+
+    private class ADNListBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
+                finish();
+            }
+        }
     }
 }

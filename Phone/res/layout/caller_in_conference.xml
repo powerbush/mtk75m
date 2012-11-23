@@ -28,16 +28,19 @@
         android:gravity="center_vertical">
 
         <!-- "End" button for this caller -->
-        <ImageButton
+        <Button
             android:id="@+id/conferenceCallerDisconnect"
-            style="?android:attr/buttonStyleSmall"
-            android:src="@drawable/ic_button_conference_end"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
+            android:text="@string/onscreenEndCallText"
+            android:textColor="#ECE2E2"
+            android:layout_width="@dimen/manage_conference_button_end_width"
+            android:layout_height="@dimen/manage_conference_button_height"
             android:layout_marginTop="2dp"
             android:layout_marginLeft="6dp"
             android:scaleType="center"
-            android:contentDescription="@string/onscreenEndCallText" />
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:contentDescription="@string/onscreenEndCallText" 
+            android:background="@drawable/incall_btn_end"/>
 
         <!-- Caller information -->
         <LinearLayout
@@ -46,7 +49,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:layout_marginLeft="4dp">
+            android:layout_marginLeft="8dp">
 
             <!-- Name or number of this caller -->
             <TextView
@@ -90,16 +93,18 @@
         </LinearLayout>  <!-- End of caller information -->
 
         <!-- "Separate" (i.e. "go private") button for this caller -->
-        <ImageButton
+        <Button
             android:id="@+id/conferenceCallerSeparate"
-            style="?android:attr/buttonStyleSmall"
-            android:src="@drawable/ic_button_conference_private"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
+            android:text="@string/incall_conference_private"
+            android:layout_width="@dimen/manage_conference_button_private_width"
+            android:layout_height="@dimen/manage_conference_button_height"
             android:layout_marginTop="2dp"
             android:layout_marginRight="6dp"
             android:scaleType="center"
-            android:contentDescription="@string/goPrivate"/>
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:contentDescription="@string/goPrivate"
+            android:background="@drawable/incall_btn_return"/>
 
     </LinearLayout>  <!-- End of single list element -->
 

@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -16,6 +51,7 @@
 
 package com.android.phone;
 
+import static android.provider.Settings.System.SCREEN_OFF_TIMEOUT;
 import android.app.Activity;
 import android.app.Application;
 import android.app.KeyguardManager;
@@ -28,12 +64,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncResult;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.IPowerManager;
@@ -45,35 +81,47 @@ import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.preference.PreferenceManager;
-import android.provider.Telephony;
+import android.provider.Settings;
+import android.provider.Telephony.SIMInfo;
+import android.provider.CallLog.Calls;
 import android.provider.Settings.System;
+import android.provider.Settings.SettingNotFoundException;
 import android.telephony.ServiceState;
-import android.telephony.TelephonyManager;
 import android.util.Config;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.Toast;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Toast;
 import com.android.internal.telephony.Call;
 import com.android.internal.telephony.CallManager;
+import com.android.internal.telephony.Connection;
+import com.android.internal.telephony.CallerInfo;
 import com.android.internal.telephony.IccCard;
 import com.android.internal.telephony.MmiCode;
 import com.android.internal.telephony.Phone;
+import com.android.internal.telephony.gemini.GeminiPhone;
+import com.android.internal.telephony.gemini.GeminiNetworkSubUtil;
 import com.android.internal.telephony.PhoneFactory;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.telephony.cdma.EriInfo;
+import com.android.phone.OtaUtils.CdmaOtaScreenState;
 import com.android.internal.telephony.cdma.TtyIntent;
-import com.android.phone.PhoneAlertDialog;
 import com.android.internal.telephony.sip.SipPhoneFactory;
 import com.android.phone.OtaUtils.CdmaOtaScreenState;
 import com.android.server.sip.SipService;
+import android.os.Bundle;
+import com.mediatek.featureoption.FeatureOption;
+import com.android.internal.telephony.gemini.*;
+import com.mediatek.vt.VTManager;
+import android.os.AsyncResult;
+import com.android.internal.telephony.IccCard;
+import android.content.ComponentName;
+import java.util.List;
+import android.os.RemoteException;
+import com.android.internal.telephony.log.*;
 
-
-import android.provider.Settings;
-
-import static android.provider.Settings.System.SCREEN_OFF_TIMEOUT;
-import static com.android.internal.telephony.MsmsConstants.DEFAULT_SUBSCRIPTION;
 /**
  * Top-level Application class for the Phone app.
  */
@@ -93,19 +141,22 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
      * or else
      *   (PhoneApp.DBG_LEVEL >= 2)
      * depending on the desired verbosity.
-     *
-     * ***** DO NOT SUBMIT WITH DBG_LEVEL > 0 *************
      */
-    /* package */ static final int DBG_LEVEL = 0;
+    /* package */ static final int DBG_LEVEL = 1;
 
-    private static final boolean DBG = true;
-            //(PhoneApp.DBG_LEVEL >= 1) && (SystemProperties.getInt("ro.debuggable", 0) == 1);
-    private static final boolean VDBG = true;//(PhoneApp.DBG_LEVEL >= 2);
+    //private static final boolean DBG =
+    //         (PhoneApp.DBG_LEVEL >= 1) && (SystemProperties.getInt("ro.debuggable", 0) == 1);
+    // private static final boolean VDBG = (PhoneApp.DBG_LEVEL >= 2);
+    
+    private static final int USE_CM = 1;  // use call manager or not
 
-	public static final String EXTRA_IS_INCOMINGCALL = "android.phone.extra.IS_INCOMINGCALL";
+    private static final boolean DBG = true ;
+    private static final boolean VDBG = true;
 
     // Message codes; see mHandler below.
     private static final int EVENT_SIM_NETWORK_LOCKED = 3;
+    private static final int EVENT_SIM1_NETWORK_LOCKED = 19;
+    private static final int EVENT_SIM2_NETWORK_LOCKED = 21;
     private static final int EVENT_WIRED_HEADSET_PLUG = 7;
     private static final int EVENT_SIM_STATE_CHANGED = 8;
     private static final int EVENT_UPDATE_INCALL_NOTIFICATION = 9;
@@ -117,17 +168,34 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
     private static final int EVENT_TTY_MODE_GET = 15;
     private static final int EVENT_TTY_MODE_SET = 16;
     private static final int EVENT_START_SIP_SERVICE = 17;
+    private static final int EVENT_TIMEOUT = 18;
+    private static final int EVENT_TOUCH_ANSWER_VT = 30;
 
+  //Msg event for SIM Lock
+    private static final int SIM1QUERY = 120;
+    private static final int SIM2QUERY = 122; 
+    
+    
+    
     // The MMI codes are also used by the InCallScreen.
     public static final int MMI_INITIATE = 51;
     public static final int MMI_COMPLETE = 52;
     public static final int MMI_CANCEL = 53;
-    public static final int MMI_DIALOG_HIDE = 54;
+
+/* Fion add start */
+    public static final int MMI_INITIATE2 = 54; 
+    public static final int MMI_COMPLETE2 = 55;
+    public static final int MMI_CANCEL2 = 56;
+/* Fion add end */
+    private static final String PERMISSION = android.Manifest.permission.PROCESS_OUTGOING_CALLS;
+    private static final String STKCALL_REGISTER_SPEECH_INFO = "com.android.stk.STKCALL_REGISTER_SPEECH_INFO";
+    public static final String MISSEDCALL_DELETE_INTENT = "com.android.phone.MISSEDCALL_DELETE_INTENT";
     // Don't use message codes larger than 99 here; those are reserved for
     // the individual Activities of the Phone UI.
-
-    private static String NEW_SMS_RECEIVED_ACTION = "com.sprd.NEW_SMS_RECEIVED_ACTION";/*fixed CR<NEWMS00142299> by luning at 2011.11.21*/
-    
+    public static final String OLD_NETWORK_MODE = "com.android.phone.OLD_NETWORK_MODE";
+    public static final String NETWORK_MODE_CHANGE = "com.android.phone.NETWORK_MODE_CHANGE";
+    public static final String NETWORK_MODE_CHANGE_RESPONSE = "com.android.phone.NETWORK_MODE_CHANGE_RESPONSE";
+    public static final int MESSAGE_SET_PREFERRED_NETWORK_TYPE = 10011;
     /**
      * Allowable values for the poke lock code (timeout between a user activity and the
      * going to sleep), please refer to {@link com.android.server.PowerManagerService}
@@ -154,16 +222,18 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         FULL
     }
 
-    protected static PhoneApp sMe;
+    private static PhoneApp sMe;
 
     // A few important fields we expose to the rest of the package
     // directly (rather than thru set/get methods) for efficiency.
     Phone phone;
     CallNotifier notifier;
-    NotificationMgr notificationMgr;
     Ringer ringer;
     BluetoothHandsfree mBtHandsfree;
+    PhoneInterfaceManager phoneMgr;
     CallManager mCM;
+    MTKCallManager mCMGemini;
+	
     int mBluetoothHeadsetState = BluetoothHeadset.STATE_ERROR;
     int mBluetoothHeadsetAudioState = BluetoothHeadset.STATE_ERROR;
     boolean mShowBluetoothIndication = false;
@@ -174,14 +244,13 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
 
     // The InCallScreen instance (or null if the InCallScreen hasn't been
     // created yet.)
-    protected InCallScreen mInCallScreen;
-	 protected InVideoCallScreen mInVideoCallScreen;
+    private InCallScreen mInCallScreen;
 
     // The currently-active PUK entry activity and progress dialog.
     // Normally, these are the Emergency Dialer and the subsequent
     // progress dialog.  null if there is are no such objects in
     // the foreground.
-    protected Activity mPUKEntryActivity;
+    private Activity mPUKEntryActivity;
     private ProgressDialog mPUKEntryProgressDialog;
 
     private boolean mIsSimPinEnabled;
@@ -190,11 +259,11 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
     // True if a wired headset is currently plugged in, based on the state
     // from the latest Intent.ACTION_HEADSET_PLUG broadcast we received in
     // mReceiver.onReceive().
-    protected boolean mIsHeadsetPlugged;
+    private boolean mIsHeadsetPlugged;
 
     // True if the keyboard is currently *not* hidden
     // Gets updated whenever there is a Configuration change
-    protected boolean mIsHardKeyboardOpen;
+    private boolean mIsHardKeyboardOpen;
 
     // True if we are beginning a call, but the phone state has not changed yet
     private boolean mBeginningCall;
@@ -202,28 +271,30 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
     // Last phone state seen by updatePhoneState()
     Phone.State mLastPhoneState = Phone.State.IDLE;
 
-    protected WakeState mWakeState = WakeState.SLEEP;
+    private WakeState mWakeState = WakeState.SLEEP;
     private ScreenTimeoutDuration mScreenTimeoutDuration = ScreenTimeoutDuration.DEFAULT;
     private boolean mIgnoreTouchUserActivity = false;
     private IBinder mPokeLockToken = new Binder();
-    protected IPowerManager mPowerManagerService;
-    protected PowerManager.WakeLock mWakeLock;
-    protected PowerManager.WakeLock mPartialWakeLock;
-    protected PowerManager.WakeLock mProximityWakeLock;
-    protected KeyguardManager mKeyguardManager;
-    protected StatusBarManager mStatusBarManager;
-    protected int mStatusBarDisableCount;
-    protected AccelerometerListener mAccelerometerListener;
+    private IPowerManager mPowerManagerService;
+    private PowerManager.WakeLock mWakeLock;
+    private PowerManager.WakeLock mWakeLockForDisconnect;
+    private int mWakelockSequence = 0; 
+    private PowerManager.WakeLock mPartialWakeLock;
+    private PowerManager.WakeLock mProximityWakeLock;
+    private KeyguardManager mKeyguardManager;
+    private StatusBarManager mStatusBarManager;
+    private int mStatusBarDisableCount;
+    private AccelerometerListener mAccelerometerListener;
     private int mOrientation = AccelerometerListener.ORIENTATION_UNKNOWN;
 
     // Broadcast receiver for various intent broadcasts (see onCreate())
-    protected final BroadcastReceiver mReceiver = new PhoneAppBroadcastReceiver();
+    private final BroadcastReceiver mReceiver = new PhoneAppBroadcastReceiver();
 
     // Broadcast receiver purely for ACTION_MEDIA_BUTTON broadcasts
-    protected final BroadcastReceiver mMediaButtonReceiver = new MediaButtonBroadcastReceiver();
+    private final BroadcastReceiver mMediaButtonReceiver = new MediaButtonBroadcastReceiver();
 
     /** boolean indicating restoring mute state on InCallScreen.onResume() */
-    protected boolean mShouldRestoreMuteOnInCallResume;
+    private boolean mShouldRestoreMuteOnInCallResume;
 
     // Following are the CDMA OTA information Objects used during OTA Call.
     // cdmaOtaProvisionData object store static OTA information that needs
@@ -236,14 +307,25 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
     public OtaUtils.CdmaOtaScreenState cdmaOtaScreenState;
     public OtaUtils.CdmaOtaInCallScreenUiState cdmaOtaInCallScreenUiState;
 
-    // TTY feature enabled on this platform
-    protected boolean mTtyEnabled;
-    // Current TTY operating mode selected by user
-    protected int mPreferredTtyMode = Phone.TTY_MODE_OFF;
+    //Add a worker thread to handle the work that may take long time
+    PhoneUtils.WorkerThread mWorker = null;
+    Handler mWorkerHandler = null;
     
-    public static boolean mBooted = false;
-    private View mInCallScreenView;
+    // TTY feature enabled on this platform
+    private boolean mTtyEnabled;
+    
+    public boolean isEnableTTY() {
+        return mTtyEnabled;
+    }
+    // Current TTY operating mode selected by user
+    private int mPreferredTtyMode = Phone.TTY_MODE_OFF;
+    
+    
+    public int ihandledEventSIM2SIMLocked = 0;//whether handled EVENT_SIM2_NETWORK_LOCKED message, 0--not handled,1--already handled
+    public int ihandledEventSIM1SIMLocked = 0;//whether handled EVENT_SIM1_NETWORK_LOCKED message, 0--not handled,1--already handled
 
+    public static int[] arySIMLockStatus = {3,3}; //the SIM Lock deal with status
+    
     /**
      * Set the restore mute state flag. Used when we are setting the mute state
      * OUTSIDE of user interaction {@link PhoneUtils#startNewCall(Phone)}
@@ -260,7 +342,7 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
     /*package*/boolean getRestoreMuteOnInCallResume () {
         return mShouldRestoreMuteOnInCallResume;
     }
-
+    
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -278,21 +360,80 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 // TODO: This event should be handled by the lock screen, just
                 // like the "SIM missing" and "Sim locked" cases (bug 1804111).
                 case EVENT_SIM_NETWORK_LOCKED:
-                    if (getResources().getBoolean(R.bool.ignore_sim_network_locked_events)) {
-                        // Some products don't have the concept of a "SIM network lock"
-                        Log.i(LOG_TAG, "Ignoring EVENT_SIM_NETWORK_LOCKED event; "
-                              + "not showing 'SIM network unlock' PIN entry screen");
-                    } else {
-                        // Normal case: show the "SIM network unlock" PIN entry screen.
-                        // The user won't be able to do anything else until
-                        // they enter a valid SIM network PIN.
-                        Log.i(LOG_TAG, "show sim depersonal panel");
-                        IccNetworkDepersonalizationPanel ndpPanel =
-                                new IccNetworkDepersonalizationPanel(PhoneApp.getInstance());
-                        ndpPanel.show();
-                    }
+//                    if (getResources().getBoolean(R.bool.ignore_sim_network_locked_events)) {
+//                        // Some products don't have the concept of a "SIM network lock"
+//                        Log.i(LOG_TAG, "Ignoring EVENT_SIM_NETWORK_LOCKED event; "
+//                              + "not showing 'SIM network unlock' PIN entry screen");
+//                    } else {
+//                        // Normal case: show the "SIM network unlock" PIN entry screen.
+//                        // The user won't be able to do anything else until
+//                        // they enter a valid SIM network PIN.
+//                        Log.i(LOG_TAG, "show sim depersonal panel");
+//                        IccNetworkDepersonalizationPanel ndpPanel =
+//                                new IccNetworkDepersonalizationPanel(PhoneApp.getInstance());
+//                        ndpPanel.show();
+//                    }
+            		Log.d(LOG_TAG, "handle EVENT_SIM_NETWORK_LOCKED +");
+                	Intent intent3 = new Intent(PhoneApp.this, PowerOnSetupUnlockSIMLock.class);  
+                    intent3.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            		startActivity(intent3); 
+                	Log.d(LOG_TAG, "handle EVENT_SIM_NETWORK_LOCKED -");
                     break;
+                    
+                case EVENT_SIM1_NETWORK_LOCKED: //SIM 1 Network locked 
+//                	try{
+//                		Thread.sleep(1000);
+//                	}catch(InterruptedException er){
+//                		er.printStackTrace();
+//                	}
+//                	if(bNeedUnlockSIMLock(Phone.GEMINI_SIM_2) == false){//wait for SIM2 call PowerOnSetupUnlockSIMLock
+//                		
+//                	}else{
+//                    	ihandledEventSIM1SIMLocked = 1;//deal with EVENT_SIM2_NETWORK_LOCKED
+                	Log.d(LOG_TAG, "[Received][EVENT_SIM1_NETWORK_LOCKED]");	
+//                	if (arySIMLockStatus[0] == 0)//not deal with EVENT_SIM1_NETWORK_LOCKED
+//                    	{
+	                		Log.d(LOG_TAG, "handle EVENT_SIM1_NETWORK_LOCKED +");
+	                    	Intent intent = new Intent(PhoneApp.this, PowerOnSetupUnlockSIMLock.class);  
+	                		Bundle bundle = new Bundle();
+	                        bundle.putInt("Phone.GEMINI_SIM_ID_KEY",0);//To unlock which card  default:-1, Slot1: 0, Slot2:1
+	                		intent.putExtras(bundle);
+	                    	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	                		startActivity(intent); 
+	                    	Log.d(LOG_TAG, "handle EVENT_SIM1_NETWORK_LOCKED -");
+//                    	}
+//                	}
 
+
+                  break;    
+                case EVENT_SIM2_NETWORK_LOCKED: //SIM 2 Network locked
+//                	try{
+//                		Thread.sleep(1000);
+//                	}catch(InterruptedException er){
+//                		er.printStackTrace();
+//                	}
+//                	if(bNeedUnlockSIMLock(Phone.GEMINI_SIM_1) == false){//wait for SIM2 call PowerOnSetupUnlockSIMLock
+//                		
+//                	}else{
+//                    	ihandledEventSIM2SIMLocked = 1;//deal with EVENT_SIM2_NETWORK_LOCKED
+                	Log.d(LOG_TAG, "[Received][EVENT_SIM2_NETWORK_LOCKED]");		
+//                	if (arySIMLockStatus[1] == 0)//not deal with EVENT_SIM1_NETWORK_LOCKED
+//                    	{
+                    		Log.d(LOG_TAG, "handle EVENT_SIM2_NETWORK_LOCKED +");
+                            
+                        	Intent intent2 = new Intent(PhoneApp.this, PowerOnSetupUnlockSIMLock.class); 
+	                		Bundle bundle2 = new Bundle();
+	                        bundle2.putInt("Phone.GEMINI_SIM_ID_KEY",1);//To unlock which card  default:-1, Slot1: 0, Slot2:1
+	                		intent2.putExtras(bundle2);
+	                    	intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	                    	startActivity(intent2);
+                    		Log.d(LOG_TAG, "handle EVENT_SIM2_NETWORK_LOCKED -");
+//                    	}
+//
+//                	}
+
+
+                    break;
                 case EVENT_UPDATE_INCALL_NOTIFICATION:
                     // Tell the NotificationMgr to update the "ongoing
                     // call" icon in the status bar, if necessary.
@@ -300,29 +441,35 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                     // state change (since the status bar icon needs to
                     // turn blue when bluetooth is active.)
                     if (DBG) Log.d (LOG_TAG, "- updating in-call notification from handler...");
-                    notificationMgr.updateInCallNotification();
+                    NotificationMgr.getDefault().updateInCallNotification();
                     break;
 
                 case EVENT_DATA_ROAMING_DISCONNECTED:
-                    notificationMgr.showDataDisconnectedRoaming();
+                    NotificationMgr.getDefault().showDataDisconnectedRoaming(msg.arg1);
                     break;
 
                 case EVENT_DATA_ROAMING_OK:
-                    notificationMgr.hideDataDisconnectedRoaming();
+                    NotificationMgr.getDefault().hideDataDisconnectedRoaming();
                     break;
 
                 case MMI_COMPLETE:
+	/* Fion add start */
                     onMMIComplete((AsyncResult) msg.obj);
+                    break;
+                case MMI_COMPLETE2:
+                    onMMIComplete2((AsyncResult) msg.obj);
+			
                     break;
 
                 case MMI_CANCEL:
-                    PhoneUtils.cancelMmiCode(phone);
+                    PhoneUtils.cancelMmiCodeExt(phone, Phone.GEMINI_SIM_1);
                     break;
 
-                case MMI_DIALOG_HIDE:
-                    onMMIDialogHide();
+                case MMI_CANCEL2:					
+                    PhoneUtils.cancelMmiCodeExt(phone, Phone.GEMINI_SIM_2);
                     break;
-
+	/* Fion add end */		
+	
                 case EVENT_WIRED_HEADSET_PLUG:
                     // Since the presence of a wired headset or bluetooth affects the
                     // speakerphone, update the "speaker" state.  We ONLY want to do
@@ -332,7 +479,8 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                     phoneState = mCM.getState();
                     // Do not change speaker state if phone is not off hook
                     if (phoneState == Phone.State.OFFHOOK) {
-                        if (mBtHandsfree == null || !mBtHandsfree.isAudioOn()) {
+                        if (!isShowingCallScreen() &&
+                            (mBtHandsfree == null || !mBtHandsfree.isAudioOn())) {
                             if (!isHeadsetPlugged()) {
                                 // if the state is "not connected", restore the speaker state.
                                 PhoneUtils.restoreSpeakerMode(getApplicationContext());
@@ -394,8 +542,6 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
 
                         if (mInCallScreen != null) {
                             mInCallScreen.requestUpdateTouchUi();
-                        } else if (mInVideoCallScreen != null){
-                        	mInVideoCallScreen.requestUpdateTouchUi();
                         }
                     }
 
@@ -407,7 +553,7 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                     } else {
                         ttyMode = Phone.TTY_MODE_OFF;
                     }
-                    phone.setTTYMode(ttyMode, mHandler.obtainMessage(EVENT_TTY_MODE_SET));
+                    phone.setTTYMode(convertTTYmodeToRadio(ttyMode), mHandler.obtainMessage(EVENT_TTY_MODE_SET));
                     break;
 
                 case EVENT_TTY_MODE_GET:
@@ -417,38 +563,80 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 case EVENT_TTY_MODE_SET:
                     handleSetTTYModeResponse(msg);
                     break;
+
+                case EVENT_TIMEOUT:
+                    handleTimeout(msg.arg1);
+                    break;
+                    
+                case MESSAGE_SET_PREFERRED_NETWORK_TYPE:
+                    AsyncResult ar = (AsyncResult) msg.obj;
+                    Intent it = new Intent(NETWORK_MODE_CHANGE_RESPONSE);
+                    if (ar.exception == null) {
+                        it.putExtra(NETWORK_MODE_CHANGE_RESPONSE, true);
+                        it.putExtra("NEW_NETWORK_MODE", msg.arg2);
+                    }else {
+                        it.putExtra(NETWORK_MODE_CHANGE_RESPONSE, false);
+                        it.putExtra(OLD_NETWORK_MODE, msg.arg1);
+                    }
+                    sendBroadcast(it);
+                    break;
+                   
+                    
+                case EVENT_TOUCH_ANSWER_VT:
+                	if (DBG) Log.d (LOG_TAG, "mHandler.handleMessage() : EVENT_TOUCH_ANSWER_VT");
+                	try{
+                		getInCallScreenInstance().getInCallTouchUi().touchAnswerCall();
+                	}catch(Exception e){
+                		if (DBG) Log.d (LOG_TAG, "mHandler.handleMessage() : the InCallScreen Instance is null , so cannot answer incoming VT call");
+                	}
+                	break;
+                
             }
         }
     };
-    static MsmsPhoneApp msApp;
-    Context mContext;
+
     public PhoneApp() {
         sMe = this;
     }
 
     @Override
     public void onCreate() {
-        Log.d("lu", "onCreate");
         if (VDBG) Log.v(LOG_TAG, "onCreate()...");
-        mContext = this;
+
+        if (!SystemProperties.getBoolean("gsm.phone.created", false)) {
+            Log.d(LOG_TAG, "set System Property gsm.phone.created = true");
+            SystemProperties.set("gsm.phone.created", "true");
+            Settings.System.putLong(getApplicationContext().getContentResolver(),
+                    Settings.System.SIM_LOCK_STATE_SETTING, 0x0L);
+        }
 
         ContentResolver resolver = getContentResolver();
-        System.putInt(getContentResolver(), System.Standby_Select_Card_Show, 0);
 
         if (phone == null) {
+
+            Log.v(LOG_TAG, "onCreate(), start to make default phone");			
+
             // Initialize the telephony framework
             PhoneFactory.makeDefaultPhones(this);
+
+            Log.v(LOG_TAG, "onCreate(), make default phone complete");			
 
             // Get the default phone
             phone = PhoneFactory.getDefaultPhone();
 
             mCM = CallManager.getInstance();
-            mCM.registerPhone(phone);
-
+            if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                mCMGemini = MTKCallManager.getInstance();
+                mCMGemini.registerPhoneGemini(phone); 
+            } else {
+                mCM.registerPhone(phone);
+            }
 
             NotificationMgr.init(this);
-            notificationMgr = NotificationMgr.getDefault();
-            new PhoneInterfaceManager(this, phone);
+
+            Log.v(LOG_TAG, "onCreate(), start to new phone interface");
+
+            phoneMgr = new PhoneInterfaceManager(this, phone);
 
             mHandler.sendEmptyMessage(EVENT_START_SIP_SERVICE);
 
@@ -459,6 +647,8 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 cdmaPhoneCallState = new CdmaPhoneCallState();
                 cdmaPhoneCallState.CdmaPhoneCallStateInit();
             }
+
+            Log.v(LOG_TAG, "onCreate(), start to get BT default adapter");			
 
             if (BluetoothAdapter.getDefaultAdapter() != null) {
                 mBtHandsfree = new BluetoothHandsfree(this, mCM);
@@ -473,8 +663,15 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
             // before registering for phone state changes
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK
-                    | PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                    LOG_TAG);
+                    | PowerManager.ACQUIRE_CAUSES_WAKEUP
+                    | PowerManager.ON_AFTER_RELEASE, LOG_TAG);
+
+            mWakeLockForDisconnect = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK
+                    | PowerManager.ACQUIRE_CAUSES_WAKEUP
+                    | PowerManager.ON_AFTER_RELEASE, LOG_TAG);
+   
+            Log.v(LOG_TAG, "onCreate(), new partial wakelock");			
+
             // lock used to keep the processor awake, when we don't care for the display.
             mPartialWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK
                     | PowerManager.ON_AFTER_RELEASE, LOG_TAG);
@@ -499,27 +696,68 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
             mPowerManagerService = IPowerManager.Stub.asInterface(
                     ServiceManager.getService("power"));
 
+            Log.v(LOG_TAG, "onCreate(), new callnotifier");			
+
             notifier = new CallNotifier(this, phone, ringer, mBtHandsfree, new CallLogAsync());
 
-            // register for ICC status
-            IccCard sim = phone.getIccCard();
-            if (sim != null) {
-                if (VDBG) Log.v(LOG_TAG, "register for ICC status");
-                sim.registerForNetworkLocked(mHandler, EVENT_SIM_NETWORK_LOCKED, null);
-            }
+//             /* Fion add start */
+//             /* Benson: no use currently */
+//            // register for ICC status
+//            IccCard sim = phone.getIccCard();
+//            if (sim != null) {
+//                if (VDBG) Log.v(LOG_TAG, "register for ICC status");
+//                sim.registerForNetworkLocked(mHandler, EVENT_SIM_NETWORK_LOCKED, null);
+//            }
+            
+//            // register for SIM Lock
+//            if (phoneType == Phone.PHONE_TYPE_GSM) {
+//                if (FeatureOption.MTK_GEMINI_SUPPORT) {
+//                	GeminiPhone mGeminiPhone = (GeminiPhone)PhoneFactory.getDefaultPhone();
+//                	IccCard sim1Gemini = mGeminiPhone.getIccCardGemini(Phone.GEMINI_SIM_1);
+//                	IccCard sim2Gemini = mGeminiPhone.getIccCardGemini(Phone.GEMINI_SIM_2);
+//                	sim1Gemini.registerForNetworkLocked(mHandler, EVENT_SIM1_NETWORK_LOCKED, null);
+//                	sim2Gemini.registerForNetworkLocked(mHandler, EVENT_SIM2_NETWORK_LOCKED, null);
+//                } else {
+//                    IccCard sim = phone.getIccCard();
+//                    if (sim != null) {
+//                        if (VDBG) Log.v(LOG_TAG, "register for ICC status");
+//                        sim.registerForNetworkLocked(mHandler, EVENT_SIM_NETWORK_LOCKED, null);
+//                    }
+//                }
+//            }
 
             // register for MMI/USSD
-            mCM.registerForMmiComplete(mHandler, MMI_COMPLETE, null);
+            if (phoneType == Phone.PHONE_TYPE_GSM) {
+                if (FeatureOption.MTK_GEMINI_SUPPORT) {
+                    mCMGemini.registerForMmiCompleteGemini(mHandler, PhoneApp.MMI_COMPLETE, null, Phone.GEMINI_SIM_1);                
+                    mCMGemini.registerForMmiCompleteGemini(mHandler, PhoneApp.MMI_COMPLETE2, null, Phone.GEMINI_SIM_2);                
+                } else {
+                    mCM.registerForMmiComplete(mHandler, MMI_COMPLETE, null);
+                }
+            }
+
+            Log.v(LOG_TAG, "onCreate(), initialize connection handler");			
 
             // register connection tracking to PhoneUtils
             PhoneUtils.initializeConnectionHandler(mCM);
 
             // Read platform settings for TTY feature
-            mTtyEnabled = getResources().getBoolean(R.bool.tty_enabled);
+            if (PhoneUtils.isSupportFeature("TTY"))
+            {
+                mTtyEnabled = getResources().getBoolean(R.bool.tty_enabled);
+            }
+            else
+            {
+                mTtyEnabled = false;
+            }
+
+            Log.v(LOG_TAG, "onCreate(), new intentfilter");			
 
             // Register for misc other intent broadcasts.
             IntentFilter intentFilter =
                     new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+            intentFilter.addAction(Intent.ACTION_DUAL_SIM_MODE_CHANGED);
+            intentFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
             intentFilter.addAction(BluetoothHeadset.ACTION_STATE_CHANGED);
             intentFilter.addAction(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED);
             intentFilter.addAction(TelephonyIntents.ACTION_ANY_DATA_CONNECTION_STATE_CHANGED);
@@ -534,11 +772,17 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 intentFilter.addAction(TtyIntent.TTY_PREFERRED_MODE_CHANGE_ACTION);
             }
             intentFilter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
-            
-            intentFilter.addAction(NEW_SMS_RECEIVED_ACTION);/*fixed CR<NEWMS00142299> by luning at 2011.11.21*/
-            
-            intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
-            
+            intentFilter.addAction(Intent.ACTION_SHUTDOWN);
+			intentFilter.addAction(STKCALL_REGISTER_SPEECH_INFO);
+            intentFilter.addAction(MISSEDCALL_DELETE_INTENT);
+            intentFilter.addAction("out_going_call_to_phone_app");
+            //Handle the network mode change for enhancement
+            intentFilter.addAction(NETWORK_MODE_CHANGE);
+            intentFilter.addAction("android.intent.action.ACTION_SHUTDOWN_IPO");
+            intentFilter.addAction("android.intent.action.ACTION_PREBOOT_IPO");
+            intentFilter.addAction(GeminiPhone.EVENT_3G_SWITCH_START_MD_RESET);
+            intentFilter.addAction(TelephonyIntents.ACTION_RADIO_OFF);
+            intentFilter.addAction(Constant.ACTION_MODEM_RESET);
             registerReceiver(mReceiver, intentFilter);
 
             // Use a separate receiver for ACTION_MEDIA_BUTTON broadcasts,
@@ -562,23 +806,12 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
             // Make sure the audio mode (along with some
             // audio-mode-related state of our own) is initialized
             // correctly, given the current state of the phone.
-            switch (phone.getState()) {
-                case IDLE:
-                    if (DBG) Log.d(LOG_TAG, "Resetting audio state/mode: IDLE");
-                    PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_IDLE);
-                    PhoneUtils.setAudioMode(AudioManager.MODE_NORMAL);
-                    break;
-                case RINGING:
-                    if (DBG) Log.d(LOG_TAG, "Resetting audio state/mode: RINGING");
-                    PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_RINGING);
-                    PhoneUtils.setAudioMode(AudioManager.MODE_RINGTONE);
-                    break;
-                case OFFHOOK:
-                    if (DBG) Log.d(LOG_TAG, "Resetting audio state/mode: OFFHOOK");
-                    PhoneUtils.setAudioControlState(PhoneUtils.AUDIO_OFFHOOK);
-                    PhoneUtils.setAudioMode(AudioManager.MODE_IN_CALL);
-                    break;
-            }
+            PhoneUtils.setAudioMode(mCM);
+            mWorker = PhoneUtils.WorkerThread.getWorkerThread();
+            mWorker.startWorkerThread();
+            mWorkerHandler = mWorker.getHandler();
+            MiniLog.flush();
+            LogService logService = new LogService();
         }
 
         boolean phoneIsCdma = (phone.getPhoneType() == Phone.PHONE_TYPE_CDMA);
@@ -620,13 +853,21 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                                       CallFeaturesSetting.HAC_VAL_ON :
                                       CallFeaturesSetting.HAC_VAL_OFF);
         }
-        LayoutInflater pi = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mInCallScreenView = pi.inflate(R.layout.incall_screen, null);
-   }
+        
+        if(FeatureOption.MTK_PHONE_VOICE_RECORDING)
+        {
+        	mRecorderServiceIntent = new Intent(this, PhoneRecorderServices.class);
+        }
+        
+        PhoneUtils.turnOnSpeaker(this, false, true);
+        PhoneUtils.setMute(false);
+        mStatusBarManager.removeIcon("speakerphone");
+        mStatusBarManager.removeIcon("mute");
+        NotificationMgr.getDefault().updateInCallNotification();
+        
+        Log.v(LOG_TAG, "onCreate(), exit.");
 
-    public View getmInCallScreenView() {
-       return mInCallScreenView;
-    }
+   }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -655,10 +896,6 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         return getInstance().phone;
     }
 
-   Phone getPhone(int subscription) {
-       return this.phone;
-   }
-
     Ringer getRinger() {
         return ringer;
     }
@@ -683,7 +920,8 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-                | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+                | Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.setClassName("com.android.phone", getCallScreenClassName());
         return intent;
     }
@@ -693,63 +931,23 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
      * DTMF dialpad should be initially visible when the InCallScreen
      * comes up.
      */
-    /* package */static Intent createInCallIntent(boolean showDialpad) {
-        if (PhoneApp.getInstance() instanceof MsmsPhoneApp) {
-            return MsmsPhoneApp.createInCallIntent(showDialpad);
-        }
+    /* package */ static Intent createInCallIntent(boolean showDialpad) {
         Intent intent = createInCallIntent();
         intent.putExtra(InCallScreen.SHOW_DIALPAD_EXTRA, showDialpad);
         return intent;
     }
 
     static String getCallScreenClassName() {
-		if (PhoneUtils.isVideoCall(PhoneApp.getInstance().getDefaultPhone()))
-			return InVideoCallScreen.class.getName();
-		else
-	        return InCallScreen.class.getName();
+        return InCallScreen.class.getName();
     }
 
     /**
      * Starts the InCallScreen Activity.
      */
-    private void displayCallScreen() {
+    /* private */ void displayCallScreen() {
         if (VDBG) Log.d(LOG_TAG, "displayCallScreen()...");
         startActivity(createInCallIntent());
         Profiler.callScreenRequested();
-    }
-
-    /**
-     * Starts the InComingCallScreen Activity.
-     */
-    void displayInComingCallScreen() {
-        if (VDBG) Log.d(LOG_TAG, "displayInComingCallScreen()...");
-		Intent intent = createInCallIntent();
-		intent.putExtra(EXTRA_IS_INCOMINGCALL, true);
-        startActivity(intent);
-        Profiler.callScreenRequested();
-    }
-
-    /**
-     * Helper function to check for one special feature of the CALL key:
-     * Normally, when the phone is idle, CALL takes you to the call log
-     * (see the handler for KEYCODE_CALL in PhoneWindow.onKeyUp().)
-     * But if the phone is in use (either off-hook or ringing) we instead
-     * handle the CALL button by taking you to the in-call UI.
-     *
-     * @return true if we intercepted the CALL keypress (i.e. the phone
-     *              was in use)
-     *
-     * @see DialerActivity#onCreate
-     */
-    boolean handleInCallOrRinging() {
-        if (phone.getState() != Phone.State.IDLE) {
-            // Phone is OFFHOOK or RINGING.
-            if (DBG) Log.v(LOG_TAG,
-                           "handleInCallOrRinging: show call screen");
-            displayCallScreen();
-            return true;
-        }
-        return false;
     }
 
     boolean isSimPinEnabled() {
@@ -767,17 +965,10 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
     void setInCallScreenInstance(InCallScreen inCallScreen) {
         mInCallScreen = inCallScreen;
     }
-
-    InCallScreen getInCallScreen() {
-        return mInCallScreen;
-    }
     
-    InVideoCallScreen getInVideoCallScreen() {
-        return mInVideoCallScreen;
-    }
-
-    void setInVideoCallScreenInstance(InVideoCallScreen inCallScreen) {
-        mInVideoCallScreen = inCallScreen;
+    InCallScreen getInCallScreenInstance()
+    {
+    	return mInCallScreen;
     }
 
     /**
@@ -792,16 +983,13 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
      * always "paused" while the screen is off.)
      */
     boolean isShowingCallScreen() {
-    	if (PhoneUtils.isVideoCall())
-		{
-	        if (mInVideoCallScreen == null) return false;
-	        return mInVideoCallScreen.isForegroundActivity();
-		}
-		else
-		{
-	        if (mInCallScreen == null) return false;
-	        return mInCallScreen.isForegroundActivity();
-		}
+        if (mInCallScreen == null) return false;
+        return mInCallScreen.isForegroundActivity();
+    }
+    
+    boolean isShouldPlayRingtone(){
+    	if(mInCallScreen == null)return false;
+    	return mInCallScreen.isShouldPlayRingtone();
     }
 
     /**
@@ -814,14 +1002,6 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
      * to display OTA Call End screen.
      */
     void dismissCallScreen() {
-    	if (PhoneUtils.isVideoCall())
-		{
-	        if (mInVideoCallScreen != null) {
-	                mInVideoCallScreen.finish();
-	        }
-		}
-		else
-		{		
         if (mInCallScreen != null) {
             if ((phone.getPhoneType() == Phone.PHONE_TYPE_CDMA) &&
                     (mInCallScreen.isOtaCallInActiveState()
@@ -843,7 +1023,6 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 mInCallScreen.finish();
             }
         }
-    }
     }
 
     /**
@@ -1085,6 +1264,28 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         }
     }
 
+    void wakeUpScreenForDisconnect(int holdMs) {
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        synchronized (this) {
+            if (mWakeState == WakeState.SLEEP && !pm.isScreenOn()) { 
+                if (DBG) Log.d(LOG_TAG, "wakeUpScreenForDisconnect(" + holdMs + ")");
+                mWakeLockForDisconnect.acquire();
+                mHandler.removeMessages(EVENT_TIMEOUT);
+                mWakelockSequence++;
+                Message msg = mHandler.obtainMessage(EVENT_TIMEOUT, mWakelockSequence, 0);
+                mHandler.sendMessageDelayed(msg, holdMs);
+            }
+        }
+    }
+    
+    void handleTimeout(int seq){
+        synchronized (this) {
+            if (DBG) Log.d(LOG_TAG, "handleTimeout");
+            if (seq == mWakelockSequence) {
+                mWakeLockForDisconnect.release();
+            }
+        }
+    }
     /**
      * Sets the wake state and screen timeout based on the current state
      * of the phone, and the current state of the in-call UI.
@@ -1107,8 +1308,7 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         // True if the InCallScreen's DTMF dialer is currently opened.
         // (Note this does NOT imply whether or not the InCallScreen
         // itself is visible.)
-        boolean isDialerOpened = (((mInCallScreen != null) && mInCallScreen.isDialerOpened())
-        						||((mInVideoCallScreen != null) && mInVideoCallScreen.isDialerOpened()));
+        boolean isDialerOpened = (mInCallScreen != null) && mInCallScreen.isDialerOpened();
 
         // True if the speakerphone is in use.  (If so, we *always* use
         // the default timeout.  Since the user is obviously not holding
@@ -1171,7 +1371,12 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         // the "disconnected" state.
         //
         boolean isRinging = (state == Phone.State.RINGING);
-        boolean isDialing = (phone.getForegroundCall().getState() == Call.State.DIALING);
+        boolean isDialing;
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true) {
+            isDialing = (((GeminiPhone)phone).getForegroundCall().getState() == Call.State.DIALING);
+        } else {
+            isDialing = (phone.getForegroundCall().getState() == Call.State.DIALING);
+        }	
         boolean showingDisconnectedConnection =
                 PhoneUtils.hasDisconnectedConnections(phone) && isShowingCallScreen;
         boolean keepScreenOn = isRinging || isDialing || showingDisconnectedConnection;
@@ -1285,12 +1490,21 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 boolean screenOnImmediately = (isHeadsetPlugged()
                             || PhoneUtils.isSpeakerOn(this)
                             || ((mBtHandsfree != null) && mBtHandsfree.isAudioOn())
-                            || mIsHardKeyboardOpen);
+                            || mIsHardKeyboardOpen
+                            // ignore g-sensor, see CR:73830
+                            /*|| mOrientation == AccelerometerListener.ORIENTATION_HORIZONTAL*/);
+
+				if (FeatureOption.MTK_VT3G324M_SUPPORT == true) {
+					screenOnImmediately = screenOnImmediately
+							|| ((!isVTIdle()) && (!isVTRinging()));
+				}
                 // We do not keep the screen off when we are horizontal, but we do not force it
                 // on when we become horizontal until the proximity sensor goes negative.
-//                boolean horizontal = (mOrientation == AccelerometerListener.ORIENTATION_HORIZONTAL);
-//                && !horizontal
-                if ((((!PhoneUtils.isVideoCall()) && (state == Phone.State.OFFHOOK)) || mBeginningCall) && !screenOnImmediately ) {
+                // ignore g-sensor, see CR:73830
+                // boolean horizontal = (mOrientation == AccelerometerListener.ORIENTATION_HORIZONTAL);
+
+                if (((state == Phone.State.OFFHOOK) || mBeginningCall) &&
+                        !screenOnImmediately /*&& !horizontal*/) {
                     // Phone is in use!  Arrange for the screen to turn off
                     // automatically when the sensor detects a close object.
                     if (!mProximityWakeLock.isHeld()) {
@@ -1345,9 +1559,12 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
             // an insecure lock screen.
             // But we do not want to do this if there is no active call so we do not
             // bypass the keyguard if the call is not answered or declined.
-            if (mInCallScreen != null) {
-                mInCallScreen.updateKeyguardPolicy(state == Phone.State.OFFHOOK);
-            }
+			if (mInCallScreen != null) {
+				if (VDBG)Log.d(LOG_TAG, "updatePhoneState: state = " + state);
+				mInCallScreen.updateActivityHiberarchy(state != Phone.State.IDLE);
+				if (!PhoneUtils.isDMLocked())
+					mInCallScreen.updateKeyguardPolicy(state == Phone.State.OFFHOOK);
+			}
         }
     }
 
@@ -1367,24 +1584,35 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         return mKeyguardManager;
     }
 
-    protected void onMMIComplete(AsyncResult r) {
+    private void onMMIComplete(AsyncResult r) {
         if (VDBG) Log.d(LOG_TAG, "onMMIComplete()...");
         MmiCode mmiCode = (MmiCode) r.result;
-        PhoneUtils.displayMMIComplete(phone, getInstance(), mmiCode, null, null);
-        if (mInCallScreen != null) {
-            Call ringcall = mInCallScreen.getmRingingCall();
-            if (ringcall != null){
-                if (mInCallScreen.isForegroundActivity() && ringcall.isRinging() ) {
-                    mHandler.sendEmptyMessageDelayed(MMI_DIALOG_HIDE,1000);
-                }
-            }
+        MmiCode.State state = mmiCode.getState();
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+        	if (state != MmiCode.State.PENDING) {
+	     	   Intent intent = new Intent();
+	     	   intent.setAction("com.android.phone.mmi");
+	     	   sendBroadcast(intent);
+        	}
         }
+        PhoneUtils.displayMMIComplete(phone, getInstance(), mmiCode, null, null);
     }
 
-    private void onMMIDialogHide() {
-        final Intent intendSend = new Intent(PhoneAlertDialog.CALL_SCREEN_ON_TOP);
-        sendBroadcast(intendSend);
+/* Fion add start */
+    private void onMMIComplete2(AsyncResult r) {
+        if (VDBG) Log.d(LOG_TAG, "onMMIComplete2()...");
+        MmiCode mmiCode = (MmiCode) r.result;
+        MmiCode.State state = mmiCode.getState();
+        if (FeatureOption.MTK_GEMINI_SUPPORT) {
+        	if (state != MmiCode.State.PENDING) {
+	     	   Intent intent = new Intent();
+	     	   intent.setAction("com.android.phone.mmi");
+	     	   sendBroadcast(intent);
+        	}
+        }
+        PhoneUtils.displayMMICompleteExt(phone, getInstance(), mmiCode, null, null, Phone.GEMINI_SIM_2);
     }
+/* Fion add end */
 
     private void initForNewRadioTechnology() {
         if (DBG) Log.d(LOG_TAG, "initForNewRadioTechnology...");
@@ -1422,13 +1650,28 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         }
 
         // Update registration for ICC status after radio technology change
-        IccCard sim = phone.getIccCard();
-        if (sim != null) {
-            if (DBG) Log.d(LOG_TAG, "Update registration for ICC status...");
-
-            //Register all events new to the new active phone
-            sim.registerForNetworkLocked(mHandler, EVENT_SIM_NETWORK_LOCKED, null);
-        }
+//        IccCard sim = phone.getIccCard();
+//        if (sim != null) {
+//            if (DBG) Log.d(LOG_TAG, "Update registration for ICC status...");
+//
+//            //Register all events new to the new active phone
+//            sim.registerForNetworkLocked(mHandler, EVENT_SIM_NETWORK_LOCKED, null);
+//        }
+       
+            if (FeatureOption.MTK_GEMINI_SUPPORT) {
+            	GeminiPhone mGeminiPhone = (GeminiPhone)PhoneFactory.getDefaultPhone();
+            	IccCard sim1Gemini = mGeminiPhone.getIccCardGemini(Phone.GEMINI_SIM_1);
+            	IccCard sim2Gemini = mGeminiPhone.getIccCardGemini(Phone.GEMINI_SIM_2);
+            	sim1Gemini.registerForNetworkLocked(mHandler, EVENT_SIM1_NETWORK_LOCKED, null);
+            	sim2Gemini.registerForNetworkLocked(mHandler, EVENT_SIM2_NETWORK_LOCKED, null);
+            } else {
+                IccCard sim = phone.getIccCard();
+                if (sim != null) {
+                    if (VDBG) Log.v(LOG_TAG, "register for ICC status");
+                    sim.registerForNetworkLocked(mHandler, EVENT_SIM_NETWORK_LOCKED, null);
+                }
+            }
+       
     }
 
 
@@ -1473,30 +1716,13 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         if (forceUiUpdate) {
             // Post Handler messages to the various components that might
             // need to be refreshed based on the new state.
-            if (isShowingCallScreen()) {
-				if (PhoneUtils.isVideoCall()){
-					mInVideoCallScreen.requestUpdateBluetoothIndication();
-				} else {
-					mInCallScreen.requestUpdateBluetoothIndication();
-				}
-            }
+            if (isShowingCallScreen()) mInCallScreen.requestUpdateBluetoothIndication();
+            if (DBG) Log.d (LOG_TAG, "- updating in-call notification for BT state change...");
             mHandler.sendEmptyMessage(EVENT_UPDATE_INCALL_NOTIFICATION);
         }
 
         // Update the Proximity sensor based on Bluetooth audio state
         updateProximitySensorMode(mCM.getState());
-    }
-
-    /* package */ void updateMuteIndication() {
-            // Post Handler messages to the various components that might
-            // need to be refreshed based on the new state.
-            if (isShowingCallScreen()) {
-		if (PhoneUtils.isVideoCall()){
-			mInVideoCallScreen.requestUpdateMuteIndication();
-		} else {
-			//mInCallScreen.requestUpdateBluetoothIndication();
-		}
-        }
     }
 
     /**
@@ -1542,20 +1768,74 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 return false;
         }
     }
+    
+    public class OutgoingCallPhoneAppReceiver extends BroadcastReceiver {
+        private static final String TAG = "OutgoingCallPhoneAppReceiver";
 
+        public void onReceive(Context context, Intent intent) {
+            if (DBG) Log.v(TAG, "onReceive: " + intent);
+            String resultdata = getResultData();
+            if (resultdata == null) {
+                Log.v(TAG, "CALL cancelled (null number), returning...");
+                return;
+            }
+        	if (null != intent && intent.getBooleanExtra("launch_from_dialer", false)) {
+            	final String number = intent.getStringExtra("number");
+                if (DBG) Log.v(TAG, "onReceive: launch_from_dialer");
+        		if (null != intent && intent.getBooleanExtra("is_sip_call", false)) {
+                    if (DBG) Log.v(TAG, "onReceive: is_sip_call: true");
+                    intent.setData(Uri.fromParts("sip", number, null));
+        			intent.setComponent(new ComponentName("com.android.phone", "com.android.phone.SipCallHandlerEx"));
+        		} else {
+                    if (DBG) Log.v(TAG, "onReceive: is_sip_call: false");
+                    intent.setData(Uri.fromParts("tel", number, null));
+        			intent.setComponent(new ComponentName("com.android.phone", "com.android.phone.InCallScreen"));
+        		}
+        		intent.setAction(Intent.ACTION_CALL_PRIVILEGED);
+        		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                context.startActivity(intent);
+        	}
+        }
+    }
 
     /**
      * Receiver for misc intent broadcasts the Phone app cares about.
      */
-    protected class PhoneAppBroadcastReceiver extends BroadcastReceiver {
+    private class PhoneAppBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int phoneId = intent.getIntExtra(Phone.PHONE_ID, 0);
             String action = intent.getAction();
+            if (VDBG) Log.d(LOG_TAG, "PhoneAppBroadcastReceiver ------------------------- action=" + action);
             if (action.equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
-                boolean enabled = System.getInt(getContentResolver(),
-                        System.AIRPLANE_MODE_ON, 0) == 0;
-                phone.setRadioPower(enabled);
+            	boolean enabled = intent.getBooleanExtra("state", false);
+            	if (VDBG) Log.d(LOG_TAG, "PhoneAppBroadcastReceiver ------------------------- enabled=" + enabled);
+//                boolean enabled = System.getInt(getContentResolver(),
+//                        System.AIRPLANE_MODE_ON, 0) == 0;
+                if (enabled == true)
+                {
+                    PhoneUtils.DismissMMIDialog();
+                }
+                if (FeatureOption.MTK_GEMINI_SUPPORT != true) 
+                    phone.setRadioPower(!enabled);
+                else {
+                    if (!enabled) {
+                        int dualSimModeSetting = System.getInt(getContentResolver(),
+                                System.DUAL_SIM_MODE_SETTING, GeminiNetworkSubUtil.MODE_DUAL_SIM);
+                        ((GeminiPhone)phone).setRadioMode(dualSimModeSetting);
+                    } else {
+                        ((GeminiPhone)phone).setRadioMode(GeminiNetworkSubUtil.MODE_FLIGHT_MODE);
+                    }
+                }
+            } else if (action.equals(Intent.ACTION_DUAL_SIM_MODE_CHANGED)) {
+                int mode = intent.getIntExtra(Intent.EXTRA_DUAL_SIM_MODE, GeminiNetworkSubUtil.MODE_DUAL_SIM);
+                ((GeminiPhone)phone).setRadioMode(mode);
+            } else if (action.equals(Intent.ACTION_CONFIGURATION_CHANGED)) {
+                if (FeatureOption.MTK_GEMINI_SUPPORT != true) {
+                    phone.refreshSpnDisplay();
+                } else {
+                    ((GeminiPhone)phone).refreshSpnDisplay();
+                }
             } else if (action.equals(BluetoothHeadset.ACTION_STATE_CHANGED)) {
                 mBluetoothHeadsetState = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE,
                                                             BluetoothHeadset.STATE_ERROR);
@@ -1575,6 +1855,8 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 if (VDBG) Log.d(LOG_TAG, "- reason: "
                                 + intent.getStringExtra(Phone.STATE_CHANGE_REASON_KEY));
 
+                //Get the simId for the disconnection action
+                int simId = intent.getIntExtra(Phone.GEMINI_SIM_ID_KEY,Phone.GEMINI_SIM_1);
                 // The "data disconnected due to roaming" notification is
                 // visible if you've lost data connectivity because you're
                 // roaming and you have the "data roaming" feature turned off.
@@ -1588,9 +1870,12 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                         disconnectedDueToRoaming = true;
                     }
                 }
-                mHandler.sendEmptyMessage(disconnectedDueToRoaming
+                mHandler.sendMessage(mHandler.obtainMessage(disconnectedDueToRoaming ? EVENT_DATA_ROAMING_DISCONNECTED
+                                : EVENT_DATA_ROAMING_OK, simId, 0));
+                
+                /*mHandler.sendEmptyMessage(disconnectedDueToRoaming
                                           ? EVENT_DATA_ROAMING_DISCONNECTED
-                                          : EVENT_DATA_ROAMING_OK);
+                                          : EVENT_DATA_ROAMING_OK);*/
             } else if (action.equals(Intent.ACTION_HEADSET_PLUG)) {
                 if (VDBG) Log.d(LOG_TAG, "mReceiver: ACTION_HEADSET_PLUG");
                 if (VDBG) Log.d(LOG_TAG, "    state: " + intent.getIntExtra("state", 0));
@@ -1600,20 +1885,49 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
             } else if (action.equals(Intent.ACTION_BATTERY_LOW)) {
                 if (VDBG) Log.d(LOG_TAG, "mReceiver: ACTION_BATTERY_LOW");
                 notifier.sendBatteryLow();  // Play a warning tone if in-call
-            } else if ((action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED)) &&
-                    (mPUKEntryActivity != null)) {
+            } else if ((action.equals(TelephonyIntents.ACTION_SIM_STATE_CHANGED))) {
                 // if an attempt to un-PUK-lock the device was made, while we're
                 // receiving this state change notification, notify the handler.
                 // NOTE: This is ONLY triggered if an attempt to un-PUK-lock has
                 // been attempted.
-                mHandler.sendMessage(mHandler.obtainMessage(EVENT_SIM_STATE_CHANGED,
-                        intent.getStringExtra(IccCard.INTENT_KEY_ICC_STATE)));
+            	int unlockSIMID = intent.getIntExtra(Phone.GEMINI_SIM_ID_KEY,-1);
+            	String unlockSIMStatus = intent.getStringExtra(IccCard.INTENT_KEY_ICC_STATE);
+            	Log.d(LOG_TAG, "[unlock SIM card NO switched. Now] " + unlockSIMID + " is active.");
+            	Log.d(LOG_TAG, "[unlockSIMStatus] : "  + unlockSIMStatus);
+            	if ((unlockSIMID == Phone.GEMINI_SIM_1) && ((IccCard.INTENT_VALUE_LOCKED_NETWORK).equals(unlockSIMStatus)) ){
+            		Log.d(LOG_TAG, "[unlockSIMID :Phone.GEMINI_SIM_1]");
+            		
+            		arySIMLockStatus[0] = 2;//need to deal with SIM1 SIM Lock
+            		if ((arySIMLockStatus[1] != 1) && (arySIMLockStatus[1] != 4)){
+            			arySIMLockStatus[0] = 1;
+	                    mHandler.sendMessage(mHandler.obtainMessage(EVENT_SIM1_NETWORK_LOCKED,
+	                            intent.getStringExtra(IccCard.INTENT_KEY_ICC_STATE)));
+	                    
+            		}
+                    
+                    Log.d(LOG_TAG,"[SIM1][changed][arySIMLockStatus]: ["+ PhoneApp.arySIMLockStatus[0] + " , " + PhoneApp.arySIMLockStatus[1] + " ]");
+            	}else if((unlockSIMID == Phone.GEMINI_SIM_2) && ((IccCard.INTENT_VALUE_LOCKED_NETWORK).equals(unlockSIMStatus))){
+            		Log.d(LOG_TAG, "[unlockSIMID :Phone.GEMINI_SIM_2]");            		
+            		arySIMLockStatus[1] = 2;//need to deal with SIM2 SIM Lock
+            		if ((arySIMLockStatus[0] != 1) && (arySIMLockStatus[0] != 4)){
+            			arySIMLockStatus[1] = 1;
+	            		mHandler.sendMessage(mHandler.obtainMessage(EVENT_SIM2_NETWORK_LOCKED,
+	                            intent.getStringExtra(IccCard.INTENT_KEY_ICC_STATE)));                   
+	            		 
+            		}
+            		Log.d(LOG_TAG,"[SIM2][changed][arySIMLockStatus]: ["+ PhoneApp.arySIMLockStatus[0] + " , " + PhoneApp.arySIMLockStatus[1] + " ]");
+            	}else if(unlockSIMStatus.equals(IccCard.INTENT_VALUE_ICC_READY)){
+                    int delaySendMessage = 2000;
+                    mHandler.sendMessageDelayed(mHandler.obtainMessage(EVENT_SIM_STATE_CHANGED,IccCard.INTENT_VALUE_ICC_READY), delaySendMessage);
+                }else{
+            		Log.d(LOG_TAG, "[unlockSIMID : Other information]");
+            	}
             } else if (action.equals(TelephonyIntents.ACTION_RADIO_TECHNOLOGY_CHANGED)) {
                 String newPhone = intent.getStringExtra(Phone.PHONE_NAME_KEY);
                 Log.d(LOG_TAG, "Radio technology switched. Now " + newPhone + " is active.");
                 initForNewRadioTechnology();
             } else if (action.equals(TelephonyIntents.ACTION_SERVICE_STATE_CHANGED)) {
-                handleServiceStateChanged(intent, phoneId);
+                handleServiceStateChanged(intent);
             } else if (action.equals(TelephonyIntents.ACTION_EMERGENCY_CALLBACK_MODE_CHANGED)) {
                 if (phone.getPhoneType() == Phone.PHONE_TYPE_CDMA) {
                     Log.d(LOG_TAG, "Emergency Callback Mode arrived in PhoneApp.");
@@ -1643,12 +1957,106 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                 if(ringerMode == AudioManager.RINGER_MODE_SILENT) {
                     notifier.silenceRinger();
                 }
-            }
-            else if(action.equals(NEW_SMS_RECEIVED_ACTION)){/*fixed CR<NEWMS00142299> by luning at 2011.11.21*/
-                notifier.sendSmsReceived();
-            }else if(action.equals(Intent.ACTION_BOOT_COMPLETED)){
-            	Log.d(LOG_TAG,"Boot Completed");
-            	mBooted = true;
+            } else if (action.equals(Intent.ACTION_SHUTDOWN)) {
+                Log.d(LOG_TAG, "ACTION_SHUTDOWN received");
+                // MTK_OP02_PROTECT_START
+                if("OP02".equals(PhoneUtils.getOptrProperties())){
+                    addCallSync();
+                }
+                // MTK_OP02_PROTECT_END
+                notifier.unregisterCallNotifierRegistrations();
+            } else if (action.equals(STKCALL_REGISTER_SPEECH_INFO)) {
+                PhoneUtils.placeCallRegister(phone);
+            } else if (action.equals(MISSEDCALL_DELETE_INTENT)){
+                Log.d(LOG_TAG, "MISSEDCALL_DELETE_INTENT");
+                NotificationMgr.getDefault().resetMissedCallNumber();
+            }else if (action.equals(NETWORK_MODE_CHANGE))
+            {
+            	int modemNetworkMode = intent.getIntExtra(NETWORK_MODE_CHANGE, 0);
+            	int simId = intent.getIntExtra(Phone.GEMINI_SIM_ID_KEY, 0);
+            	int oldmode = intent.getIntExtra(OLD_NETWORK_MODE, -1);
+            	if (FeatureOption.MTK_GEMINI_SUPPORT)
+            	{
+            		GeminiPhone dualPhone = (GeminiPhone)phone;
+            		dualPhone.setPreferredNetworkTypeGemini(modemNetworkMode, mHandler
+        	                .obtainMessage(MESSAGE_SET_PREFERRED_NETWORK_TYPE, oldmode, modemNetworkMode), simId);
+            	}else {
+            		phone.setPreferredNetworkType(modemNetworkMode, mHandler
+                            .obtainMessage(MESSAGE_SET_PREFERRED_NETWORK_TYPE, oldmode, modemNetworkMode));
+            	}
+            } else if (action.equals("out_going_call_to_phone_app")) {
+                if (VDBG) Log.d(LOG_TAG, "PhoneAppBroadcastReceiver ------------------------- action.equals out_going_call_to_phone_app");
+                
+            	final String number = intent.getStringExtra("number");
+            	final boolean isSip = intent.getBooleanExtra("is_sip_call", false);
+                final boolean isVT = intent.getBooleanExtra("is_vt_call", false);
+                Intent broadcastIntent = new Intent(Intent.ACTION_NEW_OUTGOING_CALL);
+                if (number != null) {
+                    broadcastIntent.putExtra(Intent.EXTRA_PHONE_NUMBER, number);
+                }
+                if (isSip) {
+                	broadcastIntent.putExtra("number", number);
+                	broadcastIntent.putExtra("launch_from_dialer", true);
+                	broadcastIntent.putExtra("is_sip_call", true);
+                    broadcastIntent.putExtra("is_vt_call", isVT);
+                } else {
+                	broadcastIntent.putExtra("number", number);
+                    int slot = intent.getIntExtra(com.android.internal.telephony.Phone.GEMINI_SIM_ID_KEY, -2);
+                	broadcastIntent.putExtra(com.android.internal.telephony.Phone.GEMINI_SIM_ID_KEY, slot);
+                	broadcastIntent.putExtra("launch_from_dialer", true);
+                	broadcastIntent.putExtra("is_sip_call", false);
+                    broadcastIntent.putExtra("is_vt_call", isVT);
+                }
+            	//intent.setAction(Intent.ACTION_NEW_OUTGOING_CALL);
+                PhoneUtils.checkAndCopyPhoneProviderExtras(intent, broadcastIntent);
+                //broadcastIntent.putExtra(OutgoingCallBroadcaster.EXTRA_ALREADY_CALLED, true);
+                sendOrderedBroadcast(broadcastIntent, PERMISSION, new OutgoingCallPhoneAppReceiver(),
+                        null, Activity.RESULT_OK, number, null);
+                if (VDBG) Log.d(LOG_TAG, "PhoneAppBroadcastReceiver ------------------------- sendOrderedBroadcast");
+            }else if(action.equals("android.intent.action.ACTION_SHUTDOWN_IPO")) {
+                Log.d(LOG_TAG, "ACTION_SHUTDOWN_IPO received");
+                phone.setRadioPower(false, true);
+                if (FeatureOption.MTK_VT3G324M_SUPPORT == true) {
+        			if (VTManager.State.CLOSE != VTManager.getInstance().getState()) {
+        				if (VDBG) Log.d(LOG_TAG,"- call VTManager onDisconnected ! ");
+        				VTManager.getInstance().onDisconnected();
+        				if (VDBG) Log.d(LOG_TAG,"- finish call VTManager onDisconnected ! ");
+        				if (VDBG) Log.d(LOG_TAG,"- set VTManager close ! ");
+        				VTManager.getInstance().setVTClose();
+        				if (VDBG) Log.d(LOG_TAG,"- finish set VTManager close ! ");
+        				if (VTInCallScreenFlags.getInstance().mVTInControlRes) {
+        					sendBroadcast(new Intent(VTCallUtils.VT_CALL_END));
+        					VTInCallScreenFlags.getInstance().mVTInControlRes = false;
+        				}
+        			}
+        		}
+                // MTK_OP02_PROTECT_START
+                if("OP02".equals(PhoneUtils.getOptrProperties())) {
+                    if(PhoneApp.this.mInCallScreen != null)
+                        PhoneApp.this.mInCallScreen.internalHangupAllCalls(mCM);
+                }
+                // MTK_OP02_PROTECT_END
+                MiniLog.flush();
+            }else if(action.equals("android.intent.action.ACTION_PREBOOT_IPO")){
+                Log.d(LOG_TAG, "ACTION_PREBOOT_IPO received");
+                MiniLog.flush();
+                Settings.System.putLong(getApplicationContext().getContentResolver(), Settings.System.SIM_LOCK_STATE_SETTING, 0x0L);
+                phone.setRadioPowerOn();
+            }else if(action.equals(GeminiPhone.EVENT_3G_SWITCH_START_MD_RESET)){
+                Log.d(LOG_TAG, "EVENT_3G_SWITCH_START_MD_RESET");
+                Settings.System.putLong(getApplicationContext().getContentResolver(), Settings.System.SIM_LOCK_STATE_SETTING, 0x0L);
+                arySIMLockStatus[0] = 3;
+                arySIMLockStatus[1] = 3;
+            }else if(action.equals(TelephonyIntents.ACTION_RADIO_OFF)){
+                int slot = intent.getIntExtra(TelephonyIntents.INTENT_KEY_ICC_SLOT, 0);
+                Log.d(LOG_TAG, "ACTION_RADIO_OFF slot = " + slot);
+                clearSimSettingFlag(slot);
+                Log.i(LOG_TAG,"[xp Test][MODEM RESET]");
+                arySIMLockStatus[0] = 3;
+                arySIMLockStatus[1] = 3;
+            } else if (action.equals(Constant.ACTION_MODEM_RESET)) {
+                Log.i(LOG_TAG, "PhoneAppBroadcastReceiver receives ACTION_MODEM_RESET");
+                MiniLog.flush();
             }
         }
     }
@@ -1662,16 +2070,20 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
      * adjust its IntentFilter's priority (to make sure we get these
      * intents *before* the media player.)
      */
-    protected class MediaButtonBroadcastReceiver extends BroadcastReceiver {
+    private class MediaButtonBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             KeyEvent event = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (VDBG) Log.d(LOG_TAG,
                            "MediaButtonBroadcastReceiver.onReceive()...  event = " + event);
             if ((event != null)
-                && (event.getKeyCode() == KeyEvent.KEYCODE_HEADSETHOOK)) {
-                if (VDBG) Log.d(LOG_TAG, "MediaButtonBroadcastReceiver: HEADSETHOOK");
-                boolean consumed = PhoneUtils.handleHeadsetHook(mCM.getPhoneInCall(), event);
+                && (event.getKeyCode() == KeyEvent.KEYCODE_HEADSETHOOK)
+                && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                if (event.getRepeatCount() == 0) {
+                    // Mute ONLY on the initial keypress.
+                    if (VDBG) Log.d(LOG_TAG, "MediaButtonBroadcastReceiver: HEADSETHOOK down!");
+                    boolean consumed = PhoneUtils.handleHeadsetHook(phone, event);
                 if (VDBG) Log.d(LOG_TAG, "==> handleHeadsetHook(): consumed = " + consumed);
                 if (consumed) {
                     // If a headset is attached and the press is consumed, also update
@@ -1682,20 +2094,17 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                     }
                     abortBroadcast();
                 }
-            } else {
-                if (mCM.getState() != Phone.State.IDLE) {
-                    // If the phone is anything other than completely idle,
-                    // then we consume and ignore any media key events,
-                    // Otherwise it is too easy to accidentally start
-                    // playing music while a phone call is in progress.
-                    if (VDBG) Log.d(LOG_TAG, "MediaButtonBroadcastReceiver: consumed");
+                } else if (mCM.getState() != Phone.State.IDLE) {
+                    // As for any DOWN events other than the initial press, we consume
+                    // (and ignore) those too if the phone is in use.  (Otherwise the
+                    // music player will handle them, which would be confusing.)
                     abortBroadcast();
                 }
             }
         }
     }
 
-    private void handleServiceStateChanged(Intent intent, int phoneId) {
+    private void handleServiceStateChanged(Intent intent) {
         /**
          * This used to handle updating EriTextWidgetProvider this routine
          * and and listening for ACTION_SERVICE_STATE_CHANGED intents could
@@ -1712,7 +2121,7 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
 
         if (ss != null) {
             int state = ss.getState();
-            notificationMgr.updateNetworkSelection(state, phoneId);
+            NotificationMgr.getDefault().updateNetworkSelection(state, ss.getMySimId());
             switch (state) {
                 case ServiceState.STATE_OUT_OF_SERVICE:
                 case ServiceState.STATE_POWER_OFF:
@@ -1767,17 +2176,13 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         if (DBG) Log.d(LOG_TAG, "- clearInCallScreenMode ...");
         if (mInCallScreen != null) {
             mInCallScreen.resetInCallScreenMode();
-        } else if (mInVideoCallScreen != null) {
-			mInVideoCallScreen.resetInCallScreenMode();
-		}
+        }
     }
 
     // Update InCallScreen's touch UI. It is safe to call even if InCallScreen isn't active
     public void updateInCallScreenTouchUi() {
         if (DBG) Log.d(LOG_TAG, "- updateInCallScreenTouchUi ...");
         if (mInCallScreen != null) {
-            mInCallScreen.requestUpdateTouchUi();
-        } else if (mInCallScreen != null) {
             mInCallScreen.requestUpdateTouchUi();
         }
     }
@@ -1789,8 +2194,13 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
         } else {
             if (DBG) Log.d(LOG_TAG,
                            "handleQueryTTYModeResponse: TTY enable state successfully queried.");
-
-            int ttymode = ((int[]) ar.result)[0];
+            //We will get the tty mode from the settings directly
+            //int ttymode = ((int[]) ar.result)[0];
+            int ttymode = Phone.TTY_MODE_OFF;
+            if (isHeadsetPlugged())
+            {
+                ttymode = mPreferredTtyMode;
+            }
             if (DBG) Log.d(LOG_TAG, "handleQueryTTYModeResponse:ttymode=" + ttymode);
 
             Intent ttyModeChanged = new Intent(TtyIntent.TTY_ENABLED_CHANGE_ACTION);
@@ -1815,7 +2225,27 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
             }
             AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             audioManager.setParameters("tty_mode="+audioTtyMode);
+            PhoneUtils.setTtyMode(audioTtyMode);
         }
+    }
+
+    private int convertTTYmodeToRadio(int ttyMode)
+    {
+        int radioMode = 0;
+        
+        switch (ttyMode)
+        {
+            case Phone.TTY_MODE_FULL:
+            case Phone.TTY_MODE_HCO:
+            case Phone.TTY_MODE_VCO:
+                radioMode = Phone.TTY_MODE_FULL;
+                break;
+                
+            default:
+            radioMode = Phone.TTY_MODE_OFF;     
+        }
+        
+        return radioMode;
     }
 
     private void handleSetTTYModeResponse(Message msg) {
@@ -1826,104 +2256,455 @@ public class PhoneApp extends Application implements AccelerometerListener.Orien
                     "handleSetTTYModeResponse: Error setting TTY mode, ar.exception"
                     + ar.exception);
         }
-        phone.queryTTYMode(mHandler.obtainMessage(EVENT_TTY_MODE_GET));
+
+       //Now Phone doesn't support ttymode query, so we make a fake response to trigger the set to audio
+        //phone.queryTTYMode(mHandler.obtainMessage(EVENT_TTY_MODE_GET));
+        Message m = mHandler.obtainMessage(EVENT_TTY_MODE_GET);
+        m.obj = new AsyncResult(null, null, null);
+        m.sendToTarget();
     }
-	
-	void handleFallBack(String number, int cause){
-	        if (mInVideoCallScreen != null) {
-	                mInVideoCallScreen.handleFallBack(number, cause);
-	        }
-	}
-	
-	void handleVideoCallFail(String number, int cause){
-	        if (mInVideoCallScreen != null) {
-	                mInVideoCallScreen.handleVideoCallFail(number, cause);
-	        }
-	}
-    public void clearUserActivityTimeout() {
-	int val = Settings.System.getInt(getContentResolver(), SCREEN_OFF_TIMEOUT, 30000);
+
+    /* package */ void clearUserActivityTimeout() {
         try {
             mPowerManagerService.clearUserActivityTimeout(SystemClock.uptimeMillis(),
-                    val /* 10 sec */);
+                    10*1000 /* 10 sec */);
         } catch (RemoteException ex) {
             // System process is dead.
         }
     }
 
-
-    Phone.State getPhoneState(int subscription) {
-        return getPhoneState();
+    //xingping.zheng add
+    public boolean isQVGAPlusQwerty()
+    {
+        /*
+    	boolean retval = false;
+    	DisplayMetrics dm = new DisplayMetrics();
+    	WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+    	wm.getDefaultDisplay().getMetrics(dm);
+    	if(dm.widthPixels == 320 && dm.heightPixels == 240)
+    		retval = true;
+        return retval;
+        */
+        return FeatureOption.MTK_QVGA_LANDSCAPE_SUPPORT;
+    }
+    
+    public boolean isQVGA()
+    {
+    	boolean retval = false;
+    	DisplayMetrics dm = new DisplayMetrics();
+    	WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+    	wm.getDefaultDisplay().getMetrics(dm);
+    	if((dm.widthPixels == 320 && dm.heightPixels == 240)||(dm.widthPixels == 240 && dm.heightPixels == 320))
+    		retval = true;
+        return retval;
     }
 
-    /* Gets the default subscription */
-    public int getDefaultSubscription() {
-        return 0;//DEFAULT_SUBSCRIPTION;
+    void displayVTCallScreen() {
+        if (VDBG) Log.d(LOG_TAG, "displayVTCallScreen()...");
+        startActivity(createVTInCallIntent());
+        Profiler.callScreenRequested();
     }
 
-    /* Gets User preferred Voice subscription setting*/
-    public int getVoiceSubscription() {
-    	return 0;//DEFAULT_SUBSCRIPTION;
+    static Intent createVTInCallIntent() { 
+    	Intent intent = createInCallIntent();
+        intent.putExtra(InCallScreen.IS_VT_CALL, true);
+        return intent;
+    }
+    
+    public boolean isVTIdle()
+    {
+    	
+    	if( true != FeatureOption.MTK_VT3G324M_SUPPORT )
+    	{
+    		return true;
+    	}
+    	
+    	if( Phone.State.IDLE == mCM.getState() )
+    	{
+    		return true;
+    	}    	
+    	
+    	if ( true == FeatureOption.MTK_GEMINI_SUPPORT )
+    	{    		
+    		if ( Phone.State.IDLE == ((GeminiPhone)phone).getState() )
+    		{
+    			return true;
+    		}else if( ((GeminiPhone)phone).getForegroundCall().getState().isAlive() )
+    		{
+    			if( ((GeminiPhone)phone).getForegroundCall().getLatestConnection().isVideo() )
+				{
+					return false;
+				}
+    		}else if( ((GeminiPhone)phone).getRingingCall().getState().isAlive() )
+			{
+				if( ((GeminiPhone)phone).getRingingCall().getLatestConnection().isVideo() )
+				{
+					return false;
+				}
+			}
+    		
+    		return true;
+		}
+
+    	else
+    	{   		
+    		if ( Phone.State.IDLE == phone.getState() )
+    		{
+    			return true;
+    		}else if ( phone.getForegroundCall().getState().isAlive() )
+    		{
+    			if( phone.getForegroundCall().getLatestConnection().isVideo() )
+				{
+					return false;
+				}
+    		}else if ( phone.getRingingCall().getState().isAlive() )
+    		{
+    			if( phone.getRingingCall().getLatestConnection().isVideo() )
+				{
+					return false;
+				}
+    		}
+    		
+    		return true;
+    	}
+    }
+    
+    public boolean isVTActive()
+    {
+    	if( true != FeatureOption.MTK_VT3G324M_SUPPORT )
+    	{
+    		return false;
+    	}
+    	
+    	if ( true == FeatureOption.MTK_GEMINI_SUPPORT )
+    	{    		
+    		if( Call.State.ACTIVE == ((GeminiPhone)phone).getForegroundCall().getState() )
+    		{
+    			if( ((GeminiPhone)phone).getForegroundCall().getLatestConnection().isVideo() )
+				{
+					return true;
+				}
+    		}
+		}
+    	else
+    	{   		
+    		if ( Call.State.ACTIVE == phone.getForegroundCall().getState() )
+    		{
+    			if( phone.getForegroundCall().getLatestConnection().isVideo() )
+				{
+					return true;
+				}
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    public boolean isVTRinging()
+    {
+    	if ( true != FeatureOption.MTK_VT3G324M_SUPPORT )
+    	{
+    		return false;
+    	}
+    	
+    	if ( Phone.State.RINGING != mCM.getState() )
+    	{
+    		return false;
+    	}
+    	
+    	if ( true == FeatureOption.MTK_GEMINI_SUPPORT )
+    	{    		
+    		if( ((GeminiPhone)phone).getRingingCall().getState().isRinging() )
+    		{
+    			if( ((GeminiPhone)phone).getRingingCall().getLatestConnection().isVideo() )
+				{
+					return true;
+				}
+    		}
+		}
+    	else
+    	{   		
+    		if ( phone.getRingingCall().getState().isRinging() )
+    		{
+    			if( phone.getRingingCall().getLatestConnection().isVideo() )
+				{
+					return true;
+				}
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    public void touchAnswerVTCall(){
+    	
+    	if (DBG) Log.d (LOG_TAG, "touchAnswerVTCall()");
+    	
+    	if(getInCallScreenInstance() == null){
+    		if (DBG) Log.d (LOG_TAG, "touchAnswerVTCall() : the InCallScreen Instance is null , so cannot answer incoming VT call");
+    		return;
+    	}
+    	
+    	if(!isVTRinging()){
+    		if (DBG) Log.d (LOG_TAG, "touchAnswerVTCall() : there is no Ringing VT call , so return");
+    		return;
+    	}
+    	
+    	mHandler.sendMessage(Message.obtain(mHandler, EVENT_TOUCH_ANSWER_VT));
+    }
+    
+	public VTCallUtils.VTTimingMode getVTTimingMode() {
+		if (true != FeatureOption.MTK_VT3G324M_SUPPORT)
+			return VTCallUtils.VTTimingMode.VT_TIMING_DEFAULT;
+		if (true == FeatureOption.MTK_GEMINI_SUPPORT) {
+			if (Call.State.ACTIVE == ((GeminiPhone) phone).getForegroundCall()
+					.getState()) {
+				if (((GeminiPhone) phone).getForegroundCall()
+						.getLatestConnection().isVideo()
+						&& !((GeminiPhone) phone).getForegroundCall()
+								.getLatestConnection().isIncoming()) {
+					return VTCallUtils.checkVTTimingMode(((GeminiPhone) phone)
+							.getForegroundCall().getLatestConnection()
+							.getAddress());
+				}
+			}
+		} else {
+			if (Call.State.ACTIVE == phone.getForegroundCall().getState()) {
+				if (phone.getForegroundCall().getLatestConnection().isVideo()
+						&& !phone.getForegroundCall().getLatestConnection()
+								.isIncoming()) {
+					return VTCallUtils.checkVTTimingMode(phone
+							.getForegroundCall().getLatestConnection()
+							.getAddress());
+				}
+			}
+		}
+		return VTCallUtils.VTTimingMode.VT_TIMING_DEFAULT;
+	}  
+    
+    //To judge whether current sim card need to unlock sim lock:default false
+    public static boolean bNeedUnlockSIMLock(int iSIMNum){
+    		GeminiPhone mGeminiPhone = (GeminiPhone)PhoneFactory.getDefaultPhone();
+    		if( (mGeminiPhone.getIccCardGemini(iSIMNum).getState() == IccCard.State.PIN_REQUIRED) ||
+    		    (mGeminiPhone.getIccCardGemini(iSIMNum).getState() == IccCard.State.PUK_REQUIRED) ||
+    		    (mGeminiPhone.getIccCardGemini(iSIMNum).getState() == IccCard.State.NOT_READY)){   			
+    			
+    			Log.d(LOG_TAG, "[bNeedUnlockSIMLock][NO Card/PIN/PUK]: " +  iSIMNum);    			
+    			return false;
+    		}else{
+    			return true;
+    		}
+    	
     }
 
-    /* Gets User preferred Video subscription setting*/
-    public int getVideoSubscription() {
-        return 0;//DEFAULT_SUBSCRIPTION;
-    }
+    // MTK_OP02_PROTECT_START
+    void addCallSync() {
+        Call fgCall = mCM.getActiveFgCall();
+        Call bgCall = mCM.getFirstActiveBgCall();
+        
+        List<Connection> connections = null;
+        CallerInfo ci = null;
+        int callType = Calls.OUTGOING_TYPE;
+        int simId = Phone.GEMINI_SIM_1;
+        int isVideo = 0;
 
-    /* Gets User preferred Data subscription setting*/
-    public int getDataSubscription() {
-        return 0;//DEFAULT_SUBSCRIPTION;
-    }
+        if(FeatureOption.MTK_GEMINI_SUPPORT) {
+            GeminiPhone phone = (GeminiPhone) PhoneApp.getInstance().phone;
+            SIMInfo simInfo = null;
+            if(phone.getStateGemini(Phone.GEMINI_SIM_2) != Phone.State.IDLE) {
+                simId = Phone.GEMINI_SIM_2;
+            } else if(phone.getStateGemini(Phone.GEMINI_SIM_1) != Phone.State.IDLE) {
+                simId = Phone.GEMINI_SIM_1;
+            }
+            if(mInCallScreen != null)
+                simInfo = SIMInfo.getSIMInfoBySlot(mInCallScreen, simId);
+            if(simInfo != null)
+                simId = (int)simInfo.mSimId;
+            else
+                simId = 0;
+        }
 
-    /* Gets User preferred SMS subscription setting*/
-    public int getSMSSubscription() {
-        return 0;//msApp.getSMSSubscription();
-    }
-
-    void dismissCallScreen(Phone phone) {
-        dismissCallScreen();
-    }
-
-    Intent createCallLogIntent(int subscription) {
-        return PhoneApp.createCallLogIntent();
-
-    }
-
-    boolean isSimPukLocked(int subscription) {
-        return false;//mIsSimPukLocked;
-    }
-
-    public int getVoiceSubscriptionInService() {
-        return 0;//DEFAULT_SUBSCRIPTION;
-    }
-
-    public int getActiveSubCount() {
-        int activeCount = 0;
-        for (int i = 0; i < PhoneFactory.getPhoneCount(); i++) {
-            if (PhoneFactory.isCardReady(i)) {
-                activeCount++;
+        if(fgCall.getState() != Call.State.IDLE) {
+            connections = fgCall.getConnections();
+            for(Connection c : connections) {
+                if(c.isAlive()) {
+                    ci = notifier.getCallerInfoFromConnection(c);
+                    if (c.isIncoming())
+                        callType = Calls.INCOMING_TYPE;
+                    if(c.isVideo())
+                        isVideo = 1;
+                    else 
+                        isVideo = 0;
+                    Calls.addCall(ci, mInCallScreen, c.getAddress(),
+                            notifier.getPresentation(c, ci), callType, c.getCreateTime(), (int)c.getDurationMillis(), simId, isVideo, false);
+                }
             }
         }
-        if (DBG) Log.d(LOG_TAG, "activeSub count is " + activeCount);
-        return activeCount;
-    }
-
-    public int getExistSubCount() {
-        int existCount = 0;
-        for (int i = 0; i < PhoneFactory.getPhoneCount(); i++) {
-            if (PhoneFactory.isCardExist(i)) {
-                existCount++;
+        
+        if(bgCall.getState() != Call.State.IDLE) {
+            connections = bgCall.getConnections();
+            for(Connection c : connections) {
+                if(c.isAlive()) {
+                    ci = notifier.getCallerInfoFromConnection(c);
+                    if (c.isIncoming())
+                        callType = Calls.INCOMING_TYPE;
+                    if(c.isVideo())
+                        isVideo = 1;
+                    else 
+                        isVideo = 0;
+                    Calls.addCall(ci, mInCallScreen, c.getAddress(),
+                            notifier.getPresentation(c, ci), callType, c.getCreateTime(), (int)c.getDurationMillis(), simId, isVideo, false);
+                }
             }
         }
-        if (DBG) Log.d(LOG_TAG, "existSub count is " + existCount);
-        return existCount;
+    }
+    // MTK_OP02_PROTECT_END
+
+    @Override
+    public void onTerminate() {
+        // TODO Auto-generated method stub
+        super.onTerminate();
+        Log.d(LOG_TAG, "onTerminate");
     }
 
-    Intent createInCallIntent(int subscription) {
-        return PhoneApp.createInCallIntent();
+    private Intent mRecorderServiceIntent = null;
+    private IPhoneRecorder mPhoneRecorder = null;
+    private int mPhoneRecorderState = PhoneRecorder.IDLE_STATE;
+    private boolean mVoiceOrVTVoiceRecordFlag = true;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+        	mPhoneRecorder = IPhoneRecorder.Stub.asInterface(service);
+        	try{
+        		Log.i(LOG_TAG, "onServiceConnected");
+        		if( null != mPhoneRecorder ){
+        			mPhoneRecorder.listen(mPhoneRecordStateListener);
+        			mPhoneRecorder.startRecord();
+        		}
+        	} catch (RemoteException e) {
+        		Log.e(LOG_TAG, "onServiceConnected: couldn't register to record service", new IllegalStateException());
+            }
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+        	mPhoneRecorder = null;
+        }
+    };
+    
+    private IPhoneRecordStateListener mPhoneRecordStateListener = new IPhoneRecordStateListener.Stub() {
+    	public void onStateChange(int iState){
+    		Log.i(LOG_TAG, "onStateChange");
+    		mPhoneRecorderState = iState;
+    		if( null != mInCallScreen ){
+    			mInCallScreen.requestUpdateVoiceRecordState(iState);
+    		}
+    	}
+
+    	public void onError(int iError){
+            String message = null;
+            switch (iError) {
+                case Recorder.SDCARD_ACCESS_ERROR:
+                    message = getResources().getString(R.string.error_sdcard_access);
+                    break;
+                case Recorder.INTERNAL_ERROR:
+                    message = getResources().getString(R.string.alert_device_error);
+                    break;
+            }
+            if( null != mPhoneRecorder && null != mInCallScreen ){
+                Toast.makeText(mInCallScreen, message, Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+    
+    public void startVoiceRecord(){
+    	if( null != mRecorderServiceIntent && null == mPhoneRecorder ){
+    		bindService(mRecorderServiceIntent,mConnection,Context.BIND_AUTO_CREATE);
+    	} else if( null != mRecorderServiceIntent && null != mPhoneRecorder ) {
+        	try{
+        		mPhoneRecorder.startRecord();
+        	} catch (RemoteException e) {
+        		Log.e(LOG_TAG, "start Record failed", new IllegalStateException());
+            }
+    	}
+    }
+    
+    public void stopVoiceRecord(){
+    	try{
+    		Log.e(LOG_TAG, "stopRecord");
+    		if( null != mPhoneRecorder ){
+    			mPhoneRecorder.stopRecord();
+    			mPhoneRecorder.remove();
+    			if( null != mConnection ){
+    				unbindService(mConnection);
+    			}
+    			mPhoneRecorder = null;
+    		}
+    	} catch (RemoteException e) {
+    		Log.e(LOG_TAG, "stopRecord: couldn't call to record service", new IllegalStateException());
+        }
+    }
+    
+    public int getPhoneRecorderState(){
+    	return mPhoneRecorderState;
+    }
+    
+    public boolean getLastVoiceOrVTVoiceRecordFlag(){
+    	return mVoiceOrVTVoiceRecordFlag;
+    }
+    
+    public void setLastVoiceOrVTVoiceRecordFlag(boolean bVoiceOrVTVoiceRecord){
+    	mVoiceOrVTVoiceRecordFlag = bVoiceOrVTVoiceRecord;
     }
 
-    Phone getDefaultPhone() {
-        return this.phone;
+	public boolean isRejectAllVoiceCall() {
+		try {
+			return getApplicationContext().getSharedPreferences(
+					"com.android.phone_preferences", Context.MODE_PRIVATE)
+					.getBoolean(AutoRejectSetting.AUTO_REJECT_VOICE_CALL_KEY,
+							false);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isRejectAllVideoCall() {
+		try {
+			return getApplicationContext().getSharedPreferences(
+					"com.android.phone_preferences", Context.MODE_PRIVATE)
+					.getBoolean(AutoRejectSetting.AUTO_REJECT_VIDEO_CALL_KEY,
+							false);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isRejectAllSIPCall() {
+		try {
+			return getApplicationContext().getSharedPreferences(
+					"com.android.phone_preferences", Context.MODE_PRIVATE)
+					.getBoolean(AutoRejectSetting.AUTO_REJECT_SIP_CALL_KEY,
+							false);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+    private void clearSimSettingFlag(int slot) {
+
+        Long bitSetMask = (0x3L << (2 * slot));
+
+        Long simLockState = 0x0L;
+
+        try {
+            simLockState = Settings.System.getLong(getApplicationContext()
+                    .getContentResolver(), Settings.System.SIM_LOCK_STATE_SETTING);
+
+            simLockState = simLockState & (~bitSetMask);
+
+            Settings.System.putLong(getApplicationContext().getContentResolver(),
+                    Settings.System.SIM_LOCK_STATE_SETTING, simLockState);
+        } catch (SettingNotFoundException e) {
+            Log.e(LOG_TAG, "clearSimSettingFlag exception");
+            e.printStackTrace();
+        }
     }
 }

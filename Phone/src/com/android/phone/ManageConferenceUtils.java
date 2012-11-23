@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2009 The Android Open Source Project
  *
@@ -26,6 +61,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.view.LayoutInflater;
 
 import com.android.internal.telephony.CallerInfo;
 import com.android.internal.telephony.CallerInfoAsyncQuery;
@@ -34,6 +70,11 @@ import com.android.internal.telephony.Connection;
 import com.android.internal.telephony.Phone;
 
 import java.util.List;
+
+/* Fion add start */
+import com.android.internal.telephony.gemini.GeminiPhone;
+import com.mediatek.featureoption.FeatureOption;
+/* Fion add end */
 
 
 /**
@@ -54,9 +95,17 @@ public class ManageConferenceUtils
     private ViewGroup[] mConferenceCallList;
     private int mNumCallersInConference;
     private Chronometer mConferenceTime;
-
+    /* Added by xingping.zheng start */
+    private ViewGroup mManageConferenceHeader;
+    private Button mButtonHangupAll;
+    /* Added by xingping.zheng end */
+    
     // See CallTracker.MAX_CONNECTIONS_PER_CALL
     private static final int MAX_CALLERS_IN_CONFERENCE = 5;
+    /* added by xingping.zheng start */
+    private int mConferenceCallListSize;
+    private ViewGroup mCallerContainer;
+    /* added by xingping.zheng end   */
 
     public ManageConferenceUtils(InCallScreen inCallScreen, CallManager cm) {
         if (DBG) log("ManageConferenceUtils constructor...");
@@ -79,6 +128,12 @@ public class ManageConferenceUtils
                 throw new IllegalStateException("Couldn't find manageConferencePanel!");
             }
 
+            /* Added by xingping.zheng start */
+            mManageConferenceHeader = (ViewGroup) mInCallScreen.findViewById(R.id.manageConferenceHeader);
+            mManageConferenceHeader.setVisibility(View.GONE);
+            mCallerContainer = (ViewGroup) mInCallScreen.findViewById(R.id.caller_container);
+            /* Added by xingping.zheng end */
+            
             // set up the Conference Call chronometer
             mConferenceTime =
                     (Chronometer) mInCallScreen.findViewById(R.id.manageConferencePanelHeader);
@@ -93,9 +148,24 @@ public class ManageConferenceUtils
                 mConferenceCallList[i] =
                         (ViewGroup) mInCallScreen.findViewById(viewGroupIdList[i]);
             }
+            /* added by xingping.zheng start */
+            mConferenceCallListSize = MAX_CALLERS_IN_CONFERENCE;
+            /* added by xingping.zheng end   */
 
             mButtonManageConferenceDone = (Button) mInCallScreen.findViewById(R.id.manage_done);
             mButtonManageConferenceDone.setOnClickListener(mInCallScreen);
+            
+            /* Added by xingping.zheng */
+            mButtonHangupAll = (Button) mInCallScreen.findViewById(R.id.disconnect_all);
+            //mButtonHangupAll.setOnClickListener(mInCallScreen);
+            mButtonHangupAll.setOnClickListener(new View.OnClickListener() {
+                
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    PhoneUtils.hangup(PhoneApp.getInstance().mCM);
+                }
+            });
+            /* Added by xingping.zheng */
         }
     }
 
@@ -146,11 +216,38 @@ public class ManageConferenceUtils
 
         // Can we give the user the option to separate out ("go private with") a single
         // caller from this conference?
-        final boolean hasActiveCall = mCM.hasActiveFgCall();
-        final boolean hasHoldingCall = mCM.hasActiveBgCall();
+        boolean hasActiveCall,  hasHoldingCall ;
+//        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+//        {
+//            hasActiveCall = ((GeminiPhone)mCM).hasActiveFgCall();
+//            hasHoldingCall = ((GeminiPhone)mCM).hasActiveBgCall();
+//        }
+//        else
+//        {
+            hasActiveCall = mCM.hasActiveFgCall();
+            hasHoldingCall = mCM.hasActiveBgCall();
+//        }	
+
         boolean canSeparate = !(hasActiveCall && hasHoldingCall);
 
-        for (int i = 0; i < MAX_CALLERS_IN_CONFERENCE; i++) {
+        /* added by xingping.zheng start */
+        if(mNumCallersInConference > mConferenceCallListSize) {
+            int i = 0;
+            ViewGroup[] temp = mConferenceCallList;
+            LayoutInflater inflater = LayoutInflater.from(mInCallScreen);
+            mConferenceCallList = new ViewGroup[mNumCallersInConference];
+            for(ViewGroup item : temp) {
+                mConferenceCallList[i++] = item;
+            }
+            for(; i<mNumCallersInConference; i++) {
+                mConferenceCallList[i] = (ViewGroup)inflater.inflate(R.layout.caller_in_conference, null);
+                mCallerContainer.addView(mConferenceCallList[i]);
+            }
+            mCallerContainer.requestLayout();
+            mConferenceCallListSize = mNumCallersInConference;
+            log("mConferenceCallList = "+mConferenceCallList);
+        }
+        for (int i = 0; i < mConferenceCallListSize; i++) {
             if (i < mNumCallersInConference) {
                 // Fill in the row in the UI for this caller.
                 Connection connection = (Connection) connections.get(i);
@@ -160,6 +257,7 @@ public class ManageConferenceUtils
                 updateManageConferenceRow(i, null, false);
             }
         }
+        /* added by xingping.zheng end   */
     }
 
     /**
@@ -183,10 +281,11 @@ public class ManageConferenceUtils
             mConferenceCallList[i].setVisibility(View.VISIBLE);
 
             // get the relevant children views
-            ImageButton endButton = (ImageButton) mConferenceCallList[i].findViewById(
-                    R.id.conferenceCallerDisconnect);
-            ImageButton separateButton = (ImageButton) mConferenceCallList[i].findViewById(
-                    R.id.conferenceCallerSeparate);
+            /* Added by xingping.zheng start */
+            Button endButton = (Button) mConferenceCallList[i].findViewById(R.id.conferenceCallerDisconnect);
+            Button separateButton = (Button) mConferenceCallList[i].findViewById(R.id.conferenceCallerSeparate);
+            /* Added by xingping.zheng end   */
+            
             TextView nameTextView = (TextView) mConferenceCallList[i].findViewById(
                     R.id.conferenceCallerName);
             TextView numberTextView = (TextView) mConferenceCallList[i].findViewById(
@@ -214,10 +313,8 @@ public class ManageConferenceUtils
                     };
                 separateButton.setOnClickListener(separateThisConnection);
                 separateButton.setVisibility(View.VISIBLE);
-                separateButton.setEnabled(true);
             } else {
-                separateButton.setVisibility(View.VISIBLE);
-                separateButton.setEnabled(false);
+                separateButton.setVisibility(View.INVISIBLE);
             }
 
             // Name/number for this caller.

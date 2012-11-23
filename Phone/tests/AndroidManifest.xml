@@ -19,6 +19,7 @@
 
      <application android:label="PhoneAppTests">
          <uses-library android:name="android.test.runner" />
+         <uses-library android:name="com.mediatek.perfhelper" />
      </application>
 
      <!--
@@ -35,5 +36,11 @@
     <instrumentation android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.android.phone"
         android:label="Phone application tests." />
+        
+    <instrumentation android:name="com.android.phone.tests.CallTestRunner"
+        android:targetPackage="com.android.phone"
+        android:label="Call Test Runner">
+    </instrumentation>
+    
 </manifest>
 

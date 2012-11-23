@@ -1,3 +1,38 @@
+/* Copyright Statement:
+ *
+ * This software/firmware and related documentation ("MediaTek Software") are
+ * protected under relevant copyright laws. The information contained herein
+ * is confidential and proprietary to MediaTek Inc. and/or its licensors.
+ * Without the prior written permission of MediaTek inc. and/or its licensors,
+ * any reproduction, modification, use or disclosure of MediaTek Software,
+ * and information contained herein, in whole or in part, shall be strictly prohibited.
+ */
+/* MediaTek Inc. (C) 2010. All rights reserved.
+ *
+ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
+ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
+ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER ON
+ * AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NONINFRINGEMENT.
+ * NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH RESPECT TO THE
+ * SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY, INCORPORATED IN, OR
+ * SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES TO LOOK ONLY TO SUCH
+ * THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO. RECEIVER EXPRESSLY ACKNOWLEDGES
+ * THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES
+ * CONTAINED IN MEDIATEK SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK
+ * SOFTWARE RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
+ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S ENTIRE AND
+ * CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE RELEASED HEREUNDER WILL BE,
+ * AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE MEDIATEK SOFTWARE AT ISSUE,
+ * OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE CHARGE PAID BY RECEIVER TO
+ * MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
+ *
+ * The following software/firmware and/or related documentation ("MediaTek Software")
+ * have been modified by MediaTek Inc. All revisions are subject to any receiver's
+ * applicable license agreements with MediaTek Inc.
+ */
+
 /*
  * Copyright (C) 2009 The Android Open Source Project
  *
@@ -40,7 +75,11 @@ import com.android.internal.telephony.PhoneFactory;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.telephony.TelephonyProperties;
 
-import static com.android.internal.telephony.MsmsConstants.SUBSCRIPTION_KEY;
+
+/* Mtk add start */
+import com.android.internal.telephony.gemini.GeminiPhone;
+import com.mediatek.featureoption.FeatureOption;
+/* Mtk add end */
 
 /**
  * Application service that inserts/removes Emergency Callback Mode notification and
@@ -59,7 +98,6 @@ public class EmergencyCallbackModeService extends Service {
     private long mTimeLeft = 0;
     private Phone mPhone = null;
     private boolean mInEmergencyCall = false;
-    private int mPhoneId = 0;
 
     private static final int ECM_TIMER_RESET = 1;
 
@@ -75,24 +113,10 @@ public class EmergencyCallbackModeService extends Service {
 
     @Override
     public void onCreate() {
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-        PhoneApp app = PhoneApp.getInstance();
-
-        if (intent != null) {
-            mPhoneId = intent.getIntExtra(SUBSCRIPTION_KEY, app.getDefaultSubscription());
-        } else {
-            Log.d(LOG_TAG, "onStartCommand: intent null");
-        }
-        mPhone = app.getPhone(mPhoneId);
-
         // Check if it is CDMA phone
-        if (mPhone.getPhoneType() != Phone.PHONE_TYPE_CDMA) {
+        if (PhoneFactory.getDefaultPhone().getPhoneType() != Phone.PHONE_TYPE_CDMA) {
             Log.e(LOG_TAG, "Error! Emergency Callback Mode not supported for " +
-                    mPhone.getPhoneName() + " phones");
+                    PhoneFactory.getDefaultPhone().getPhoneName() + " phones");
             stopSelf();
         }
 
@@ -105,10 +129,21 @@ public class EmergencyCallbackModeService extends Service {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         // Register ECM timer reset notfication
+        mPhone = PhoneFactory.getDefaultPhone();
+
+/* Mtk add start */
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+        {
+            ((GeminiPhone)mPhone).registerForEcmTimerResetGemini(mHandler, ECM_TIMER_RESET, null, Phone.GEMINI_SIM_1);
+            ((GeminiPhone)mPhone).registerForEcmTimerResetGemini(mHandler, ECM_TIMER_RESET, null, Phone.GEMINI_SIM_2);
+        }
+        else
+        {			
         mPhone.registerForEcmTimerReset(mHandler, ECM_TIMER_RESET, null);
+        }
+/* Mtk add end */
 
         startTimerNotification();
-        return START_STICKY;
     }
 
     @Override
@@ -116,7 +151,18 @@ public class EmergencyCallbackModeService extends Service {
         // Unregister receiver
         unregisterReceiver(mEcmReceiver);
         // Unregister ECM timer reset notification
+
+/* Mtk add start */
+        if (FeatureOption.MTK_GEMINI_SUPPORT == true)
+        {
+            ((GeminiPhone)mPhone).unregisterForEcmTimerResetGemini(mHandler, Phone.GEMINI_SIM_1);
+            ((GeminiPhone)mPhone).unregisterForEcmTimerResetGemini(mHandler, Phone.GEMINI_SIM_2);			
+        }
+        else
+        {			
         mPhone.unregisterForEcmTimerReset(mHandler);
+        }
+/* Mtk add end */
 
         // Cancel the notification and timer
         mNotificationManager.cancel(R.string.phone_in_ecm_notification_title);
@@ -184,12 +230,10 @@ public class EmergencyCallbackModeService extends Service {
                 R.drawable.picture_emergency25x25,
                 getText(R.string.phone_entered_ecm_text), 0);
 
-        Intent intent = new Intent(EmergencyCallbackModeExitDialog.ACTION_SHOW_ECM_EXIT_DIALOG);
-        intent.putExtra(SUBSCRIPTION_KEY, mPhoneId);
-
         // PendingIntent to launch Emergency Callback Mode Exit activity if the user selects
         // this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(EmergencyCallbackModeExitDialog.ACTION_SHOW_ECM_EXIT_DIALOG), 0);
 
         // Format notification string
         String text = null;

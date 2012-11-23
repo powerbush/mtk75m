@@ -79,7 +79,7 @@
     <bool name="config_enable_dialer_key_vibration">true</bool>
 
     <!-- Flag indicating if the tty is enabled -->
-    <bool name="tty_enabled">false</bool>
+    <bool name="tty_enabled">true</bool>
 
     <!-- Flag indicating if hac is enabled -->
     <bool name="hac_enabled">false</bool>
@@ -114,17 +114,23 @@
     <!-- Determine whether calls to mute the microphone in PhoneUtils
          are routed through the android.media.AudioManager class (true) or through
          the com.android.internal.telephony.Phone interface (false). -->
-    <bool name="send_mic_mute_to_AudioManager">false</bool>
+    <bool name="send_mic_mute_to_AudioManager">true</bool>
 
     <!-- Determines if device implements a noise suppression device for in call audio-->
     <bool name="has_in_call_noise_suppression">false</bool>
 
-    <!-- Determines if device enable call id control function-->
-    <bool name="callid_enabled">true</bool>
 
     <!-- If true, removes the Voice Privacy option from Call Settings -->
     <bool name="config_voice_privacy_disable">false</bool>
+    
+    <!-- Added by lianyu.zhang
+    	 Determine which sim can support video call: 
+    	 sim1 : 0     sim2 : 1-->
+    <integer name="vt_sim_id">0</integer>
+    
+    <!-- Added by lianyu.zhang
+    	 QCIF: 176*144-->
+    <integer name="qcif_x">176</integer>
+    <integer name="qcif_y">144</integer>
 
-    <!-- If true, show an onscreen volume adjust buttons in vt screen. -->
-    <bool name="config_show_vt_onscreen_volume_button">false</bool>
 </resources>
