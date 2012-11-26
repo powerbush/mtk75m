@@ -48,6 +48,7 @@
         android:layout_gravity="bottom"
         android:visibility="gone"/>
 
+    <!-- liaobz modify layout_marginBottom & orientation -->
     <LinearLayout android:id="@+id/incomingCallWidgetUnlocked"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
@@ -55,23 +56,28 @@
                   android:layout_gravity="bottom"
                   android:layout_marginLeft="@dimen/incoming_call_button_margin"
                   android:layout_marginRight="@dimen/incoming_call_button_margin"
-                  android:layout_marginBottom="30dip"
-                  android:orientation="horizontal">
+                  android:layout_marginBottom="40dip"
+                  android:orientation="vertical">
 
+        <!-- liaobz modify layout_width,add layout_margin -->
         <Button android:id="@+id/answerButton"
-                android:layout_width="@dimen/incoming_call_button_width"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/incoming_call_button_height"
                 android:layout_marginRight="@dimen/incoming_call_button_margin_internal"
                 android:text="@string/incoming_call_widget_answer_text"
                 android:textColor="#ECE2E2"
+                android:layout_margin="10dp"
                 android:textSize="@dimen/incall_btn_end_call_text_size"
                 android:background="@drawable/incall_btn_answer"/>
         
+        <!-- liaobz modify layout_width,add layout_margin & layout_marginRight -->
         <Button android:id="@+id/rejectButton"
-                android:layout_width="@dimen/incoming_call_button_width"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/incoming_call_button_height"
+                android:layout_marginRight="@dimen/incoming_call_button_margin_internal"
                 android:text="@string/incoming_call_widget_reject_text"
                 android:textColor="#ECE2E2"
+                android:layout_margin="10dp"
                 android:textSize="@dimen/incall_btn_end_call_text_size"
                 android:background="@drawable/incall_btn_end"/>
 

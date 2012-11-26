@@ -23,7 +23,8 @@
     <dimen name="incall_btn_end_call_width">270dip</dimen>
     <dimen name="incall_btn_end_call_height">40dip</dimen>
     <dimen name="incall_btn_end_call_margin_top">19dip</dimen>
-    <dimen name="incall_btn_end_call_text_size">18dip</dimen>
+    <!-- liaobz modify incall_btn_end_call_text_size -->
+    <dimen name="incall_btn_end_call_text_size">24dip</dimen>
     
     <dimen name="incall_status_height">54dip</dimen>
     <dimen name="incall_status0_height">27dip</dimen>
@@ -69,7 +70,8 @@
     <dimen name="manage_conference_button_private_width">80px</dimen>
     
     <dimen name="incoming_call_button_width">127dip</dimen>
-    <dimen name="incoming_call_button_height">39dip</dimen>
+    <!-- liaobz modify incoming_call_button_height -->
+    <dimen name="incoming_call_button_height">45dip</dimen>
     <dimen name="incoming_call_button_margin_bottom">40dip</dimen>
     <dimen name="incoming_call_button_margin_internal">20dip</dimen>
     <dimen name="incoming_call_button_margin">23dip</dimen>
