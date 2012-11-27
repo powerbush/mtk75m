@@ -38,7 +38,6 @@ public class GameEntry {
 				game.pkgName = item.getAttribute("pkgname");
 				game.className = item.getAttribute("classname");
 				game.id = Integer.parseInt(item.getAttribute("id"));
-				game.iconPath = item.getAttribute("iconpath");
 				list.add(game);
 			}
 

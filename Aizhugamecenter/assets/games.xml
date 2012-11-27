@@ -4,13 +4,11 @@
 	<item id="1" 
 		pkgname="org.jfedor.frozenbubble"
 		classname="org.jfedor.frozenbubble.FrozenBubble"
-		name="泡泡龙" 
-		iconpath="@drawable/app_frozen_bubble" />
+		name="泡泡龙"  />
 
 	<item id="2" 
-		pkgname="org.jfedor.frozenbubble"
-		classname="org.jfedor.frozenbubble.FrozenBubble"
-		name="泡泡龙" 
-		iconpath="@drawable/app_frozen_bubble" />
+		pkgname="com.realarcade.DOJ"
+		classname="com.realarcade.DOJ.MrGame"
+		name="涂鸦跳跳"  />
 
 </game>

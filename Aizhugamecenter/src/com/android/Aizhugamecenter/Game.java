@@ -5,5 +5,4 @@ public class Game {
 	public String name;
 	public String pkgName;
 	public String className;
-	public String iconPath;
 }
